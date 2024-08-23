@@ -1,0 +1,3360 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>User guide</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">User guide</h1>
+
+
+
+<div id="background" class="section level1">
+<h1>Background</h1>
+<p>The package xeredar is an R-package for analysis of the New Approach
+Methodology (NAM) assays of XETA (Xenopus Eleutheroembryonic Thyroid),
+RADAR (Rapid Androgen Disruption Activity Reporter) and REACTIV (Rapid
+Estrogen ACTivity In Vivo) for assessing endocrine effects of chemicals
+on the thyroid, androgen/steroid and estrogen axis. The functionality is
+based on the SAS-script recommended in the Annex 13 of OECD test
+guideline No. 248 of the XETA assay (<a href="https://www.oecd-ilibrary.org/environment/tg-248-xenopus-eleutheroembryonic-thyroid-assay-xeta_a13f80ee-en">2019</a>),
+written by John Green.</p>
+</div>
+<div id="data-requirements" class="section level1">
+<h1>Data requirements</h1>
+<p>Data frames that are supposed to be analyzed with xeredar needs to
+fulfill certain requirements. The data frame or tibble needs to contain
+the following column headers:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">head</span>(xeredar<span class="sc">::</span>testDataSpiked))</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">Replicate</th>
+<th align="left">Treatment</th>
+<th align="left">Row</th>
+<th align="right">Fluor</th>
+<th align="left">Conc</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">11</td>
+<td align="left">1</td>
+<td align="left">0 + T3</td>
+<td align="left">4</td>
+<td align="right">19.768</td>
+<td align="left">0</td>
+</tr>
+<tr class="even">
+<td align="left">12</td>
+<td align="left">1</td>
+<td align="left">0 + T3</td>
+<td align="left">4</td>
+<td align="right">27.928</td>
+<td align="left">0</td>
+</tr>
+<tr class="odd">
+<td align="left">13</td>
+<td align="left">1</td>
+<td align="left">0 + T3</td>
+<td align="left">4</td>
+<td align="right">29.592</td>
+<td align="left">0</td>
+</tr>
+<tr class="even">
+<td align="left">14</td>
+<td align="left">1</td>
+<td align="left">0 + T3</td>
+<td align="left">4</td>
+<td align="right">22.816</td>
+<td align="left">0</td>
+</tr>
+<tr class="odd">
+<td align="left">15</td>
+<td align="left">1</td>
+<td align="left">0 + T3</td>
+<td align="left">4</td>
+<td align="right">26.080</td>
+<td align="left">0</td>
+</tr>
+<tr class="even">
+<td align="left">16</td>
+<td align="left">1</td>
+<td align="left">0 + T3</td>
+<td align="left">4</td>
+<td align="right">25.332</td>
+<td align="left">0</td>
+</tr>
+</tbody>
+</table>
+<p>The type of each column should be accordingly:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(purrr<span class="sc">::</span><span class="fu">map_df</span>(xeredar<span class="sc">::</span>testDataSpiked, class))</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Replicate</th>
+<th align="left">Treatment</th>
+<th align="left">Row</th>
+<th align="left">Fluor</th>
+<th align="left">Conc</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">factor</td>
+<td align="left">character</td>
+<td align="left">character</td>
+<td align="left">numeric</td>
+<td align="left">ordered</td>
+</tr>
+<tr class="even">
+<td align="left">factor</td>
+<td align="left">character</td>
+<td align="left">character</td>
+<td align="left">numeric</td>
+<td align="left">factor</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Replicate</strong> (i.e. run), <strong>Treatment</strong>
+(i.e. a unique name for each treatment level in either spiked or
+unspiked mode) and <strong>Row</strong> (i.e. exposure vessel) can
+either be <em>factor</em> or <em>character</em> columns, but
+<strong>Fluor</strong> (i.e. measured fluorescence) must always be
+<em>numeric</em> and <strong>Conc</strong> (i.e. concentration of test
+item) must always contain <em>ordered factors</em>. The order of the
+columns is not relevant.</p>
+<p><strong>Replicate</strong>, <strong>Treatment</strong> and
+<strong>Row</strong> can either be <em>factor</em> or <em>character</em>
+columns, but <strong>Fluor</strong> must always be <em>numeric</em> and
+<strong>Conc</strong> must always contain <em>ordered factors</em>. The
+order of the columns is not relevant. It is important that the decimal
+separator is a period instead of a comma.</p>
+<p>When simply aiming to use the <code>data_prep()</code> function, the
+data frame needs to either contain spiked treatments or unspiked
+treatments. When still having spiked and unspiked treatments in one data
+frame they should be separated. Imagine you have a XETA data frame (dat)
+which contains spiked and unspiked treatments as well as the T4 positive
+control. The T3 or T4 additions are designated by “T3” and “T4” in the
+<strong>Treatment</strong> column. The spiked and unspiked datasets
+could quickly be subset using the following code:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>datSpiked <span class="ot">&lt;-</span> dat[<span class="fu">grepl</span>(<span class="st">&quot;T3&quot;</span>,dat<span class="sc">$</span>Treatment),] <span class="co"># spiked data </span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>datUnspiked <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(dat,datSpiked)</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>datUnspiked <span class="ot">&lt;-</span> datUnspiked[<span class="fu">which</span>(datUnspiked<span class="sc">$</span>Treatment <span class="sc">!=</span> <span class="st">&quot;T4&quot;</span>),] <span class="co"># unspiked data</span></span></code></pre></div>
+</div>
+<div id="running-default-xeta-analysis" class="section level1">
+<h1>Running default XETA analysis</h1>
+<p>To demonstrate how to run XETA analysis, we will use one of the data
+sets by the French lab containing the spiked and unspiked measurements
+from the XETA ring test as included in OECD test guideline No. 248 of
+the XETA assay (<a href="https://www.oecd-ilibrary.org/environment/tg-248-xenopus-eleutheroembryonic-thyroid-assay-xeta_a13f80ee-en">2019</a>).</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>xeta_spiked <span class="ot">&lt;-</span> xeredar<span class="sc">::</span>valid_data_xeta[[<span class="st">&quot;ptu_france_spiked&quot;</span>]]</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>xeta_unspiked <span class="ot">&lt;-</span> xeredar<span class="sc">::</span>valid_data_xeta[[<span class="st">&quot;ptu_france_unspiked&quot;</span>]]</span></code></pre></div>
+<p>The default XETA analysis can be run using the
+<code>data_prep()</code> function with either spiked or unspiked data.
+This function automatically decides whether trimming, outlier removal
+and/or transformations are conducted following the manuscript
+(Spyridonov et al. unpublished). The actual analysis is carried out by
+the <code>ana()</code> function. The <code>ana()</code> function is
+called by the <code>data_prep()</code> function and does not need to be
+called separately. For this dataset, the exposure well ID (Row of the 96
+well plate) is not recorded, therefore, we set the <code>row</code>
+argument to <code>FALSE</code>. In this case, we use the reduced mixed
+ANOVA model where the exposure well ID is not included as a random
+effect. Please specify <code>row=TRUE</code> if the exposure well ID is
+recorded and you want to use the full mixed ANOVA model.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>xeta_spiked_result <span class="ot">&lt;-</span> xeredar<span class="sc">::</span><span class="fu">data_prep</span>(<span class="at">dataframe =</span> xeta_spiked, <span class="at">row =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>xeta_unspiked_result <span class="ot">&lt;-</span> xeredar<span class="sc">::</span><span class="fu">data_prep</span>(<span class="at">dataframe =</span> xeta_unspiked, <span class="at">row=</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<p>Here we use the spike data as an example to demonstrate the output of
+the <code>data_prep()</code> function.</p>
+<p>The outputs of the <code>data_prep()</code> function are lists
+containing the following elements:</p>
+<ul>
+<li>A reasoning for the recommended transformation and trimming. The raw
+data should be used for the analysis because the residuals of the mixed
+ANOVA are normally distributed and show homogeneous variances among
+treatment groups.</li>
+</ul>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>xeta_spiked_result<span class="sc">$</span>Justify</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="co">#&gt; [1] &quot;The raw data should be used for the analysis because\n                  the residuals of the mixed ANOVA are normally\n                  distributed and show homogeneous variances\n                  among treatment groups.&quot;</span></span></code></pre></div>
+<ul>
+<li>A data frame of the processed data (e.g. raw data, trimmed,
+transformed, or outlier removed) used for actual statistical testing
+following the reasoning. The box plots of the processed data per
+run/replicate (i.e. each panel represents each run/replicate) are also
+provided for visual inspection.</li>
+</ul>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">head</span>(xeta_spiked_result<span class="sc">$</span>ProcessedData))</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Replicate</th>
+<th align="left">Treatment</th>
+<th align="right">Fluor</th>
+<th align="left">Conc</th>
+<th align="left">Country</th>
+<th align="left">Substance</th>
+<th align="left">Spiked</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">FETAXT3</td>
+<td align="right">4989.533</td>
+<td align="left">0</td>
+<td align="left">france</td>
+<td align="left">ptu</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="even">
+<td align="left">1</td>
+<td align="left">FETAXT3</td>
+<td align="right">5002.533</td>
+<td align="left">0</td>
+<td align="left">france</td>
+<td align="left">ptu</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">FETAXT3</td>
+<td align="right">6331.533</td>
+<td align="left">0</td>
+<td align="left">france</td>
+<td align="left">ptu</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="even">
+<td align="left">1</td>
+<td align="left">FETAXT3</td>
+<td align="right">4645.533</td>
+<td align="left">0</td>
+<td align="left">france</td>
+<td align="left">ptu</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">FETAXT3</td>
+<td align="right">4977.533</td>
+<td align="left">0</td>
+<td align="left">france</td>
+<td align="left">ptu</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="even">
+<td align="left">1</td>
+<td align="left">FETAXT3</td>
+<td align="right">6229.533</td>
+<td align="left">0</td>
+<td align="left">france</td>
+<td align="left">ptu</td>
+<td align="left">TRUE</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>xeta_spiked_result<span class="sc">$</span>BoxPlots</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<ul>
+<li>Summary tables of the processed data (per replicate and
+overall)</li>
+</ul>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(xeta_spiked_result<span class="sc">$</span>SummaryDF_Rep, <span class="at">caption=</span><span class="st">&quot;Summary statistics of fluorescence in different concentrations of test item per replicate&quot;</span>)</span></code></pre></div>
+<table>
+<caption>Summary statistics of fluorescence in different concentrations
+of test item per replicate</caption>
+<colgroup>
+<col width="7%" />
+<col width="14%" />
+<col width="4%" />
+<col width="12%" />
+<col width="26%" />
+<col width="35%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Conc</th>
+<th align="left">Replicate</th>
+<th align="right">N</th>
+<th align="right">Mean</th>
+<th align="right">Standard deviation</th>
+<th align="right">Coefficient of variation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">0</td>
+<td align="left">1</td>
+<td align="right">19</td>
+<td align="right">4651.060</td>
+<td align="right">944.7420</td>
+<td align="right">0.2031240</td>
+</tr>
+<tr class="even">
+<td align="left">0</td>
+<td align="left">2</td>
+<td align="right">20</td>
+<td align="right">4024.300</td>
+<td align="right">603.6731</td>
+<td align="right">0.1500070</td>
+</tr>
+<tr class="odd">
+<td align="left">0</td>
+<td align="left">3</td>
+<td align="right">19</td>
+<td align="right">4952.225</td>
+<td align="right">1179.3597</td>
+<td align="right">0.2381475</td>
+</tr>
+<tr class="even">
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="right">19</td>
+<td align="right">3854.137</td>
+<td align="right">828.3944</td>
+<td align="right">0.2149364</td>
+</tr>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">2</td>
+<td align="right">20</td>
+<td align="right">4557.867</td>
+<td align="right">558.4921</td>
+<td align="right">0.1225337</td>
+</tr>
+<tr class="even">
+<td align="left">1</td>
+<td align="left">3</td>
+<td align="right">19</td>
+<td align="right">4720.819</td>
+<td align="right">619.8992</td>
+<td align="right">0.1313118</td>
+</tr>
+<tr class="odd">
+<td align="left">3</td>
+<td align="left">1</td>
+<td align="right">19</td>
+<td align="right">4671.428</td>
+<td align="right">976.9674</td>
+<td align="right">0.2091368</td>
+</tr>
+<tr class="even">
+<td align="left">3</td>
+<td align="left">2</td>
+<td align="right">19</td>
+<td align="right">4486.538</td>
+<td align="right">783.8641</td>
+<td align="right">0.1747147</td>
+</tr>
+<tr class="odd">
+<td align="left">3</td>
+<td align="left">3</td>
+<td align="right">20</td>
+<td align="right">5421.433</td>
+<td align="right">703.9490</td>
+<td align="right">0.1298456</td>
+</tr>
+<tr class="even">
+<td align="left">10</td>
+<td align="left">1</td>
+<td align="right">20</td>
+<td align="right">4573.083</td>
+<td align="right">946.2029</td>
+<td align="right">0.2069070</td>
+</tr>
+<tr class="odd">
+<td align="left">10</td>
+<td align="left">2</td>
+<td align="right">19</td>
+<td align="right">4329.538</td>
+<td align="right">827.4898</td>
+<td align="right">0.1911266</td>
+</tr>
+<tr class="even">
+<td align="left">10</td>
+<td align="left">3</td>
+<td align="right">19</td>
+<td align="right">5106.849</td>
+<td align="right">876.5940</td>
+<td align="right">0.1716507</td>
+</tr>
+<tr class="odd">
+<td align="left">30</td>
+<td align="left">1</td>
+<td align="right">20</td>
+<td align="right">5391.183</td>
+<td align="right">809.5849</td>
+<td align="right">0.1501683</td>
+</tr>
+<tr class="even">
+<td align="left">30</td>
+<td align="left">2</td>
+<td align="right">19</td>
+<td align="right">4556.275</td>
+<td align="right">694.1698</td>
+<td align="right">0.1523547</td>
+</tr>
+<tr class="odd">
+<td align="left">30</td>
+<td align="left">3</td>
+<td align="right">19</td>
+<td align="right">5164.691</td>
+<td align="right">763.8837</td>
+<td align="right">0.1479050</td>
+</tr>
+<tr class="even">
+<td align="left">100</td>
+<td align="left">1</td>
+<td align="right">19</td>
+<td align="right">5181.060</td>
+<td align="right">858.5454</td>
+<td align="right">0.1657085</td>
+</tr>
+<tr class="odd">
+<td align="left">100</td>
+<td align="left">2</td>
+<td align="right">19</td>
+<td align="right">5124.381</td>
+<td align="right">733.4611</td>
+<td align="right">0.1431317</td>
+</tr>
+<tr class="even">
+<td align="left">100</td>
+<td align="left">3</td>
+<td align="right">20</td>
+<td align="right">6048.083</td>
+<td align="right">959.5900</td>
+<td align="right">0.1586602</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(xeta_spiked_result<span class="sc">$</span>SummaryDF, <span class="at">caption=</span><span class="st">&quot;Summary statistics of fluorescence in different concentrations of test item of all replicates&quot;</span>)</span></code></pre></div>
+<table>
+<caption>Summary statistics of fluorescence in different concentrations
+of test item of all replicates</caption>
+<thead>
+<tr class="header">
+<th align="left">Conc</th>
+<th align="right">N</th>
+<th align="right">Mean</th>
+<th align="right">Standard deviation</th>
+<th align="right">Coefficient of variation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">0</td>
+<td align="right">58</td>
+<td align="right">4533.593</td>
+<td align="right">998.2901</td>
+<td align="right">0.2201984</td>
+</tr>
+<tr class="even">
+<td align="left">1</td>
+<td align="right">58</td>
+<td align="right">4380.715</td>
+<td align="right">764.2147</td>
+<td align="right">0.1744498</td>
+</tr>
+<tr class="odd">
+<td align="left">3</td>
+<td align="right">58</td>
+<td align="right">4869.483</td>
+<td align="right">910.7568</td>
+<td align="right">0.1870336</td>
+</tr>
+<tr class="even">
+<td align="left">10</td>
+<td align="right">58</td>
+<td align="right">4668.156</td>
+<td align="right">928.9066</td>
+<td align="right">0.1989879</td>
+</tr>
+<tr class="odd">
+<td align="left">30</td>
+<td align="right">58</td>
+<td align="right">5043.483</td>
+<td align="right">825.4425</td>
+<td align="right">0.1636652</td>
+</tr>
+<tr class="even">
+<td align="left">100</td>
+<td align="right">58</td>
+<td align="right">5461.466</td>
+<td align="right">945.7370</td>
+<td align="right">0.1731654</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Tables of results evaluated using increasing/decreasing Williams
+test and/or Dunnett’s test, if applicable.</li>
+</ul>
+<p>In the the Williams’ test result tables, <em>Y.Tilde</em> is the
+amalgamated mean of the fluorescence in each treatment group,
+<em>Y0</em> is the mean of the control fluorescence, <em>DIFF</em> is
+the estimated difference between the treatment and the control,
+<em>SE_DIFF</em> is the standard error of the Williams’ test,
+<em>DF</em> is the degrees of freedom for Williams’ test, <em>WILL
+Incr</em> or <em>Will Decr</em> is the Williams’ test statistic,
+<em>crit Val</em> is the critical value of Williams distribution,
+<em>Sign</em> suggests if there is significant difference between the
+treatment and the control, and <em>%Incr</em> is the percent increase of
+the fluorescence compared to the control.</p>
+<p>In the Dunnett’s test result table, <em>Estimate</em> is the
+estimated difference between the treatment and the control, <em>SE</em>
+is the standard error of the mixed ANOVA model, <em>t value</em> is the
+Dunnett’s test statistic, <em>adj p</em> is the adjusted p value and
+<em>%Incr</em> is the percent increase of the fluorescence compared to
+the control.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(xeta_spiked_result<span class="sc">$</span>WilliamsIncrease, <span class="at">caption=</span><span class="st">&quot;Increasing Williams&#39; test&quot;</span>)</span></code></pre></div>
+<table>
+<caption>Increasing Williams’ test</caption>
+<colgroup>
+<col width="16%" />
+<col width="5%" />
+<col width="8%" />
+<col width="9%" />
+<col width="10%" />
+<col width="9%" />
+<col width="3%" />
+<col width="11%" />
+<col width="9%" />
+<col width="6%" />
+<col width="10%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">Conc</th>
+<th align="right">Y.Tilde</th>
+<th align="right">Y0</th>
+<th align="right">DIFF Incr</th>
+<th align="right">SE_DIFF</th>
+<th align="right">DF</th>
+<th align="right">WILL Incr</th>
+<th align="right">crit Val</th>
+<th align="left">Sign</th>
+<th align="right">% Incr</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Conc100 - Conc0</td>
+<td align="left">100</td>
+<td align="right">5461.47</td>
+<td align="right">4533.593</td>
+<td align="right">927.8769</td>
+<td align="right">249.7868</td>
+<td align="right">10</td>
+<td align="right">3.7146758</td>
+<td align="right">1.971</td>
+<td align="left">TRUE</td>
+<td align="right">20.466613</td>
+</tr>
+<tr class="even">
+<td align="left">Conc30 - Conc0</td>
+<td align="left">30</td>
+<td align="right">5043.48</td>
+<td align="right">4533.593</td>
+<td align="right">509.8869</td>
+<td align="right">249.7868</td>
+<td align="right">10</td>
+<td align="right">2.0412886</td>
+<td align="right">1.965</td>
+<td align="left">TRUE</td>
+<td align="right">11.246933</td>
+</tr>
+<tr class="odd">
+<td align="left">Conc10 - Conc0</td>
+<td align="left">10</td>
+<td align="right">4768.82</td>
+<td align="right">4533.593</td>
+<td align="right">235.2269</td>
+<td align="right">249.7868</td>
+<td align="right">10</td>
+<td align="right">0.9417108</td>
+<td align="right">1.956</td>
+<td align="left">FALSE</td>
+<td align="right">2.968123</td>
+</tr>
+<tr class="even">
+<td align="left">Conc3 - Conc0</td>
+<td align="left">3</td>
+<td align="right">4768.82</td>
+<td align="right">4533.593</td>
+<td align="right">235.2269</td>
+<td align="right">249.7868</td>
+<td align="right">10</td>
+<td align="right">0.9417108</td>
+<td align="right">1.940</td>
+<td align="left">FALSE</td>
+<td align="right">7.408918</td>
+</tr>
+<tr class="odd">
+<td align="left">Conc1 - Conc0</td>
+<td align="left">1</td>
+<td align="right">4380.72</td>
+<td align="right">4533.593</td>
+<td align="right">-152.8731</td>
+<td align="right">249.7845</td>
+<td align="right">10</td>
+<td align="right">-0.6120201</td>
+<td align="right">1.908</td>
+<td align="left">FALSE</td>
+<td align="right">-3.372111</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(xeta_spiked_result<span class="sc">$</span>WilliamsDecrease, <span class="at">caption=</span><span class="st">&quot;Decreasing Williams&#39; test&quot;</span>)</span></code></pre></div>
+<table style="width:100%;">
+<caption>Decreasing Williams’ test</caption>
+<colgroup>
+<col width="16%" />
+<col width="5%" />
+<col width="8%" />
+<col width="9%" />
+<col width="10%" />
+<col width="9%" />
+<col width="3%" />
+<col width="10%" />
+<col width="9%" />
+<col width="6%" />
+<col width="10%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">Conc</th>
+<th align="right">Y.Tilde</th>
+<th align="right">Y0</th>
+<th align="right">DIFF Decr</th>
+<th align="right">SE_DIFF</th>
+<th align="right">DF</th>
+<th align="right">WILL Decr</th>
+<th align="right">crit Val</th>
+<th align="left">Sign</th>
+<th align="right">% Incr</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Conc100 - Conc0</td>
+<td align="left">100</td>
+<td align="right">4884.66</td>
+<td align="right">4533.593</td>
+<td align="right">-351.0669</td>
+<td align="right">249.7868</td>
+<td align="right">10</td>
+<td align="right">-1.405466</td>
+<td align="right">1.971</td>
+<td align="left">FALSE</td>
+<td align="right">20.466613</td>
+</tr>
+<tr class="even">
+<td align="left">Conc30 - Conc0</td>
+<td align="left">30</td>
+<td align="right">4884.66</td>
+<td align="right">4533.593</td>
+<td align="right">-351.0669</td>
+<td align="right">249.7868</td>
+<td align="right">10</td>
+<td align="right">-1.405466</td>
+<td align="right">1.965</td>
+<td align="left">FALSE</td>
+<td align="right">11.246933</td>
+</tr>
+<tr class="odd">
+<td align="left">Conc10 - Conc0</td>
+<td align="left">10</td>
+<td align="right">4884.66</td>
+<td align="right">4533.593</td>
+<td align="right">-351.0669</td>
+<td align="right">249.7868</td>
+<td align="right">10</td>
+<td align="right">-1.405466</td>
+<td align="right">1.956</td>
+<td align="left">FALSE</td>
+<td align="right">2.968123</td>
+</tr>
+<tr class="even">
+<td align="left">Conc3 - Conc0</td>
+<td align="left">3</td>
+<td align="right">4884.66</td>
+<td align="right">4533.593</td>
+<td align="right">-351.0669</td>
+<td align="right">249.7868</td>
+<td align="right">10</td>
+<td align="right">-1.405466</td>
+<td align="right">1.940</td>
+<td align="left">FALSE</td>
+<td align="right">7.408918</td>
+</tr>
+<tr class="odd">
+<td align="left">Conc1 - Conc0</td>
+<td align="left">1</td>
+<td align="right">4884.66</td>
+<td align="right">4533.593</td>
+<td align="right">-351.0669</td>
+<td align="right">249.7845</td>
+<td align="right">10</td>
+<td align="right">-1.405479</td>
+<td align="right">1.908</td>
+<td align="left">FALSE</td>
+<td align="right">-3.372111</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(xeta_spiked_result<span class="sc">$</span>Dunnetts, <span class="at">caption=</span><span class="st">&quot;Dunnett&#39;s test&quot;</span>)</span></code></pre></div>
+<table>
+<caption>Dunnett’s test</caption>
+<colgroup>
+<col width="23%" />
+<col width="14%" />
+<col width="13%" />
+<col width="4%" />
+<col width="15%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">Estimate</th>
+<th align="right">SE</th>
+<th align="right">df</th>
+<th align="right">t value</th>
+<th align="right">adj p</th>
+<th align="right">% Incr</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Conc1 - Conc0</td>
+<td align="right">-160.4067</td>
+<td align="right">249.7845</td>
+<td align="right">10</td>
+<td align="right">-0.6421806</td>
+<td align="right">0.9458404</td>
+<td align="right">-3.372111</td>
+</tr>
+<tr class="even">
+<td align="left">Conc3 - Conc0</td>
+<td align="right">320.1063</td>
+<td align="right">249.7868</td>
+<td align="right">10</td>
+<td align="right">1.2815181</td>
+<td align="right">0.5970718</td>
+<td align="right">7.408918</td>
+</tr>
+<tr class="odd">
+<td align="left">Conc10 - Conc0</td>
+<td align="right">128.8281</td>
+<td align="right">249.7868</td>
+<td align="right">10</td>
+<td align="right">0.5157522</td>
+<td align="right">0.9769722</td>
+<td align="right">2.968123</td>
+</tr>
+<tr class="even">
+<td align="left">Conc30 - Conc0</td>
+<td align="right">499.2993</td>
+<td align="right">249.7868</td>
+<td align="right">10</td>
+<td align="right">1.9989021</td>
+<td align="right">0.2367993</td>
+<td align="right">11.246933</td>
+</tr>
+<tr class="odd">
+<td align="left">Conc100 - Conc0</td>
+<td align="right">911.7088</td>
+<td align="right">249.7868</td>
+<td align="right">10</td>
+<td align="right">3.6499482</td>
+<td align="right">0.0174131</td>
+<td align="right">20.466613</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Further information about the normality test (Shapiro-Wilk), the
+homogeneity of variance test (Levene’s test) of residuals of the mixed
+ANOVA model, the monotonicity test and the model fit.</li>
+</ul>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>xeta_spiked_result<span class="sc">$</span>NormalityTest</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a><span class="co">#&gt;  Shapiro-Wilk normality test</span></span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a><span class="co">#&gt; data:  stats::resid(mixedaov)</span></span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a><span class="co">#&gt; W = 0.99186, p-value = 0.05343</span></span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a>xeta_spiked_result<span class="sc">$</span>LeveneTest</span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 4</span></span>
+<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a><span class="co">#&gt;   statistic p.value    df df.residual</span></span>
+<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a><span class="co">#&gt;       &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt;       &lt;int&gt;</span></span>
+<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a><span class="co">#&gt; 1     0.759   0.580     5         342</span></span>
+<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a>xeta_spiked_result<span class="sc">$</span><span class="st">`</span><span class="at">Monotonicity Test</span><span class="st">`</span></span>
+<span id="cb14-13"><a href="#cb14-13" tabindex="-1"></a><span class="co">#&gt;        Test t value Pr(&gt;|t|) Significance</span></span>
+<span id="cb14-14"><a href="#cb14-14" tabindex="-1"></a><span class="co">#&gt; 1    Linear    6.49  &lt;0.0001          ***</span></span>
+<span id="cb14-15"><a href="#cb14-15" tabindex="-1"></a><span class="co">#&gt; 2 Quadratic    2.14   0.0335            *</span></span>
+<span id="cb14-16"><a href="#cb14-16" tabindex="-1"></a>xeta_spiked_result<span class="sc">$</span>MixedAnova</span>
+<span id="cb14-17"><a href="#cb14-17" tabindex="-1"></a><span class="co">#&gt; Linear mixed model fit by REML [&#39;lmerMod&#39;]</span></span>
+<span id="cb14-18"><a href="#cb14-18" tabindex="-1"></a><span class="co">#&gt; Formula: Fluor ~ Conc + (1 | Replicate) + (1 | Replicate:Conc)</span></span>
+<span id="cb14-19"><a href="#cb14-19" tabindex="-1"></a><span class="co">#&gt;    Data: dataframe</span></span>
+<span id="cb14-20"><a href="#cb14-20" tabindex="-1"></a><span class="co">#&gt; REML criterion at convergence: 5608.294</span></span>
+<span id="cb14-21"><a href="#cb14-21" tabindex="-1"></a><span class="co">#&gt; Random effects:</span></span>
+<span id="cb14-22"><a href="#cb14-22" tabindex="-1"></a><span class="co">#&gt;  Groups         Name        Std.Dev.</span></span>
+<span id="cb14-23"><a href="#cb14-23" tabindex="-1"></a><span class="co">#&gt;  Replicate:Conc (Intercept) 241.1   </span></span>
+<span id="cb14-24"><a href="#cb14-24" tabindex="-1"></a><span class="co">#&gt;  Replicate      (Intercept) 350.5   </span></span>
+<span id="cb14-25"><a href="#cb14-25" tabindex="-1"></a><span class="co">#&gt;  Residual                   827.7   </span></span>
+<span id="cb14-26"><a href="#cb14-26" tabindex="-1"></a><span class="co">#&gt; Number of obs: 348, groups:  Replicate:Conc, 18; Replicate, 3</span></span>
+<span id="cb14-27"><a href="#cb14-27" tabindex="-1"></a><span class="co">#&gt; Fixed Effects:</span></span>
+<span id="cb14-28"><a href="#cb14-28" tabindex="-1"></a><span class="co">#&gt; (Intercept)       Conc.L       Conc.Q       Conc.C       Conc^4       Conc^5  </span></span>
+<span id="cb14-29"><a href="#cb14-29" tabindex="-1"></a><span class="co">#&gt;      4824.2        758.5        264.5         52.6        149.8       -270.8</span></span></code></pre></div>
+<p><em>The list output from running the data_prep() function can be
+summarized with the data_summary() function.</em></p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>xeredar<span class="sc">::</span><span class="fu">data_summary</span>(xeta_spiked_result) <span class="sc">|&gt;</span> knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">1</th>
+<th align="left">3</th>
+<th align="left">10</th>
+<th align="left">30</th>
+<th align="left">100</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Replicate 1</td>
+<td align="left">-17.13</td>
+<td align="left">0.44</td>
+<td align="left">-1.68</td>
+<td align="left">15.91</td>
+<td align="left">11.4</td>
+</tr>
+<tr class="even">
+<td align="left">Replicate 2</td>
+<td align="left">13.26</td>
+<td align="left">11.49</td>
+<td align="left">7.58</td>
+<td align="left">13.22</td>
+<td align="left">27.34</td>
+</tr>
+<tr class="odd">
+<td align="left">Replicate 3</td>
+<td align="left">-4.67</td>
+<td align="left">9.47</td>
+<td align="left">3.12</td>
+<td align="left">4.29</td>
+<td align="left">22.13</td>
+</tr>
+<tr class="even">
+<td align="left">Pooled</td>
+<td align="left">-3.37</td>
+<td align="left">7.41</td>
+<td align="left">2.97</td>
+<td align="left">11.25</td>
+<td align="left">20.47</td>
+</tr>
+<tr class="odd">
+<td align="left">Dunnett</td>
+<td align="left">ns</td>
+<td align="left">ns</td>
+<td align="left">ns</td>
+<td align="left">ns</td>
+<td align="left">*</td>
+</tr>
+<tr class="even">
+<td align="left">IncreasingWilliams</td>
+<td align="left">ns</td>
+<td align="left">ns</td>
+<td align="left">ns</td>
+<td align="left">*</td>
+<td align="left">*</td>
+</tr>
+<tr class="odd">
+<td align="left">DecreasingWilliams</td>
+<td align="left">ns</td>
+<td align="left">ns</td>
+<td align="left">ns</td>
+<td align="left">ns</td>
+<td align="left">ns</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="running-default-radar-analysis" class="section level1">
+<h1>Running default RADAR analysis</h1>
+<p>To demonstrate how to run RADAR analysis, we will use one of the data
+sets by the Pos_mDHT_Fraunhofer_RADAR containing the spiked and unspiked
+measurements from the RADAR study validation in the lab Fraunhofer with
+an androgen axis active chemical.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>radar_spiked <span class="ot">&lt;-</span> xeredar<span class="sc">::</span>Pos_mDHT_Fraunhofer_RADAR_Spiked</span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>radar_unspiked <span class="ot">&lt;-</span> xeredar<span class="sc">::</span>Pos_mDHT_Fraunhofer_RADAR_Unspiked</span></code></pre></div>
+<p>The default radar analysis can be run using the
+<code>data_prep()</code> function with either spiked or unspiked data.
+This function automatically decides whether trimming, outlier removal
+and/or transformations are conducted following the manuscript
+(Spyridonov et al. unpublished). The actual analysis is carried out by
+the <code>ana()</code> function. The <code>ana()</code> function is
+called by the <code>data_prep()</code> function and does not need to be
+called separately. the analysis the RADAR assay follows the description
+of the Method 2 (the mixed ANOVA approach) in the Annex 8: methods for
+the statistical analysis of RADAR assay data of the OECD TG 251 (<a href="https://www.oecd-ilibrary.org/environment/test-no-251-rapid-androgen-disruption-activity-reporter-radar-assay_da264d82-en">2022</a>).
+For this dataset, the exposure well ID (Row of the 96 well plate) is not
+recorded, therefore, we set the <code>row</code> argument to
+<code>FALSE</code>. In this case, we use the reduced mixed ANOVA model
+where the exposure well ID is not included as a random effect. Please
+specify <code>row=TRUE</code> if the exposure well ID is recorded and
+you want to use the full mixed ANOVA model. Trimming is not
+required.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a></span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>radar_spiked_result <span class="ot">&lt;-</span> xeredar<span class="sc">::</span><span class="fu">data_prep</span>(<span class="at">dataframe =</span> radar_spiked, <span class="at">row =</span> <span class="cn">FALSE</span>, <span class="at">trimming=</span><span class="cn">FALSE</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a>radar_unspiked_result <span class="ot">&lt;-</span> xeredar<span class="sc">::</span><span class="fu">data_prep</span>(<span class="at">dataframe =</span> radar_unspiked, <span class="at">row=</span> <span class="cn">FALSE</span>, <span class="at">trimming=</span><span class="cn">FALSE</span>)</span></code></pre></div>
+<p>Here we use the spike data as an example to demonstrate the output of
+the <code>data_prep()</code> function.</p>
+<p>The outputs of the <code>data_prep()</code> function are lists
+containing the following elements:</p>
+<ul>
+<li>A reasoning for the recommended transformation and trimming. The raw
+data (without trimming or outlier removal) where the fluorescence values
+are box-cox transformed should be used for the analysis because only
+after box-cox transformation, the residuals of the mixed ANOVA are
+normally distributed and have homogeneous variances among treatment
+groups.</li>
+</ul>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a>radar_spiked_result<span class="sc">$</span>Justify</span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a><span class="co">#&gt; [1] &quot;The raw data (without trimming or outlier removal)\n                    where the fluorescence values are box-cox transformed\n                    should be used for the analysis because only after\n                    box-cox transformation, the residuals of the mixed\n                    ANOVA are normally distributed and have homogeneous\n                    variances among treatment groups.&quot;</span></span></code></pre></div>
+<ul>
+<li>A data frame of the processed data (e.g. raw data, transformed, or
+outlier removed) used for actual statistical testing following the
+reasoning. The box plots of the processed data per run/replicate
+(i.e. each panel represents each run/replicate) are also provided for
+visual inspection.</li>
+</ul>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">head</span>(radar_spiked_result<span class="sc">$</span>ProcessedData))</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Replicate</th>
+<th align="left">Treatment</th>
+<th align="right">Fluor</th>
+<th align="left">Conc</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">MT_0</td>
+<td align="right">113152</td>
+<td align="left">0</td>
+</tr>
+<tr class="even">
+<td align="left">1</td>
+<td align="left">mDHT-1µg/L+MT</td>
+<td align="right">708</td>
+<td align="left">1</td>
+</tr>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">mDHT-2µg/L+MT</td>
+<td align="right">2498</td>
+<td align="left">2</td>
+</tr>
+<tr class="even">
+<td align="left">1</td>
+<td align="left">mDHT-4µg/L+MT</td>
+<td align="right">10152</td>
+<td align="left">4</td>
+</tr>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">mDHT-8µg/L+MT</td>
+<td align="right">356</td>
+<td align="left">8</td>
+</tr>
+<tr class="even">
+<td align="left">1</td>
+<td align="left">mDHT-16µg/L+MT</td>
+<td align="right">4621</td>
+<td align="left">16</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a>radar_spiked_result<span class="sc">$</span>BoxPlots</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<ul>
+<li>Summary tables of the processed data (per replicate and
+overall)</li>
+</ul>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(radar_spiked_result<span class="sc">$</span>SummaryDF_Rep, <span class="at">caption=</span><span class="st">&quot;Summary statistics of fluorescence in different concentrations of test item per replicate&quot;</span>)</span></code></pre></div>
+<table>
+<caption>Summary statistics of fluorescence in different concentrations
+of test item per replicate</caption>
+<colgroup>
+<col width="7%" />
+<col width="14%" />
+<col width="4%" />
+<col width="12%" />
+<col width="26%" />
+<col width="35%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Conc</th>
+<th align="left">Replicate</th>
+<th align="right">N</th>
+<th align="right">Mean</th>
+<th align="right">Standard deviation</th>
+<th align="right">Coefficient of variation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">0</td>
+<td align="left">1</td>
+<td align="right">20</td>
+<td align="right">21472.45</td>
+<td align="right">39991.342</td>
+<td align="right">1.862449</td>
+</tr>
+<tr class="even">
+<td align="left">0</td>
+<td align="left">2</td>
+<td align="right">20</td>
+<td align="right">13337.15</td>
+<td align="right">34300.658</td>
+<td align="right">2.571813</td>
+</tr>
+<tr class="odd">
+<td align="left">0</td>
+<td align="left">3</td>
+<td align="right">20</td>
+<td align="right">26313.45</td>
+<td align="right">35370.046</td>
+<td align="right">1.344181</td>
+</tr>
+<tr class="even">
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="right">20</td>
+<td align="right">7711.10</td>
+<td align="right">10559.058</td>
+<td align="right">1.369332</td>
+</tr>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">2</td>
+<td align="right">20</td>
+<td align="right">10044.70</td>
+<td align="right">13997.692</td>
+<td align="right">1.393540</td>
+</tr>
+<tr class="even">
+<td align="left">1</td>
+<td align="left">3</td>
+<td align="right">21</td>
+<td align="right">18764.48</td>
+<td align="right">27176.392</td>
+<td align="right">1.448289</td>
+</tr>
+<tr class="odd">
+<td align="left">2</td>
+<td align="left">1</td>
+<td align="right">20</td>
+<td align="right">29476.80</td>
+<td align="right">44428.181</td>
+<td align="right">1.507225</td>
+</tr>
+<tr class="even">
+<td align="left">2</td>
+<td align="left">2</td>
+<td align="right">20</td>
+<td align="right">8471.85</td>
+<td align="right">10013.423</td>
+<td align="right">1.181964</td>
+</tr>
+<tr class="odd">
+<td align="left">2</td>
+<td align="left">3</td>
+<td align="right">21</td>
+<td align="right">37028.38</td>
+<td align="right">50456.149</td>
+<td align="right">1.362634</td>
+</tr>
+<tr class="even">
+<td align="left">4</td>
+<td align="left">1</td>
+<td align="right">20</td>
+<td align="right">16336.90</td>
+<td align="right">31480.267</td>
+<td align="right">1.926943</td>
+</tr>
+<tr class="odd">
+<td align="left">4</td>
+<td align="left">2</td>
+<td align="right">20</td>
+<td align="right">14077.65</td>
+<td align="right">20278.502</td>
+<td align="right">1.440475</td>
+</tr>
+<tr class="even">
+<td align="left">4</td>
+<td align="left">3</td>
+<td align="right">20</td>
+<td align="right">22364.45</td>
+<td align="right">32556.358</td>
+<td align="right">1.455719</td>
+</tr>
+<tr class="odd">
+<td align="left">8</td>
+<td align="left">1</td>
+<td align="right">20</td>
+<td align="right">5425.90</td>
+<td align="right">8478.898</td>
+<td align="right">1.562671</td>
+</tr>
+<tr class="even">
+<td align="left">8</td>
+<td align="left">2</td>
+<td align="right">20</td>
+<td align="right">8867.10</td>
+<td align="right">14750.623</td>
+<td align="right">1.663523</td>
+</tr>
+<tr class="odd">
+<td align="left">8</td>
+<td align="left">3</td>
+<td align="right">20</td>
+<td align="right">21992.45</td>
+<td align="right">30246.253</td>
+<td align="right">1.375302</td>
+</tr>
+<tr class="even">
+<td align="left">16</td>
+<td align="left">1</td>
+<td align="right">20</td>
+<td align="right">6758.70</td>
+<td align="right">8394.210</td>
+<td align="right">1.241986</td>
+</tr>
+<tr class="odd">
+<td align="left">16</td>
+<td align="left">2</td>
+<td align="right">20</td>
+<td align="right">7988.10</td>
+<td align="right">14300.281</td>
+<td align="right">1.790198</td>
+</tr>
+<tr class="even">
+<td align="left">16</td>
+<td align="left">3</td>
+<td align="right">20</td>
+<td align="right">15274.35</td>
+<td align="right">19124.161</td>
+<td align="right">1.252044</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(radar_spiked_result<span class="sc">$</span>SummaryDF, <span class="at">caption=</span><span class="st">&quot;Summary statistics of fluorescence in different concentrations of test item of all replicates&quot;</span>)</span></code></pre></div>
+<table>
+<caption>Summary statistics of fluorescence in different concentrations
+of test item of all replicates</caption>
+<thead>
+<tr class="header">
+<th align="left">Conc</th>
+<th align="right">N</th>
+<th align="right">Mean</th>
+<th align="right">Standard deviation</th>
+<th align="right">Coefficient of variation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">0</td>
+<td align="right">60</td>
+<td align="right">20374.35</td>
+<td align="right">36413.54</td>
+<td align="right">1.787224</td>
+</tr>
+<tr class="even">
+<td align="left">1</td>
+<td align="right">61</td>
+<td align="right">12281.48</td>
+<td align="right">19154.08</td>
+<td align="right">1.559591</td>
+</tr>
+<tr class="odd">
+<td align="left">2</td>
+<td align="right">61</td>
+<td align="right">25189.66</td>
+<td align="right">40666.43</td>
+<td align="right">1.614410</td>
+</tr>
+<tr class="even">
+<td align="left">4</td>
+<td align="right">60</td>
+<td align="right">17593.00</td>
+<td align="right">28378.41</td>
+<td align="right">1.613052</td>
+</tr>
+<tr class="odd">
+<td align="left">8</td>
+<td align="right">60</td>
+<td align="right">12095.15</td>
+<td align="right">20967.68</td>
+<td align="right">1.733561</td>
+</tr>
+<tr class="even">
+<td align="left">16</td>
+<td align="right">60</td>
+<td align="right">10007.05</td>
+<td align="right">14855.60</td>
+<td align="right">1.484513</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Tables of results evaluated using increasing/decreasing Williams
+test and/or Dunnett’s test, if applicable.</li>
+</ul>
+<p>In the the Williams’ test result tables, <em>Y.Tilde</em> is the
+amalgamated mean of the fluorescence in each treatment group,
+<em>Y0</em> is the mean of the control fluorescence, <em>DIFF</em> is
+the estimated difference between the treatment and the control,
+<em>SE_DIFF</em> is the standard error of the Williams’ test,
+<em>DF</em> is the degrees of freedom for Williams’ test, <em>WILL
+Incr</em> or <em>Will Decr</em> is the Williams’ test statistic,
+<em>crit Val</em> is the critical value of Williams distribution,
+<em>Sign</em> suggests if there is significant difference between the
+treatment and the control, and <em>%Incr</em> is the percent increase of
+the fluorescence compared to the control.</p>
+<p>In the Dunnett’s test result table, <em>Estimate</em> is the
+estimated difference between the treatment and the control, <em>SE</em>
+is the standard error of the mixed ANOVA model, <em>t value</em> is the
+Dunnett’s test statistic, <em>adj p</em> is the adjusted p value and
+<em>%Incr</em> is the percent increase of the fluorescence compared to
+the control.</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(radar_spiked_result<span class="sc">$</span>WilliamsIncrease, <span class="at">caption=</span><span class="st">&quot;Increasing Williams&#39; test&quot;</span>)</span></code></pre></div>
+<table>
+<caption>Increasing Williams’ test</caption>
+<colgroup>
+<col width="15%" />
+<col width="5%" />
+<col width="8%" />
+<col width="9%" />
+<col width="10%" />
+<col width="10%" />
+<col width="3%" />
+<col width="11%" />
+<col width="9%" />
+<col width="6%" />
+<col width="10%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">Conc</th>
+<th align="right">Y.Tilde</th>
+<th align="right">Y0</th>
+<th align="right">DIFF Incr</th>
+<th align="right">SE_DIFF</th>
+<th align="right">DF</th>
+<th align="right">WILL Incr</th>
+<th align="right">crit Val</th>
+<th align="left">Sign</th>
+<th align="right">% Incr</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Conc16 - Conc0</td>
+<td align="left">16</td>
+<td align="right">11.1995</td>
+<td align="right">11.24223</td>
+<td align="right">-0.04273</td>
+<td align="right">0.5230995</td>
+<td align="right">10</td>
+<td align="right">-0.0816862</td>
+<td align="right">1.971</td>
+<td align="left">FALSE</td>
+<td align="right">-50.88408</td>
+</tr>
+<tr class="even">
+<td align="left">Conc8 - Conc0</td>
+<td align="left">8</td>
+<td align="right">11.1995</td>
+<td align="right">11.24223</td>
+<td align="right">-0.04273</td>
+<td align="right">0.5230995</td>
+<td align="right">10</td>
+<td align="right">-0.0816862</td>
+<td align="right">1.965</td>
+<td align="left">FALSE</td>
+<td align="right">-40.63541</td>
+</tr>
+<tr class="odd">
+<td align="left">Conc4 - Conc0</td>
+<td align="left">4</td>
+<td align="right">11.1995</td>
+<td align="right">11.24223</td>
+<td align="right">-0.04273</td>
+<td align="right">0.5230995</td>
+<td align="right">10</td>
+<td align="right">-0.0816862</td>
+<td align="right">1.956</td>
+<td align="left">FALSE</td>
+<td align="right">-13.65123</td>
+</tr>
+<tr class="even">
+<td align="left">Conc2 - Conc0</td>
+<td align="left">2</td>
+<td align="right">11.1995</td>
+<td align="right">11.24223</td>
+<td align="right">-0.04273</td>
+<td align="right">0.5209615</td>
+<td align="right">10</td>
+<td align="right">-0.0820214</td>
+<td align="right">1.940</td>
+<td align="left">FALSE</td>
+<td align="right">23.63416</td>
+</tr>
+<tr class="odd">
+<td align="left">Conc1 - Conc0</td>
+<td align="left">1</td>
+<td align="right">10.7566</td>
+<td align="right">11.24223</td>
+<td align="right">-0.48563</td>
+<td align="right">0.5209615</td>
+<td align="right">10</td>
+<td align="right">-0.9321802</td>
+<td align="right">1.908</td>
+<td align="left">FALSE</td>
+<td align="right">-39.72090</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(radar_spiked_result<span class="sc">$</span>WilliamsDecrease, <span class="at">caption=</span><span class="st">&quot;Decreasing Williams&#39; test&quot;</span>)</span></code></pre></div>
+<table>
+<caption>Decreasing Williams’ test</caption>
+<colgroup>
+<col width="15%" />
+<col width="5%" />
+<col width="8%" />
+<col width="9%" />
+<col width="10%" />
+<col width="10%" />
+<col width="3%" />
+<col width="11%" />
+<col width="9%" />
+<col width="6%" />
+<col width="10%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">Conc</th>
+<th align="right">Y.Tilde</th>
+<th align="right">Y0</th>
+<th align="right">DIFF Decr</th>
+<th align="right">SE_DIFF</th>
+<th align="right">DF</th>
+<th align="right">WILL Decr</th>
+<th align="right">crit Val</th>
+<th align="left">Sign</th>
+<th align="right">% Incr</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Conc16 - Conc0</td>
+<td align="left">16</td>
+<td align="right">10.4996</td>
+<td align="right">11.24223</td>
+<td align="right">0.74263</td>
+<td align="right">0.5230995</td>
+<td align="right">10</td>
+<td align="right">1.4196726</td>
+<td align="right">1.971</td>
+<td align="left">FALSE</td>
+<td align="right">-50.88408</td>
+</tr>
+<tr class="even">
+<td align="left">Conc8 - Conc0</td>
+<td align="left">8</td>
+<td align="right">10.6478</td>
+<td align="right">11.24223</td>
+<td align="right">0.59443</td>
+<td align="right">0.5230995</td>
+<td align="right">10</td>
+<td align="right">1.1363613</td>
+<td align="right">1.965</td>
+<td align="left">FALSE</td>
+<td align="right">-40.63541</td>
+</tr>
+<tr class="odd">
+<td align="left">Conc4 - Conc0</td>
+<td align="left">4</td>
+<td align="right">11.4661</td>
+<td align="right">11.24223</td>
+<td align="right">-0.22387</td>
+<td align="right">0.5230995</td>
+<td align="right">10</td>
+<td align="right">-0.4279683</td>
+<td align="right">1.956</td>
+<td align="left">FALSE</td>
+<td align="right">-13.65123</td>
+</tr>
+<tr class="even">
+<td align="left">Conc2 - Conc0</td>
+<td align="left">2</td>
+<td align="right">11.4661</td>
+<td align="right">11.24223</td>
+<td align="right">-0.22387</td>
+<td align="right">0.5209615</td>
+<td align="right">10</td>
+<td align="right">-0.4297247</td>
+<td align="right">1.940</td>
+<td align="left">FALSE</td>
+<td align="right">23.63416</td>
+</tr>
+<tr class="odd">
+<td align="left">Conc1 - Conc0</td>
+<td align="left">1</td>
+<td align="right">11.4661</td>
+<td align="right">11.24223</td>
+<td align="right">-0.22387</td>
+<td align="right">0.5209615</td>
+<td align="right">10</td>
+<td align="right">-0.4297247</td>
+<td align="right">1.908</td>
+<td align="left">FALSE</td>
+<td align="right">-39.72090</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(radar_spiked_result<span class="sc">$</span>Dunnetts, <span class="at">caption=</span><span class="st">&quot;Dunnett&#39;s test&quot;</span>)</span></code></pre></div>
+<table style="width:100%;">
+<caption>Dunnett’s test</caption>
+<colgroup>
+<col width="21%" />
+<col width="15%" />
+<col width="14%" />
+<col width="4%" />
+<col width="15%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">Estimate</th>
+<th align="right">SE</th>
+<th align="right">df</th>
+<th align="right">t value</th>
+<th align="right">adj p</th>
+<th align="right">% Incr</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Conc1 - Conc0</td>
+<td align="right">-0.4981949</td>
+<td align="right">0.5209615</td>
+<td align="right">10</td>
+<td align="right">-0.9562989</td>
+<td align="right">0.8003229</td>
+<td align="right">-39.72090</td>
+</tr>
+<tr class="even">
+<td align="left">Conc2 - Conc0</td>
+<td align="right">0.8271841</td>
+<td align="right">0.5209615</td>
+<td align="right">10</td>
+<td align="right">1.5878028</td>
+<td align="right">0.4159647</td>
+<td align="right">23.63416</td>
+</tr>
+<tr class="odd">
+<td align="left">Conc4 - Conc0</td>
+<td align="right">0.3056907</td>
+<td align="right">0.5230995</td>
+<td align="right">10</td>
+<td align="right">0.5843835</td>
+<td align="right">0.9619664</td>
+<td align="right">-13.65123</td>
+</tr>
+<tr class="even">
+<td align="left">Conc8 - Conc0</td>
+<td align="right">-0.5944222</td>
+<td align="right">0.5230995</td>
+<td align="right">10</td>
+<td align="right">-1.1363464</td>
+<td align="right">0.6892705</td>
+<td align="right">-40.63541</td>
+</tr>
+<tr class="odd">
+<td align="left">Conc16 - Conc0</td>
+<td align="right">-0.7426002</td>
+<td align="right">0.5230995</td>
+<td align="right">10</td>
+<td align="right">-1.4196155</td>
+<td align="right">0.5114138</td>
+<td align="right">-50.88408</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Further information about the normality test (Shapiro-Wilk), the
+homogeneity of variance test (Levene’s test) of residuals of the mixed
+ANOVA model, the monotonicity test and the model fit.</li>
+</ul>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a>radar_spiked_result<span class="sc">$</span>NormalityTest</span>
+<span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb26-3"><a href="#cb26-3" tabindex="-1"></a><span class="co">#&gt;  Shapiro-Wilk normality test</span></span>
+<span id="cb26-4"><a href="#cb26-4" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb26-5"><a href="#cb26-5" tabindex="-1"></a><span class="co">#&gt; data:  stats::resid(mixedaov)</span></span>
+<span id="cb26-6"><a href="#cb26-6" tabindex="-1"></a><span class="co">#&gt; W = 0.99162, p-value = 0.03852</span></span>
+<span id="cb26-7"><a href="#cb26-7" tabindex="-1"></a>radar_spiked_result<span class="sc">$</span>LeveneTest</span>
+<span id="cb26-8"><a href="#cb26-8" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 4</span></span>
+<span id="cb26-9"><a href="#cb26-9" tabindex="-1"></a><span class="co">#&gt;   statistic p.value    df df.residual</span></span>
+<span id="cb26-10"><a href="#cb26-10" tabindex="-1"></a><span class="co">#&gt;       &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt;       &lt;int&gt;</span></span>
+<span id="cb26-11"><a href="#cb26-11" tabindex="-1"></a><span class="co">#&gt; 1     0.328   0.896     5         356</span></span>
+<span id="cb26-12"><a href="#cb26-12" tabindex="-1"></a>radar_spiked_result<span class="sc">$</span><span class="st">`</span><span class="at">Monotonicity Test</span><span class="st">`</span></span>
+<span id="cb26-13"><a href="#cb26-13" tabindex="-1"></a><span class="co">#&gt;        Test t value Pr(&gt;|t|) Significance</span></span>
+<span id="cb26-14"><a href="#cb26-14" tabindex="-1"></a><span class="co">#&gt; 1    Linear   -1.49   0.1372            .</span></span>
+<span id="cb26-15"><a href="#cb26-15" tabindex="-1"></a><span class="co">#&gt; 2 Quadratic   -2.10   0.0364            *</span></span>
+<span id="cb26-16"><a href="#cb26-16" tabindex="-1"></a>radar_spiked_result<span class="sc">$</span>MixedAnova</span>
+<span id="cb26-17"><a href="#cb26-17" tabindex="-1"></a><span class="co">#&gt; Linear mixed model fit by REML [&#39;lmerMod&#39;]</span></span>
+<span id="cb26-18"><a href="#cb26-18" tabindex="-1"></a><span class="co">#&gt; Formula: </span></span>
+<span id="cb26-19"><a href="#cb26-19" tabindex="-1"></a><span class="co">#&gt; (Fluor^lambda - 1)/lambda ~ Conc + (1 | Replicate) + (1 | Replicate:Conc)</span></span>
+<span id="cb26-20"><a href="#cb26-20" tabindex="-1"></a><span class="co">#&gt;    Data: dataframe</span></span>
+<span id="cb26-21"><a href="#cb26-21" tabindex="-1"></a><span class="co">#&gt; REML criterion at convergence: 1790.386</span></span>
+<span id="cb26-22"><a href="#cb26-22" tabindex="-1"></a><span class="co">#&gt; Random effects:</span></span>
+<span id="cb26-23"><a href="#cb26-23" tabindex="-1"></a><span class="co">#&gt;  Groups         Name        Std.Dev.</span></span>
+<span id="cb26-24"><a href="#cb26-24" tabindex="-1"></a><span class="co">#&gt;  Replicate:Conc (Intercept) 0.000   </span></span>
+<span id="cb26-25"><a href="#cb26-25" tabindex="-1"></a><span class="co">#&gt;  Replicate      (Intercept) 0.708   </span></span>
+<span id="cb26-26"><a href="#cb26-26" tabindex="-1"></a><span class="co">#&gt;  Residual                   2.865   </span></span>
+<span id="cb26-27"><a href="#cb26-27" tabindex="-1"></a><span class="co">#&gt; Number of obs: 362, groups:  Replicate:Conc, 18; Replicate, 3</span></span>
+<span id="cb26-28"><a href="#cb26-28" tabindex="-1"></a><span class="co">#&gt; Fixed Effects:</span></span>
+<span id="cb26-29"><a href="#cb26-29" tabindex="-1"></a><span class="co">#&gt; (Intercept)       Conc.L       Conc.Q       Conc.C       Conc^4       Conc^5  </span></span>
+<span id="cb26-30"><a href="#cb26-30" tabindex="-1"></a><span class="co">#&gt;    11.12517     -0.54062     -0.78033     -0.07106      0.90730     -0.34498  </span></span>
+<span id="cb26-31"><a href="#cb26-31" tabindex="-1"></a><span class="co">#&gt; optimizer (nloptwrap) convergence code: 0 (OK) ; 0 optimizer warnings; 1 lme4 warnings</span></span></code></pre></div>
+<p><em>The list output from running the data_prep() function can be
+summarized with the data_summary() function.</em></p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a>xeredar<span class="sc">::</span><span class="fu">data_summary</span>(radar_spiked_result) <span class="sc">|&gt;</span> knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">1</th>
+<th align="left">2</th>
+<th align="left">4</th>
+<th align="left">8</th>
+<th align="left">16</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Replicate 1</td>
+<td align="left">-64.09</td>
+<td align="left">37.28</td>
+<td align="left">-23.92</td>
+<td align="left">-74.73</td>
+<td align="left">-68.52</td>
+</tr>
+<tr class="even">
+<td align="left">Replicate 2</td>
+<td align="left">-24.69</td>
+<td align="left">-36.48</td>
+<td align="left">5.55</td>
+<td align="left">-33.52</td>
+<td align="left">-40.11</td>
+</tr>
+<tr class="odd">
+<td align="left">Replicate 3</td>
+<td align="left">-28.69</td>
+<td align="left">40.72</td>
+<td align="left">-15.01</td>
+<td align="left">-16.42</td>
+<td align="left">-41.95</td>
+</tr>
+<tr class="even">
+<td align="left">Pooled</td>
+<td align="left">-39.72</td>
+<td align="left">23.63</td>
+<td align="left">-13.65</td>
+<td align="left">-40.64</td>
+<td align="left">-50.88</td>
+</tr>
+<tr class="odd">
+<td align="left">Dunnett</td>
+<td align="left">ns</td>
+<td align="left">ns</td>
+<td align="left">ns</td>
+<td align="left">ns</td>
+<td align="left">ns</td>
+</tr>
+<tr class="even">
+<td align="left">IncreasingWilliams</td>
+<td align="left">ns</td>
+<td align="left">ns</td>
+<td align="left">ns</td>
+<td align="left">ns</td>
+<td align="left">ns</td>
+</tr>
+<tr class="odd">
+<td align="left">DecreasingWilliams</td>
+<td align="left">ns</td>
+<td align="left">ns</td>
+<td align="left">ns</td>
+<td align="left">ns</td>
+<td align="left">ns</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="running-default-reactiv-analysis" class="section level1">
+<h1>Running default REACTIV analysis</h1>
+<p>To demonstrate how to run REACTIV analysis, we will use one
+artificial data set containing the spiked and unspiked measurements.</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a>reactiv_spiked <span class="ot">&lt;-</span> reactiv_data <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(Spiked <span class="sc">==</span> <span class="cn">TRUE</span>)</span>
+<span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a>reactiv_unspiked <span class="ot">&lt;-</span> reactiv_data <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(Spiked <span class="sc">==</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<p>The default REACTIV analysis can be run using the
+<code>data_prep()</code> function with either spiked or unspiked data.
+This function automatically decides whether trimming, outlier removal
+and/or transformations are conducted following the manuscript
+(Spyridonov et al. unpublished). The actual analysis is carried out by
+the <code>ana()</code> function. The <code>ana()</code> function is
+called by the <code>data_prep()</code> function and does not need to be
+called separately. The analysis the REACTIV assay follows the
+description of the Method 2 (the mixed ANOVA approach) in the Annex 8:
+methods for the statistical analysis of REACTIV assay data of the
+Amended Draft new Test Guideline for the REACTIV assay for second
+WNT-review (<a href="https://www.oecd.org/chemicalsafety/testing/amended-draft-new-test-guideline-for-the-rapid-estrogen-ACTivity-in-vivo-assay.pdf">30.01.2024</a>).
+For this assay, the <code>row</code> argument should be set to
+<code>FALSE</code>. Trimming is not required. In case there are
+residuals deviate from normality and variance homogeneity, outlier
+removal (e.g. by applying the Tukey rule (Green et al., 2018) and data
+transformation (for example log- or square-root) can be conducted.</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" tabindex="-1"></a></span>
+<span id="cb29-2"><a href="#cb29-2" tabindex="-1"></a>reactiv_spiked_result <span class="ot">&lt;-</span> xeredar<span class="sc">::</span><span class="fu">data_prep</span>(<span class="at">dataframe =</span> reactiv_spiked, <span class="at">row =</span> <span class="cn">FALSE</span>, <span class="at">trimming=</span><span class="cn">FALSE</span>, <span class="at">boxcox =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb29-3"><a href="#cb29-3" tabindex="-1"></a>reactiv_unspiked_result <span class="ot">&lt;-</span> xeredar<span class="sc">::</span><span class="fu">data_prep</span>(<span class="at">dataframe =</span> reactiv_unspiked, <span class="at">row=</span> <span class="cn">FALSE</span>, <span class="at">trimming=</span><span class="cn">FALSE</span>, <span class="at">boxcox =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<p>Here we use the spiked data as an example to demonstrate the output
+of the <code>data_prep()</code> function.</p>
+<p>The outputs of the <code>data_prep()</code> function are lists
+containing the following elements:</p>
+<ul>
+<li>A reasoning for the recommended transformation and trimming. The
+data from which outliers were removed with the Tukey-rule where the
+fluorescence values are square-root transformed, should be used for the
+analysis because only after outlier removal and sqrt transformation, the
+residuals of the mixed ANOVA are normally distributed and have
+homogeneous variances among treatment groups</li>
+</ul>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a>reactiv_spiked_result<span class="sc">$</span>Justify</span>
+<span id="cb30-2"><a href="#cb30-2" tabindex="-1"></a><span class="co">#&gt; [1] &quot;The data from which outliers were removed with the\n                    Tukey-rule where the fluorescence values are square-root\n                    transformed, should be used for the analysis because only\n                    after outlier removal and sqrt transformation, the\n                    residuals of the mixed ANOVA are normally distributed\n                    and have homogeneous variances among treatment groups&quot;</span></span></code></pre></div>
+<ul>
+<li>A data frame of the processed data (e.g. raw data, transformed, or
+outlier removed) used for actual statistical testing following the
+reasoning. The box plots of the processed data per run/replicate
+(i.e. each panel represents each run/replicate) are also provided for
+visual inspection.</li>
+</ul>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">head</span>(reactiv_spiked_result<span class="sc">$</span>ProcessedData))</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Replicate</th>
+<th align="left">Conc</th>
+<th align="right">Fluor</th>
+<th align="left">Treatment</th>
+<th align="left">Spiked</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">0</td>
+<td align="right">1801520</td>
+<td align="left">0</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="even">
+<td align="left">1</td>
+<td align="left">0</td>
+<td align="right">1517719</td>
+<td align="left">0</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">0</td>
+<td align="right">2517533</td>
+<td align="left">0</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="even">
+<td align="left">1</td>
+<td align="left">0</td>
+<td align="right">3744706</td>
+<td align="left">0</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">0</td>
+<td align="right">2744990</td>
+<td align="left">0</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="even">
+<td align="left">1</td>
+<td align="left">0</td>
+<td align="right">2889488</td>
+<td align="left">0</td>
+<td align="left">TRUE</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" tabindex="-1"></a>reactiv_spiked_result<span class="sc">$</span>BoxPlots</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<ul>
+<li>Summary tables of the processed data (per replicate and
+overall)</li>
+</ul>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(reactiv_spiked_result<span class="sc">$</span>SummaryDF_Rep, <span class="at">caption=</span><span class="st">&quot;Summary statistics of fluorescence in different concentrations of test item per replicate&quot;</span>)</span></code></pre></div>
+<table>
+<caption>Summary statistics of fluorescence in different concentrations
+of test item per replicate</caption>
+<colgroup>
+<col width="7%" />
+<col width="14%" />
+<col width="4%" />
+<col width="12%" />
+<col width="26%" />
+<col width="35%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Conc</th>
+<th align="left">Replicate</th>
+<th align="right">N</th>
+<th align="right">Mean</th>
+<th align="right">Standard deviation</th>
+<th align="right">Coefficient of variation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">0</td>
+<td align="left">1</td>
+<td align="right">16</td>
+<td align="right">2486847</td>
+<td align="right">1154357.6</td>
+<td align="right">0.4641853</td>
+</tr>
+<tr class="even">
+<td align="left">0</td>
+<td align="left">2</td>
+<td align="right">16</td>
+<td align="right">3341118</td>
+<td align="right">797137.2</td>
+<td align="right">0.2385839</td>
+</tr>
+<tr class="odd">
+<td align="left">0</td>
+<td align="left">3</td>
+<td align="right">16</td>
+<td align="right">2783708</td>
+<td align="right">1049011.8</td>
+<td align="right">0.3768398</td>
+</tr>
+<tr class="even">
+<td align="left">0.16</td>
+<td align="left">1</td>
+<td align="right">8</td>
+<td align="right">2748986</td>
+<td align="right">550546.7</td>
+<td align="right">0.2002727</td>
+</tr>
+<tr class="odd">
+<td align="left">0.16</td>
+<td align="left">2</td>
+<td align="right">8</td>
+<td align="right">2382941</td>
+<td align="right">636560.2</td>
+<td align="right">0.2671321</td>
+</tr>
+<tr class="even">
+<td align="left">0.16</td>
+<td align="left">3</td>
+<td align="right">8</td>
+<td align="right">2705488</td>
+<td align="right">981794.9</td>
+<td align="right">0.3628901</td>
+</tr>
+<tr class="odd">
+<td align="left">0.8</td>
+<td align="left">1</td>
+<td align="right">8</td>
+<td align="right">2683131</td>
+<td align="right">1093419.6</td>
+<td align="right">0.4075163</td>
+</tr>
+<tr class="even">
+<td align="left">0.8</td>
+<td align="left">2</td>
+<td align="right">8</td>
+<td align="right">2567366</td>
+<td align="right">412800.9</td>
+<td align="right">0.1607877</td>
+</tr>
+<tr class="odd">
+<td align="left">0.8</td>
+<td align="left">3</td>
+<td align="right">8</td>
+<td align="right">2860645</td>
+<td align="right">499925.0</td>
+<td align="right">0.1747595</td>
+</tr>
+<tr class="even">
+<td align="left">4</td>
+<td align="left">1</td>
+<td align="right">8</td>
+<td align="right">2885645</td>
+<td align="right">850608.9</td>
+<td align="right">0.2947725</td>
+</tr>
+<tr class="odd">
+<td align="left">4</td>
+<td align="left">2</td>
+<td align="right">8</td>
+<td align="right">3581072</td>
+<td align="right">837331.5</td>
+<td align="right">0.2338214</td>
+</tr>
+<tr class="even">
+<td align="left">4</td>
+<td align="left">3</td>
+<td align="right">8</td>
+<td align="right">2870297</td>
+<td align="right">644055.0</td>
+<td align="right">0.2243862</td>
+</tr>
+<tr class="odd">
+<td align="left">20</td>
+<td align="left">1</td>
+<td align="right">6</td>
+<td align="right">6389817</td>
+<td align="right">1455541.4</td>
+<td align="right">0.2277908</td>
+</tr>
+<tr class="even">
+<td align="left">20</td>
+<td align="left">2</td>
+<td align="right">7</td>
+<td align="right">6142859</td>
+<td align="right">1499704.2</td>
+<td align="right">0.2441378</td>
+</tr>
+<tr class="odd">
+<td align="left">20</td>
+<td align="left">3</td>
+<td align="right">7</td>
+<td align="right">6533288</td>
+<td align="right">1256422.3</td>
+<td align="right">0.1923109</td>
+</tr>
+<tr class="even">
+<td align="left">100</td>
+<td align="left">1</td>
+<td align="right">5</td>
+<td align="right">10533255</td>
+<td align="right">1668866.7</td>
+<td align="right">0.1584379</td>
+</tr>
+<tr class="odd">
+<td align="left">100</td>
+<td align="left">2</td>
+<td align="right">4</td>
+<td align="right">10248429</td>
+<td align="right">1982668.2</td>
+<td align="right">0.1934607</td>
+</tr>
+<tr class="even">
+<td align="left">100</td>
+<td align="left">3</td>
+<td align="right">4</td>
+<td align="right">9080113</td>
+<td align="right">1215680.9</td>
+<td align="right">0.1338839</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(reactiv_spiked_result<span class="sc">$</span>SummaryDF, <span class="at">caption=</span><span class="st">&quot;Summary statistics of fluorescence in different concentrations of test item of all replicates&quot;</span>)</span></code></pre></div>
+<table>
+<caption>Summary statistics of fluorescence in different concentrations
+of test item of all replicates</caption>
+<thead>
+<tr class="header">
+<th align="left">Conc</th>
+<th align="right">N</th>
+<th align="right">Mean</th>
+<th align="right">Standard deviation</th>
+<th align="right">Coefficient of variation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">0</td>
+<td align="right">48</td>
+<td align="right">2870558</td>
+<td align="right">1052304.4</td>
+<td align="right">0.3665854</td>
+</tr>
+<tr class="even">
+<td align="left">0.16</td>
+<td align="right">24</td>
+<td align="right">2612472</td>
+<td align="right">732636.7</td>
+<td align="right">0.2804381</td>
+</tr>
+<tr class="odd">
+<td align="left">0.8</td>
+<td align="right">24</td>
+<td align="right">2703714</td>
+<td align="right">712021.2</td>
+<td align="right">0.2633493</td>
+</tr>
+<tr class="even">
+<td align="left">4</td>
+<td align="right">24</td>
+<td align="right">3112338</td>
+<td align="right">821286.1</td>
+<td align="right">0.2638807</td>
+</tr>
+<tr class="odd">
+<td align="left">20</td>
+<td align="right">20</td>
+<td align="right">6353596</td>
+<td align="right">1339757.0</td>
+<td align="right">0.2108659</td>
+</tr>
+<tr class="even">
+<td align="left">100</td>
+<td align="right">13</td>
+<td align="right">9998496</td>
+<td align="right">1643685.7</td>
+<td align="right">0.1643933</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Tables of results evaluated using increasing/decreasing Williams
+test and/or Dunnett’s test, if applicable.</li>
+</ul>
+<p>In the Williams’ test result tables, <em>Y.Tilde</em> is the
+amalgamated mean of the fluorescence in each treatment group,
+<em>Y0</em> is the mean of the control fluorescence, <em>DIFF</em> is
+the estimated difference between the treatment and the control,
+<em>SE_DIFF</em> is the standard error of the Williams’ test,
+<em>DF</em> is the degrees of freedom for Williams’ test, <em>WILL
+Incr</em> or <em>Will Decr</em> is the Williams’ test statistic,
+<em>crit Val</em> is the critical value of Williams distribution,
+<em>Sign</em> suggests if there is significant difference between the
+treatment and the control, and <em>%Incr</em> is the percent increase of
+the fluorescence compared to the control.</p>
+<p>In the Dunnett’s test result table, <em>Estimate</em> is the
+estimated difference between the treatment and the control, <em>SE</em>
+is the standard error of the mixed ANOVA model, <em>t value</em> is the
+Dunnett’s test statistic, <em>adj p</em> is the adjusted p value and
+<em>%Incr</em> is the percent increase of the fluorescence compared to
+the control.</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(reactiv_spiked_result<span class="sc">$</span>WilliamsIncrease, <span class="at">caption=</span><span class="st">&quot;Increasing Williams&#39; test&quot;</span>)</span></code></pre></div>
+<table>
+<caption>Increasing Williams’ test</caption>
+<colgroup>
+<col width="17%" />
+<col width="5%" />
+<col width="8%" />
+<col width="9%" />
+<col width="11%" />
+<col width="9%" />
+<col width="3%" />
+<col width="11%" />
+<col width="9%" />
+<col width="6%" />
+<col width="11%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">Conc</th>
+<th align="right">Y.Tilde</th>
+<th align="right">Y0</th>
+<th align="right">DIFF Incr</th>
+<th align="right">SE_DIFF</th>
+<th align="right">DF</th>
+<th align="right">WILL Incr</th>
+<th align="right">crit Val</th>
+<th align="left">Sign</th>
+<th align="right">% Incr</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Conc100 - Conc0</td>
+<td align="left">100</td>
+<td align="right">3152.32</td>
+<td align="right">1661.366</td>
+<td align="right">1490.95383</td>
+<td align="right">97.89606</td>
+<td align="right">9</td>
+<td align="right">15.2299684</td>
+<td align="right">1.998</td>
+<td align="left">TRUE</td>
+<td align="right">248.311979</td>
+</tr>
+<tr class="even">
+<td align="left">Conc20 - Conc0</td>
+<td align="left">20</td>
+<td align="right">2506.80</td>
+<td align="right">1661.366</td>
+<td align="right">845.43383</td>
+<td align="right">87.04570</td>
+<td align="right">9</td>
+<td align="right">9.7125278</td>
+<td align="right">1.991</td>
+<td align="left">TRUE</td>
+<td align="right">121.336658</td>
+</tr>
+<tr class="odd">
+<td align="left">Conc4 - Conc0</td>
+<td align="left">4</td>
+<td align="right">1748.86</td>
+<td align="right">1661.366</td>
+<td align="right">87.49383</td>
+<td align="right">83.38750</td>
+<td align="right">9</td>
+<td align="right">1.0492440</td>
+<td align="right">1.981</td>
+<td align="left">FALSE</td>
+<td align="right">8.422775</td>
+</tr>
+<tr class="even">
+<td align="left">Conc0.8 - Conc0</td>
+<td align="left">0.8</td>
+<td align="right">1629.52</td>
+<td align="right">1661.366</td>
+<td align="right">-31.84617</td>
+<td align="right">83.38750</td>
+<td align="right">9</td>
+<td align="right">-0.3819058</td>
+<td align="right">1.965</td>
+<td align="left">FALSE</td>
+<td align="right">-5.812226</td>
+</tr>
+<tr class="odd">
+<td align="left">Conc0.16 - Conc0</td>
+<td align="left">0.16</td>
+<td align="right">1598.55</td>
+<td align="right">1661.366</td>
+<td align="right">-62.81617</td>
+<td align="right">83.38750</td>
+<td align="right">9</td>
+<td align="right">-0.7533044</td>
+<td align="right">1.931</td>
+<td align="left">FALSE</td>
+<td align="right">-8.990784</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(reactiv_spiked_result<span class="sc">$</span>WilliamsDecrease, <span class="at">caption=</span><span class="st">&quot;Decreasing Williams&#39; test&quot;</span>)</span></code></pre></div>
+<table>
+<caption>Decreasing Williams’ test</caption>
+<colgroup>
+<col width="17%" />
+<col width="5%" />
+<col width="8%" />
+<col width="9%" />
+<col width="10%" />
+<col width="9%" />
+<col width="3%" />
+<col width="10%" />
+<col width="9%" />
+<col width="6%" />
+<col width="11%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">Conc</th>
+<th align="right">Y.Tilde</th>
+<th align="right">Y0</th>
+<th align="right">DIFF Decr</th>
+<th align="right">SE_DIFF</th>
+<th align="right">DF</th>
+<th align="right">WILL Decr</th>
+<th align="right">crit Val</th>
+<th align="left">Sign</th>
+<th align="right">% Incr</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Conc100 - Conc0</td>
+<td align="left">100</td>
+<td align="right">2007.29</td>
+<td align="right">1661.366</td>
+<td align="right">-345.9238</td>
+<td align="right">97.89606</td>
+<td align="right">9</td>
+<td align="right">-3.533583</td>
+<td align="right">1.998</td>
+<td align="left">FALSE</td>
+<td align="right">248.311979</td>
+</tr>
+<tr class="even">
+<td align="left">Conc20 - Conc0</td>
+<td align="left">20</td>
+<td align="right">2007.29</td>
+<td align="right">1661.366</td>
+<td align="right">-345.9238</td>
+<td align="right">87.04570</td>
+<td align="right">9</td>
+<td align="right">-3.974048</td>
+<td align="right">1.991</td>
+<td align="left">FALSE</td>
+<td align="right">121.336658</td>
+</tr>
+<tr class="odd">
+<td align="left">Conc4 - Conc0</td>
+<td align="left">4</td>
+<td align="right">2007.29</td>
+<td align="right">1661.366</td>
+<td align="right">-345.9238</td>
+<td align="right">83.38750</td>
+<td align="right">9</td>
+<td align="right">-4.148390</td>
+<td align="right">1.981</td>
+<td align="left">FALSE</td>
+<td align="right">8.422775</td>
+</tr>
+<tr class="even">
+<td align="left">Conc0.8 - Conc0</td>
+<td align="left">0.8</td>
+<td align="right">2007.29</td>
+<td align="right">1661.366</td>
+<td align="right">-345.9238</td>
+<td align="right">83.38750</td>
+<td align="right">9</td>
+<td align="right">-4.148390</td>
+<td align="right">1.965</td>
+<td align="left">FALSE</td>
+<td align="right">-5.812226</td>
+</tr>
+<tr class="odd">
+<td align="left">Conc0.16 - Conc0</td>
+<td align="left">0.16</td>
+<td align="right">2007.29</td>
+<td align="right">1661.366</td>
+<td align="right">-345.9238</td>
+<td align="right">83.38750</td>
+<td align="right">9</td>
+<td align="right">-4.148390</td>
+<td align="right">1.931</td>
+<td align="left">FALSE</td>
+<td align="right">-8.990784</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(reactiv_spiked_result<span class="sc">$</span>Dunnetts, <span class="at">caption=</span><span class="st">&quot;Dunnett&#39;s test&quot;</span>)</span></code></pre></div>
+<table style="width:100%;">
+<caption>Dunnett’s test</caption>
+<colgroup>
+<col width="23%" />
+<col width="15%" />
+<col width="12%" />
+<col width="4%" />
+<col width="15%" />
+<col width="13%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">Estimate</th>
+<th align="right">SE</th>
+<th align="right">df</th>
+<th align="right">t value</th>
+<th align="right">adj p</th>
+<th align="right">% Incr</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Conc0.16 - Conc0</td>
+<td align="right">-62.81884</td>
+<td align="right">83.38750</td>
+<td align="right">9</td>
+<td align="right">-0.7533364</td>
+<td align="right">0.9231737</td>
+<td align="right">-8.990784</td>
+</tr>
+<tr class="even">
+<td align="left">Conc0.8 - Conc0</td>
+<td align="right">-31.84356</td>
+<td align="right">83.38750</td>
+<td align="right">9</td>
+<td align="right">-0.3818746</td>
+<td align="right">0.9953441</td>
+<td align="right">-5.812226</td>
+</tr>
+<tr class="odd">
+<td align="left">Conc4 - Conc0</td>
+<td align="right">87.49635</td>
+<td align="right">83.38750</td>
+<td align="right">9</td>
+<td align="right">1.0492743</td>
+<td align="right">0.7798328</td>
+<td align="right">8.422775</td>
+</tr>
+<tr class="even">
+<td align="left">Conc20 - Conc0</td>
+<td align="right">845.49890</td>
+<td align="right">87.04570</td>
+<td align="right">9</td>
+<td align="right">9.7132754</td>
+<td align="right">0.0000051</td>
+<td align="right">121.336658</td>
+</tr>
+<tr class="odd">
+<td align="left">Conc100 - Conc0</td>
+<td align="right">1489.69562</td>
+<td align="right">97.89606</td>
+<td align="right">9</td>
+<td align="right">15.2171158</td>
+<td align="right">0.0000000</td>
+<td align="right">248.311979</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Further information about the normality test (Shapiro-Wilk), the
+homogeneity of variance test (Levene’s test) of residuals of the mixed
+ANOVA model, the monotonicity test and the model fit.</li>
+</ul>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" tabindex="-1"></a>reactiv_spiked_result<span class="sc">$</span>NormalityTest</span>
+<span id="cb38-2"><a href="#cb38-2" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb38-3"><a href="#cb38-3" tabindex="-1"></a><span class="co">#&gt;  Shapiro-Wilk normality test</span></span>
+<span id="cb38-4"><a href="#cb38-4" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb38-5"><a href="#cb38-5" tabindex="-1"></a><span class="co">#&gt; data:  stats::resid(mixedaov)</span></span>
+<span id="cb38-6"><a href="#cb38-6" tabindex="-1"></a><span class="co">#&gt; W = 0.98187, p-value = 0.04164</span></span>
+<span id="cb38-7"><a href="#cb38-7" tabindex="-1"></a>reactiv_spiked_result<span class="sc">$</span>LeveneTest</span>
+<span id="cb38-8"><a href="#cb38-8" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 4</span></span>
+<span id="cb38-9"><a href="#cb38-9" tabindex="-1"></a><span class="co">#&gt;   statistic p.value    df df.residual</span></span>
+<span id="cb38-10"><a href="#cb38-10" tabindex="-1"></a><span class="co">#&gt;       &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt;       &lt;int&gt;</span></span>
+<span id="cb38-11"><a href="#cb38-11" tabindex="-1"></a><span class="co">#&gt; 1      1.59   0.167     5         147</span></span>
+<span id="cb38-12"><a href="#cb38-12" tabindex="-1"></a>reactiv_spiked_result<span class="sc">$</span><span class="st">`</span><span class="at">Monotonicity Test</span><span class="st">`</span></span>
+<span id="cb38-13"><a href="#cb38-13" tabindex="-1"></a><span class="co">#&gt;        Test t value Pr(&gt;|t|) Significance</span></span>
+<span id="cb38-14"><a href="#cb38-14" tabindex="-1"></a><span class="co">#&gt; 1    Linear   12.67  &lt;0.0001          ***</span></span>
+<span id="cb38-15"><a href="#cb38-15" tabindex="-1"></a><span class="co">#&gt; 2 Quadratic    6.66  &lt;0.0001          ***</span></span>
+<span id="cb38-16"><a href="#cb38-16" tabindex="-1"></a>reactiv_spiked_result<span class="sc">$</span>MixedAnova</span>
+<span id="cb38-17"><a href="#cb38-17" tabindex="-1"></a><span class="co">#&gt; Linear mixed model fit by REML [&#39;lmerMod&#39;]</span></span>
+<span id="cb38-18"><a href="#cb38-18" tabindex="-1"></a><span class="co">#&gt; Formula: sqrt(Fluor) ~ Conc + (1 | Replicate) + (1 | Replicate:Conc)</span></span>
+<span id="cb38-19"><a href="#cb38-19" tabindex="-1"></a><span class="co">#&gt;    Data: wt_outlier</span></span>
+<span id="cb38-20"><a href="#cb38-20" tabindex="-1"></a><span class="co">#&gt; REML criterion at convergence: 2090.548</span></span>
+<span id="cb38-21"><a href="#cb38-21" tabindex="-1"></a><span class="co">#&gt; Random effects:</span></span>
+<span id="cb38-22"><a href="#cb38-22" tabindex="-1"></a><span class="co">#&gt;  Groups         Name        Std.Dev. </span></span>
+<span id="cb38-23"><a href="#cb38-23" tabindex="-1"></a><span class="co">#&gt;  Replicate:Conc (Intercept)  58.87516</span></span>
+<span id="cb38-24"><a href="#cb38-24" tabindex="-1"></a><span class="co">#&gt;  Replicate      (Intercept)   0.01916</span></span>
+<span id="cb38-25"><a href="#cb38-25" tabindex="-1"></a><span class="co">#&gt;  Residual                   272.54703</span></span>
+<span id="cb38-26"><a href="#cb38-26" tabindex="-1"></a><span class="co">#&gt; Number of obs: 153, groups:  Replicate:Conc, 18; Replicate, 3</span></span>
+<span id="cb38-27"><a href="#cb38-27" tabindex="-1"></a><span class="co">#&gt; Fixed Effects:</span></span>
+<span id="cb38-28"><a href="#cb38-28" tabindex="-1"></a><span class="co">#&gt; (Intercept)       Conc.L       Conc.Q       Conc.C       Conc^4       Conc^5  </span></span>
+<span id="cb38-29"><a href="#cb38-29" tabindex="-1"></a><span class="co">#&gt;     2049.37      1230.22       703.01        45.68      -141.18      -117.07  </span></span>
+<span id="cb38-30"><a href="#cb38-30" tabindex="-1"></a><span class="co">#&gt; optimizer (nloptwrap) convergence code: 0 (OK) ; 0 optimizer warnings; 1 lme4 warnings</span></span></code></pre></div>
+<p><em>The list output from running the data_prep() function can be
+summarized with the data_summary() function.</em></p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" tabindex="-1"></a>xeredar<span class="sc">::</span><span class="fu">data_summary</span>(reactiv_spiked_result) <span class="sc">|&gt;</span> knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">0.16</th>
+<th align="left">0.8</th>
+<th align="left">4</th>
+<th align="left">20</th>
+<th align="left">100</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Replicate 1</td>
+<td align="left">10.54</td>
+<td align="left">7.89</td>
+<td align="left">16.04</td>
+<td align="left">156.94</td>
+<td align="left">323.56</td>
+</tr>
+<tr class="even">
+<td align="left">Replicate 2</td>
+<td align="left">-28.68</td>
+<td align="left">-23.16</td>
+<td align="left">7.18</td>
+<td align="left">83.86</td>
+<td align="left">206.74</td>
+</tr>
+<tr class="odd">
+<td align="left">Replicate 3</td>
+<td align="left">-2.81</td>
+<td align="left">2.76</td>
+<td align="left">3.11</td>
+<td align="left">134.7</td>
+<td align="left">226.19</td>
+</tr>
+<tr class="even">
+<td align="left">Pooled</td>
+<td align="left">-8.99</td>
+<td align="left">-5.81</td>
+<td align="left">8.42</td>
+<td align="left">121.34</td>
+<td align="left">248.31</td>
+</tr>
+<tr class="odd">
+<td align="left">Dunnett</td>
+<td align="left">ns</td>
+<td align="left">ns</td>
+<td align="left">ns</td>
+<td align="left">*</td>
+<td align="left">*</td>
+</tr>
+<tr class="even">
+<td align="left">IncreasingWilliams</td>
+<td align="left">ns</td>
+<td align="left">ns</td>
+<td align="left">ns</td>
+<td align="left">*</td>
+<td align="left">*</td>
+</tr>
+<tr class="odd">
+<td align="left">DecreasingWilliams</td>
+<td align="left">ns</td>
+<td align="left">ns</td>
+<td align="left">ns</td>
+<td align="left">ns</td>
+<td align="left">ns</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="validation" class="section level1">
+<h1>Validation</h1>
+<p>In order to validate the package, we will analyze all 36 XETA ring
+test studies and produce a table that can be compared with the table in
+the validation report. The validation studies are available in the
+<code>xeredar</code> package. In case the produced table is in line with
+the table description, then the package is doing exactly what it is
+supposed to do and analyzed all 36 XETA ring test studies correctly.</p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" tabindex="-1"></a></span>
+<span id="cb40-2"><a href="#cb40-2" tabindex="-1"></a></span>
+<span id="cb40-3"><a href="#cb40-3" tabindex="-1"></a></span>
+<span id="cb40-4"><a href="#cb40-4" tabindex="-1"></a>out <span class="ot">&lt;-</span>  <span class="sc">!</span>stringr<span class="sc">::</span><span class="fu">str_detect</span>(<span class="fu">names</span>(xeredar<span class="sc">::</span>valid_data_xeta), <span class="st">&quot;_combined$&quot;</span> )</span>
+<span id="cb40-5"><a href="#cb40-5" tabindex="-1"></a>list_dfs <span class="ot">&lt;-</span> xeredar<span class="sc">::</span>valid_data_xeta[out]</span>
+<span id="cb40-6"><a href="#cb40-6" tabindex="-1"></a>data_prep_trim <span class="ot">&lt;-</span> <span class="cf">function</span>(df){</span>
+<span id="cb40-7"><a href="#cb40-7" tabindex="-1"></a>  df <span class="ot">&lt;-</span> df <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(Fluor))</span>
+<span id="cb40-8"><a href="#cb40-8" tabindex="-1"></a>  dat_trim <span class="ot">&lt;-</span> xeredar<span class="sc">::</span><span class="fu">trim</span>(df)<span class="sc">$</span>dat_trim</span>
+<span id="cb40-9"><a href="#cb40-9" tabindex="-1"></a>  results <span class="ot">&lt;-</span> xeredar<span class="sc">::</span><span class="fu">data_prep</span>(dat_trim, <span class="at">row=</span> <span class="cn">FALSE</span>, <span class="at">trim=</span><span class="cn">FALSE</span>, <span class="at">outlier =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb40-10"><a href="#cb40-10" tabindex="-1"></a>  <span class="fu">return</span>(results)</span>
+<span id="cb40-11"><a href="#cb40-11" tabindex="-1"></a>}</span>
+<span id="cb40-12"><a href="#cb40-12" tabindex="-1"></a>results <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map</span>(list_dfs, data_prep_trim,  <span class="at">.progress =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb40-13"><a href="#cb40-13" tabindex="-1"></a>worked <span class="ot">&lt;-</span> <span class="sc">!</span>purrr<span class="sc">::</span><span class="fu">map_vec</span>(results, is.list)</span>
+<span id="cb40-14"><a href="#cb40-14" tabindex="-1"></a></span>
+<span id="cb40-15"><a href="#cb40-15" tabindex="-1"></a>difficult_dfs <span class="ot">&lt;-</span> list_dfs[worked]</span>
+<span id="cb40-16"><a href="#cb40-16" tabindex="-1"></a></span>
+<span id="cb40-17"><a href="#cb40-17" tabindex="-1"></a>changing_alpha <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">5</span>) <span class="sc">%o%</span> <span class="dv">10</span><span class="sc">^-</span>(<span class="dv">3</span><span class="sc">:</span><span class="dv">17</span>), <span class="dv">0</span>)</span>
+<span id="cb40-18"><a href="#cb40-18" tabindex="-1"></a></span>
+<span id="cb40-19"><a href="#cb40-19" tabindex="-1"></a>decreasing_alpha <span class="ot">&lt;-</span> <span class="cf">function</span>(df, vector){</span>
+<span id="cb40-20"><a href="#cb40-20" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> vector){</span>
+<span id="cb40-21"><a href="#cb40-21" tabindex="-1"></a>    df <span class="ot">&lt;-</span> df <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(Fluor))</span>
+<span id="cb40-22"><a href="#cb40-22" tabindex="-1"></a>    dat_trim <span class="ot">&lt;-</span> xeredar<span class="sc">::</span><span class="fu">trim</span>(df)<span class="sc">$</span>dat_trim</span>
+<span id="cb40-23"><a href="#cb40-23" tabindex="-1"></a>    result <span class="ot">&lt;-</span> <span class="fu">data_prep</span>(df, <span class="at">row=</span><span class="cn">FALSE</span>, <span class="at">alpha =</span> i, <span class="at">trim=</span><span class="cn">FALSE</span>, <span class="at">outlier =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb40-24"><a href="#cb40-24" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">is.list</span>(result)){</span>
+<span id="cb40-25"><a href="#cb40-25" tabindex="-1"></a>      <span class="cf">break</span></span>
+<span id="cb40-26"><a href="#cb40-26" tabindex="-1"></a>    } <span class="cf">else</span>{</span>
+<span id="cb40-27"><a href="#cb40-27" tabindex="-1"></a>      <span class="cf">next</span></span>
+<span id="cb40-28"><a href="#cb40-28" tabindex="-1"></a>    }</span>
+<span id="cb40-29"><a href="#cb40-29" tabindex="-1"></a>  }</span>
+<span id="cb40-30"><a href="#cb40-30" tabindex="-1"></a>  result[[<span class="st">&quot;alpha&quot;</span>]] <span class="ot">&lt;-</span> i</span>
+<span id="cb40-31"><a href="#cb40-31" tabindex="-1"></a>  <span class="fu">return</span>(result)</span>
+<span id="cb40-32"><a href="#cb40-32" tabindex="-1"></a>}</span>
+<span id="cb40-33"><a href="#cb40-33" tabindex="-1"></a></span>
+<span id="cb40-34"><a href="#cb40-34" tabindex="-1"></a></span>
+<span id="cb40-35"><a href="#cb40-35" tabindex="-1"></a>result_difficult_dfs <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map</span>(<span class="at">.x=</span>difficult_dfs, <span class="at">.f=</span> decreasing_alpha, <span class="at">vector =</span> changing_alpha)</span>
+<span id="cb40-36"><a href="#cb40-36" tabindex="-1"></a>results_alpha_decrease <span class="ot">&lt;-</span> results[<span class="fu">map_vec</span>(results, is.list)]</span>
+<span id="cb40-37"><a href="#cb40-37" tabindex="-1"></a></span>
+<span id="cb40-38"><a href="#cb40-38" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">append</span>(results_alpha_decrease, result_difficult_dfs)</span>
+<span id="cb40-39"><a href="#cb40-39" tabindex="-1"></a>check_positive <span class="ot">&lt;-</span> <span class="cf">function</span>(df){</span>
+<span id="cb40-40"><a href="#cb40-40" tabindex="-1"></a>  <span class="cf">if</span>(df[[<span class="st">&quot;Monotonicity Test&quot;</span>]]<span class="sc">$</span><span class="st">`</span><span class="at">Pr(&gt;|t|)</span><span class="st">`</span>[<span class="dv">1</span>] <span class="sc">&gt;=</span> <span class="fl">0.01</span> <span class="sc">&amp;</span></span>
+<span id="cb40-41"><a href="#cb40-41" tabindex="-1"></a>     df[[<span class="st">&quot;Monotonicity Test&quot;</span>]]<span class="sc">$</span><span class="st">`</span><span class="at">Pr(&gt;|t|)</span><span class="st">`</span>[<span class="dv">2</span>] <span class="sc">&lt;=</span> <span class="fl">0.01</span> ) {</span>
+<span id="cb40-42"><a href="#cb40-42" tabindex="-1"></a>    <span class="fu">return</span>(df[[<span class="st">&quot;Dunnetts&quot;</span>]])</span>
+<span id="cb40-43"><a href="#cb40-43" tabindex="-1"></a>  } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">length</span>(<span class="fu">unique</span>(df<span class="sc">$</span>WilliamsIncrease<span class="sc">$</span>Y.Tilde)) <span class="sc">-</span> <span class="dv">1</span> <span class="sc">&gt;</span> <span class="fu">floor</span>(<span class="fu">nrow</span>(df<span class="sc">$</span>WilliamsIncrease)<span class="sc">/</span><span class="dv">2</span>) <span class="sc">|</span> </span>
+<span id="cb40-44"><a href="#cb40-44" tabindex="-1"></a>             <span class="fu">length</span>(<span class="fu">unique</span>(df<span class="sc">$</span>WilliamsDecrease<span class="sc">$</span>Y.Tilde)) <span class="sc">-</span> <span class="dv">1</span> <span class="sc">&gt;</span> <span class="fu">floor</span>(<span class="fu">nrow</span>(df<span class="sc">$</span>WilliamsDecrease)<span class="sc">/</span><span class="dv">2</span>)) { </span>
+<span id="cb40-45"><a href="#cb40-45" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">WilliamsIncrease =</span> df[[<span class="st">&quot;WilliamsIncrease&quot;</span>]], <span class="at">WilliamsDecrease =</span> df[[<span class="st">&quot;WilliamsDecrease&quot;</span>]])) </span>
+<span id="cb40-46"><a href="#cb40-46" tabindex="-1"></a>  } <span class="cf">else</span>{</span>
+<span id="cb40-47"><a href="#cb40-47" tabindex="-1"></a>    <span class="fu">return</span>(df[[<span class="st">&quot;Dunnetts&quot;</span>]])</span>
+<span id="cb40-48"><a href="#cb40-48" tabindex="-1"></a>    } </span>
+<span id="cb40-49"><a href="#cb40-49" tabindex="-1"></a>}</span>
+<span id="cb40-50"><a href="#cb40-50" tabindex="-1"></a></span>
+<span id="cb40-51"><a href="#cb40-51" tabindex="-1"></a>results_2 <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map</span>(results, check_positive)</span>
+<span id="cb40-52"><a href="#cb40-52" tabindex="-1"></a>Williams <span class="ot">&lt;-</span> <span class="sc">!</span>purrr<span class="sc">::</span><span class="fu">map_vec</span>(results_2, is.data.frame)</span>
+<span id="cb40-53"><a href="#cb40-53" tabindex="-1"></a></span>
+<span id="cb40-54"><a href="#cb40-54" tabindex="-1"></a>significances <span class="ot">&lt;-</span> <span class="cf">function</span>(df, <span class="at">Williams=</span> <span class="cn">FALSE</span>){</span>
+<span id="cb40-55"><a href="#cb40-55" tabindex="-1"></a>  <span class="cf">if</span>(Williams) {</span>
+<span id="cb40-56"><a href="#cb40-56" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">length</span>(<span class="fu">unique</span>(df<span class="sc">$</span>WilliamsIncrease<span class="sc">$</span>Y.Tilde)) <span class="sc">-</span> <span class="dv">1</span> <span class="sc">&gt;</span> </span>
+<span id="cb40-57"><a href="#cb40-57" tabindex="-1"></a>       <span class="fu">floor</span>(<span class="fu">nrow</span>(df<span class="sc">$</span>WilliamsIncrease)<span class="sc">/</span><span class="dv">2</span>)){</span>
+<span id="cb40-58"><a href="#cb40-58" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">%in%</span> df[[<span class="st">&quot;WilliamsIncrease&quot;</span>]]<span class="sc">$</span>Sign</span>
+<span id="cb40-59"><a href="#cb40-59" tabindex="-1"></a>    } <span class="cf">else</span>{</span>
+<span id="cb40-60"><a href="#cb40-60" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">%in%</span> df[[<span class="st">&quot;WilliamsDecrease&quot;</span>]]<span class="sc">$</span>Sign</span>
+<span id="cb40-61"><a href="#cb40-61" tabindex="-1"></a>    }</span>
+<span id="cb40-62"><a href="#cb40-62" tabindex="-1"></a>  } <span class="cf">else</span>{</span>
+<span id="cb40-63"><a href="#cb40-63" tabindex="-1"></a>    df[[<span class="st">&quot;adj p&quot;</span>]][<span class="fu">length</span>(df[[<span class="st">&quot;adj p&quot;</span>]])] <span class="sc">&lt;</span> <span class="fl">0.05</span></span>
+<span id="cb40-64"><a href="#cb40-64" tabindex="-1"></a>  }</span>
+<span id="cb40-65"><a href="#cb40-65" tabindex="-1"></a>}</span>
+<span id="cb40-66"><a href="#cb40-66" tabindex="-1"></a></span>
+<span id="cb40-67"><a href="#cb40-67" tabindex="-1"></a>prelim_thyroid_active <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map2_vec</span>(results_2, Williams, significances)</span>
+<span id="cb40-68"><a href="#cb40-68" tabindex="-1"></a></span>
+<span id="cb40-69"><a href="#cb40-69" tabindex="-1"></a>country_substance_spiked <span class="ot">&lt;-</span> <span class="fu">names</span>(results_2) <span class="sc">|&gt;</span> stringr<span class="sc">::</span><span class="fu">str_split</span>(<span class="st">&quot;</span><span class="sc">\\</span><span class="st">_&quot;</span>) <span class="sc">|&gt;</span> <span class="fu">as.data.frame</span>() <span class="sc">|&gt;</span> <span class="fu">t</span>() <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">as_tibble</span>() <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="st">&quot;substance&quot;</span> <span class="ot">=</span> <span class="st">&quot;V1&quot;</span>, <span class="st">&quot;country&quot;</span> <span class="ot">=</span> <span class="st">&quot;V2&quot;</span>, <span class="st">&quot;spiked&quot;</span> <span class="ot">=</span> <span class="st">&quot;V3&quot;</span>) <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">Sign =</span> prelim_thyroid_active)</span>
+<span id="cb40-70"><a href="#cb40-70" tabindex="-1"></a></span>
+<span id="cb40-71"><a href="#cb40-71" tabindex="-1"></a></span>
+<span id="cb40-72"><a href="#cb40-72" tabindex="-1"></a>increase_h12 <span class="ot">&lt;-</span> results <span class="sc">|&gt;</span> purrr<span class="sc">::</span><span class="fu">map_vec</span>(<span class="cf">function</span>(x) {(x[[<span class="st">&quot;SummaryDF&quot;</span>]]<span class="sc">$</span>Mean[<span class="fu">nrow</span>(x[[<span class="st">&quot;SummaryDF&quot;</span>]])] <span class="sc">/</span> x[[<span class="st">&quot;SummaryDF&quot;</span>]]<span class="sc">$</span>Mean[<span class="dv">1</span>])<span class="sc">-</span><span class="dv">1</span> })</span>
+<span id="cb40-73"><a href="#cb40-73" tabindex="-1"></a></span>
+<span id="cb40-74"><a href="#cb40-74" tabindex="-1"></a></span>
+<span id="cb40-75"><a href="#cb40-75" tabindex="-1"></a>thyroid_active <span class="ot">&lt;-</span> country_substance_spiked <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">Increase =</span> increase_h12,</span>
+<span id="cb40-76"><a href="#cb40-76" tabindex="-1"></a>                                                            <span class="at">thyroid_active =</span> <span class="fu">ifelse</span>(Increase <span class="sc">&gt;=</span> <span class="fl">0.12</span> <span class="sc">&amp;</span> Sign <span class="sc">==</span> <span class="cn">TRUE</span> <span class="sc">&amp;</span> spiked <span class="sc">==</span> <span class="st">&quot;unspiked&quot;</span> <span class="sc">|</span></span>
+<span id="cb40-77"><a href="#cb40-77" tabindex="-1"></a>                                                                                      <span class="fu">abs</span>(Increase) <span class="sc">&gt;=</span> <span class="fl">0.12</span> <span class="sc">&amp;</span> Sign <span class="sc">==</span> <span class="cn">TRUE</span> <span class="sc">&amp;</span> spiked <span class="sc">==</span> <span class="st">&quot;spiked&quot;</span> , <span class="st">&quot;Thyroid active&quot;</span>, <span class="st">&quot;Thyroid inactive&quot;</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb40-78"><a href="#cb40-78" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">!</span>Sign, <span class="sc">!</span>Increase) <span class="sc">|&gt;</span> </span>
+<span id="cb40-79"><a href="#cb40-79" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarise</span>(<span class="at">thyroid_active =</span> <span class="fu">ifelse</span>(<span class="st">&quot;Thyroid active&quot;</span> <span class="sc">%in%</span> thyroid_active, <span class="st">&quot;Thyroid active&quot;</span>, <span class="st">&quot;Thyroid inactive&quot;</span>), <span class="at">.by=</span> <span class="fu">c</span>(substance, country)) <span class="sc">|&gt;</span> </span>
+<span id="cb40-80"><a href="#cb40-80" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb40-81"><a href="#cb40-81" tabindex="-1"></a>    <span class="at">country =</span> <span class="fu">ifelse</span>(country<span class="sc">==</span> <span class="st">&quot;japan&quot;</span> <span class="sc">&amp;</span> substance <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;e2&quot;</span>, <span class="st">&quot;nh3&quot;</span>) <span class="sc">|</span></span>
+<span id="cb40-82"><a href="#cb40-82" tabindex="-1"></a>                       country <span class="sc">==</span> <span class="st">&quot;japan2&quot;</span>, <span class="st">&quot;japan lab2&quot;</span>, country)) <span class="sc">|&gt;</span></span>
+<span id="cb40-83"><a href="#cb40-83" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> country, <span class="at">values_from =</span> thyroid_active) <span class="sc">|&gt;</span></span>
+<span id="cb40-84"><a href="#cb40-84" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">arrange</span>(<span class="fu">match</span>(substance, <span class="fu">c</span>(<span class="st">&quot;t3&quot;</span>, <span class="st">&quot;ptu&quot;</span>, <span class="st">&quot;t4&quot;</span>, <span class="st">&quot;triac&quot;</span>, <span class="st">&quot;cefuroxime&quot;</span>,<span class="st">&quot;linuron&quot;</span>, <span class="st">&quot;nh3&quot;</span>, <span class="st">&quot;testosterone&quot;</span>,<span class="st">&quot;e2&quot;</span>, <span class="st">&quot;abamectine&quot;</span>, <span class="st">&quot;acetone&quot;</span>, <span class="st">&quot;isophorone&quot;</span>, <span class="st">&quot;metholmyl&quot;</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb40-85"><a href="#cb40-85" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Expected classification</span><span class="st">`</span><span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;Thyroid active&quot;</span>, <span class="st">&quot;Thyroid active&quot;</span>, <span class="st">&quot;Thyroid active&quot;</span>, <span class="st">&quot;Thyroid active&quot;</span>, <span class="st">&quot;Thyroid inactive&quot;</span>, <span class="st">&quot;Thyroid active&quot;</span>, <span class="st">&quot;Thyroid active&quot;</span>, <span class="st">&quot;Unclear&quot;</span>, <span class="st">&quot;Thyroid inactive&quot;</span>, <span class="st">&quot;Thyroid inactive&quot;</span>,<span class="st">&quot;Thyroid inactive&quot;</span>,<span class="st">&quot;Thyroid inactive&quot;</span>,<span class="st">&quot;Thyroid inactive&quot;</span>))<span class="sc">|&gt;</span></span>
+<span id="cb40-86"><a href="#cb40-86" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">relocate</span>(<span class="fu">c</span>(substance,<span class="st">`</span><span class="at">Expected classification</span><span class="st">`</span>, france,japan, usa, <span class="st">`</span><span class="at">japan lab2</span><span class="st">`</span>, belgium, portugal ))  <span class="sc">|&gt;</span> </span>
+<span id="cb40-87"><a href="#cb40-87" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">USA =</span> usa)</span></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" tabindex="-1"></a>gt<span class="sc">::</span><span class="fu">gt</span>(thyroid_active, <span class="at">rowname_col =</span> <span class="st">&quot;substance&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb41-2"><a href="#cb41-2" tabindex="-1"></a>  gt<span class="sc">::</span><span class="fu">tab_options</span>(<span class="at">column_labels.text_transform =</span> <span class="st">&quot;capitalize&quot;</span>,</span>
+<span id="cb41-3"><a href="#cb41-3" tabindex="-1"></a>              <span class="at">stub.text_transform =</span> <span class="st">&quot;uppercase&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb41-4"><a href="#cb41-4" tabindex="-1"></a>  gt<span class="sc">::</span><span class="fu">data_color</span>(<span class="at">columns=</span> <span class="sc">-</span>substance, <span class="at">na_color =</span> <span class="st">&quot;white&quot;</span>, <span class="at">palette =</span> <span class="fu">c</span>(<span class="st">&quot;#c2cd94&quot;</span>, <span class="st">&quot;#b4c6e7&quot;</span>, <span class="st">&quot;white&quot;</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb41-5"><a href="#cb41-5" tabindex="-1"></a>  gt<span class="sc">::</span><span class="fu">tab_stubhead</span>(<span class="at">label =</span> <span class="st">&quot;Chemical&quot;</span>)<span class="sc">|&gt;</span></span>
+<span id="cb41-6"><a href="#cb41-6" tabindex="-1"></a>  gt<span class="sc">::</span><span class="fu">tab_spanner</span>(</span>
+<span id="cb41-7"><a href="#cb41-7" tabindex="-1"></a>    <span class="at">label =</span> <span class="st">&quot;Laboratory&quot;</span>,</span>
+<span id="cb41-8"><a href="#cb41-8" tabindex="-1"></a>    <span class="at">columns =</span> <span class="fu">c</span>(france, japan, USA, <span class="st">&#39;japan lab2&#39;</span>, belgium, portugal)</span>
+<span id="cb41-9"><a href="#cb41-9" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb41-10"><a href="#cb41-10" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">tab_style</span>(</span>
+<span id="cb41-11"><a href="#cb41-11" tabindex="-1"></a>    <span class="at">style =</span> <span class="fu">list</span>(</span>
+<span id="cb41-12"><a href="#cb41-12" tabindex="-1"></a>      gt<span class="sc">::</span><span class="fu">cell_text</span>(<span class="at">color =</span> <span class="st">&quot;#D9654B&quot;</span>, <span class="at">weight=</span> <span class="st">&quot;bold&quot;</span>)</span>
+<span id="cb41-13"><a href="#cb41-13" tabindex="-1"></a>    ),</span>
+<span id="cb41-14"><a href="#cb41-14" tabindex="-1"></a>    <span class="at">locations =</span> gt<span class="sc">::</span><span class="fu">cells_body</span>(</span>
+<span id="cb41-15"><a href="#cb41-15" tabindex="-1"></a>      <span class="at">columns =</span> <span class="fu">c</span>(france, belgium), <span class="co"># not needed if coloring all columns</span></span>
+<span id="cb41-16"><a href="#cb41-16" tabindex="-1"></a>      <span class="at">rows =</span> <span class="dv">8</span>)</span>
+<span id="cb41-17"><a href="#cb41-17" tabindex="-1"></a>  )  <span class="sc">|&gt;</span> </span>
+<span id="cb41-18"><a href="#cb41-18" tabindex="-1"></a>   gt<span class="sc">::</span><span class="fu">tab_header</span>(</span>
+<span id="cb41-19"><a href="#cb41-19" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Summary table of results from statistical analysis of all 36 validation studies of the ring test of the XETA test guideline. This table shows the results of the automatic analysis carried out with the data_prep() function of the xeredar R-package. Furthermore, this table summarises the results of the original analysis carried out by John Green using SAS. As both approaches led to exactly the same conclusions, only one table is shown. In case a substance was identified to be Thyroid active, the respective cell is colored green, whereas when a substance was identified to be Thyroid inactive, the cell was colored blue. For the study applying testosterone in the french lab, the writing is colored red, because in the original table in the validation document, this substance was incorrectly classified as Thyroid active due to a data transfer mistake. Furthermore, for the study applying testosterone in the belgium lab, the writing is colored red, as well, because in the validation document, a slip in the column led to incorrectly categorizing the respective results as carried out by the japanese lab2.&quot;</span>)</span></code></pre></div>
+<div id="cwcpbowcig" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#cwcpbowcig table {
+font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+}
+#cwcpbowcig thead, #cwcpbowcig tbody, #cwcpbowcig tfoot, #cwcpbowcig tr, #cwcpbowcig td, #cwcpbowcig th {
+border-style: none;
+}
+#cwcpbowcig p {
+margin: 0;
+padding: 0;
+}
+#cwcpbowcig .gt_table {
+display: table;
+border-collapse: collapse;
+line-height: normal;
+margin-left: auto;
+margin-right: auto;
+color: #333333;
+font-size: 16px;
+font-weight: normal;
+font-style: normal;
+background-color: #FFFFFF;
+width: auto;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #A8A8A8;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #A8A8A8;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+}
+#cwcpbowcig .gt_caption {
+padding-top: 4px;
+padding-bottom: 4px;
+}
+#cwcpbowcig .gt_title {
+color: #333333;
+font-size: 125%;
+font-weight: initial;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-color: #FFFFFF;
+border-bottom-width: 0;
+}
+#cwcpbowcig .gt_subtitle {
+color: #333333;
+font-size: 85%;
+font-weight: initial;
+padding-top: 3px;
+padding-bottom: 5px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-color: #FFFFFF;
+border-top-width: 0;
+}
+#cwcpbowcig .gt_heading {
+background-color: #FFFFFF;
+text-align: center;
+border-bottom-color: #FFFFFF;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#cwcpbowcig .gt_bottom_border {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#cwcpbowcig .gt_col_headings {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#cwcpbowcig .gt_col_heading {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: normal;
+text-transform: capitalize;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 5px;
+padding-bottom: 6px;
+padding-left: 5px;
+padding-right: 5px;
+overflow-x: hidden;
+}
+#cwcpbowcig .gt_column_spanner_outer {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: normal;
+text-transform: capitalize;
+padding-top: 0;
+padding-bottom: 0;
+padding-left: 4px;
+padding-right: 4px;
+}
+#cwcpbowcig .gt_column_spanner_outer:first-child {
+padding-left: 0;
+}
+#cwcpbowcig .gt_column_spanner_outer:last-child {
+padding-right: 0;
+}
+#cwcpbowcig .gt_column_spanner {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 5px;
+padding-bottom: 5px;
+overflow-x: hidden;
+display: inline-block;
+width: 100%;
+}
+#cwcpbowcig .gt_spanner_row {
+border-bottom-style: hidden;
+}
+#cwcpbowcig .gt_group_heading {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+text-align: left;
+}
+#cwcpbowcig .gt_empty_group_heading {
+padding: 0.5px;
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: middle;
+}
+#cwcpbowcig .gt_from_md > :first-child {
+margin-top: 0;
+}
+#cwcpbowcig .gt_from_md > :last-child {
+margin-bottom: 0;
+}
+#cwcpbowcig .gt_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+margin: 10px;
+border-top-style: solid;
+border-top-width: 1px;
+border-top-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+overflow-x: hidden;
+}
+#cwcpbowcig .gt_stub {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: uppercase;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+}
+#cwcpbowcig .gt_stub_row_group {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+vertical-align: top;
+}
+#cwcpbowcig .gt_row_group_first td {
+border-top-width: 2px;
+}
+#cwcpbowcig .gt_row_group_first th {
+border-top-width: 2px;
+}
+#cwcpbowcig .gt_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#cwcpbowcig .gt_first_summary_row {
+border-top-style: solid;
+border-top-color: #D3D3D3;
+}
+#cwcpbowcig .gt_first_summary_row.thick {
+border-top-width: 2px;
+}
+#cwcpbowcig .gt_last_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#cwcpbowcig .gt_grand_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#cwcpbowcig .gt_first_grand_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-style: double;
+border-top-width: 6px;
+border-top-color: #D3D3D3;
+}
+#cwcpbowcig .gt_last_grand_summary_row_top {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: double;
+border-bottom-width: 6px;
+border-bottom-color: #D3D3D3;
+}
+#cwcpbowcig .gt_striped {
+background-color: rgba(128, 128, 128, 0.05);
+}
+#cwcpbowcig .gt_table_body {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#cwcpbowcig .gt_footnotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#cwcpbowcig .gt_footnote {
+margin: 0px;
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#cwcpbowcig .gt_sourcenotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#cwcpbowcig .gt_sourcenote {
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#cwcpbowcig .gt_left {
+text-align: left;
+}
+#cwcpbowcig .gt_center {
+text-align: center;
+}
+#cwcpbowcig .gt_right {
+text-align: right;
+font-variant-numeric: tabular-nums;
+}
+#cwcpbowcig .gt_font_normal {
+font-weight: normal;
+}
+#cwcpbowcig .gt_font_bold {
+font-weight: bold;
+}
+#cwcpbowcig .gt_font_italic {
+font-style: italic;
+}
+#cwcpbowcig .gt_super {
+font-size: 65%;
+}
+#cwcpbowcig .gt_footnote_marks {
+font-size: 75%;
+vertical-align: 0.4em;
+position: initial;
+}
+#cwcpbowcig .gt_asterisk {
+font-size: 100%;
+vertical-align: 0;
+}
+#cwcpbowcig .gt_indent_1 {
+text-indent: 5px;
+}
+#cwcpbowcig .gt_indent_2 {
+text-indent: 10px;
+}
+#cwcpbowcig .gt_indent_3 {
+text-indent: 15px;
+}
+#cwcpbowcig .gt_indent_4 {
+text-indent: 20px;
+}
+#cwcpbowcig .gt_indent_5 {
+text-indent: 25px;
+}
+#cwcpbowcig .katex-display {
+display: inline-flex !important;
+margin-bottom: 0.75em !important;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_heading">
+      <td colspan="8" class="gt_heading gt_title gt_font_normal gt_bottom_border" style>Summary table of results from statistical analysis of all 36 validation studies of the ring test of the XETA test guideline. This table shows the results of the automatic analysis carried out with the data_prep() function of the xeredar R-package. Furthermore, this table summarises the results of the original analysis carried out by John Green using SAS. As both approaches led to exactly the same conclusions, only one table is shown. In case a substance was identified to be Thyroid active, the respective cell is colored green, whereas when a substance was identified to be Thyroid inactive, the cell was colored blue. For the study applying testosterone in the french lab, the writing is colored red, because in the original table in the validation document, this substance was incorrectly classified as Thyroid active due to a data transfer mistake. Furthermore, for the study applying testosterone in the belgium lab, the writing is colored red, as well, because in the validation document, a slip in the column led to incorrectly categorizing the respective results as carried out by the japanese lab2.</td>
+    </tr>
+    
+    <tr class="gt_col_headings gt_spanner_row">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="2" colspan="1" scope="col" id="Chemical">Chemical</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="2" colspan="1" scope="col" id="Expected classification">Expected classification</th>
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="6" scope="colgroup" id="Laboratory">
+        <span class="gt_column_spanner">Laboratory</span>
+      </th>
+    </tr>
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="france">france</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="japan">japan</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="USA">USA</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="japan lab2">japan lab2</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="belgium">belgium</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="portugal">portugal</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><th id="stub_1_1" scope="row" class="gt_row gt_left gt_stub">t3</th>
+<td headers="stub_1_1 Expected classification" class="gt_row gt_left" style="background-color: #C2CD94; color: #000000;">Thyroid active</td>
+<td headers="stub_1_1 france" class="gt_row gt_left" style="background-color: #C2CD94; color: #000000;">Thyroid active</td>
+<td headers="stub_1_1 japan" class="gt_row gt_left" style="background-color: #C2CD94; color: #000000;">Thyroid active</td>
+<td headers="stub_1_1 USA" class="gt_row gt_left" style="background-color: #C2CD94; color: #000000;">Thyroid active</td>
+<td headers="stub_1_1 japan lab2" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td>
+<td headers="stub_1_1 belgium" class="gt_row gt_left" style="background-color: #C2CD94; color: #000000;">Thyroid active</td>
+<td headers="stub_1_1 portugal" class="gt_row gt_left" style="background-color: #C2CD94; color: #000000;">Thyroid active</td></tr>
+    <tr><th id="stub_1_2" scope="row" class="gt_row gt_left gt_stub">ptu</th>
+<td headers="stub_1_2 Expected classification" class="gt_row gt_left" style="background-color: #C2CD94; color: #000000;">Thyroid active</td>
+<td headers="stub_1_2 france" class="gt_row gt_left" style="background-color: #C2CD94; color: #000000;">Thyroid active</td>
+<td headers="stub_1_2 japan" class="gt_row gt_left" style="background-color: #C2CD94; color: #000000;">Thyroid active</td>
+<td headers="stub_1_2 USA" class="gt_row gt_left" style="background-color: #C2CD94; color: #000000;">Thyroid active</td>
+<td headers="stub_1_2 japan lab2" class="gt_row gt_left" style="background-color: #C2CD94; color: #000000;">Thyroid active</td>
+<td headers="stub_1_2 belgium" class="gt_row gt_left" style="background-color: #C2CD94; color: #000000;">Thyroid active</td>
+<td headers="stub_1_2 portugal" class="gt_row gt_left" style="background-color: #C2CD94; color: #000000;">Thyroid active</td></tr>
+    <tr><th id="stub_1_3" scope="row" class="gt_row gt_left gt_stub">t4</th>
+<td headers="stub_1_3 Expected classification" class="gt_row gt_left" style="background-color: #C2CD94; color: #000000;">Thyroid active</td>
+<td headers="stub_1_3 france" class="gt_row gt_left" style="background-color: #C2CD94; color: #000000;">Thyroid active</td>
+<td headers="stub_1_3 japan" class="gt_row gt_left" style="background-color: #C2CD94; color: #000000;">Thyroid active</td>
+<td headers="stub_1_3 USA" class="gt_row gt_left" style="background-color: #C2CD94; color: #000000;">Thyroid active</td>
+<td headers="stub_1_3 japan lab2" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td>
+<td headers="stub_1_3 belgium" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td>
+<td headers="stub_1_3 portugal" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td></tr>
+    <tr><th id="stub_1_4" scope="row" class="gt_row gt_left gt_stub">triac</th>
+<td headers="stub_1_4 Expected classification" class="gt_row gt_left" style="background-color: #C2CD94; color: #000000;">Thyroid active</td>
+<td headers="stub_1_4 france" class="gt_row gt_left" style="background-color: #C2CD94; color: #000000;">Thyroid active</td>
+<td headers="stub_1_4 japan" class="gt_row gt_left" style="background-color: #C2CD94; color: #000000;">Thyroid active</td>
+<td headers="stub_1_4 USA" class="gt_row gt_left" style="background-color: #C2CD94; color: #000000;">Thyroid active</td>
+<td headers="stub_1_4 japan lab2" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td>
+<td headers="stub_1_4 belgium" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td>
+<td headers="stub_1_4 portugal" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td></tr>
+    <tr><th id="stub_1_5" scope="row" class="gt_row gt_left gt_stub">cefuroxime</th>
+<td headers="stub_1_5 Expected classification" class="gt_row gt_left" style="background-color: #B4C6E7; color: #000000;">Thyroid inactive</td>
+<td headers="stub_1_5 france" class="gt_row gt_left" style="background-color: #B4C6E7; color: #000000;">Thyroid inactive</td>
+<td headers="stub_1_5 japan" class="gt_row gt_left" style="background-color: #B4C6E7; color: #000000;">Thyroid inactive</td>
+<td headers="stub_1_5 USA" class="gt_row gt_left" style="background-color: #B4C6E7; color: #000000;">Thyroid inactive</td>
+<td headers="stub_1_5 japan lab2" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td>
+<td headers="stub_1_5 belgium" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td>
+<td headers="stub_1_5 portugal" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td></tr>
+    <tr><th id="stub_1_6" scope="row" class="gt_row gt_left gt_stub">linuron</th>
+<td headers="stub_1_6 Expected classification" class="gt_row gt_left" style="background-color: #C2CD94; color: #000000;">Thyroid active</td>
+<td headers="stub_1_6 france" class="gt_row gt_left" style="background-color: #C2CD94; color: #000000;">Thyroid active</td>
+<td headers="stub_1_6 japan" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td>
+<td headers="stub_1_6 USA" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td>
+<td headers="stub_1_6 japan lab2" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td>
+<td headers="stub_1_6 belgium" class="gt_row gt_left" style="background-color: #C2CD94; color: #000000;">Thyroid active</td>
+<td headers="stub_1_6 portugal" class="gt_row gt_left" style="background-color: #B4C6E7; color: #000000;">Thyroid inactive</td></tr>
+    <tr><th id="stub_1_7" scope="row" class="gt_row gt_left gt_stub">nh3</th>
+<td headers="stub_1_7 Expected classification" class="gt_row gt_left" style="background-color: #C2CD94; color: #000000;">Thyroid active</td>
+<td headers="stub_1_7 france" class="gt_row gt_left" style="background-color: #C2CD94; color: #000000;">Thyroid active</td>
+<td headers="stub_1_7 japan" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td>
+<td headers="stub_1_7 USA" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td>
+<td headers="stub_1_7 japan lab2" class="gt_row gt_left" style="background-color: #C2CD94; color: #000000;">Thyroid active</td>
+<td headers="stub_1_7 belgium" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td>
+<td headers="stub_1_7 portugal" class="gt_row gt_left" style="background-color: #C2CD94; color: #000000;">Thyroid active</td></tr>
+    <tr><th id="stub_1_8" scope="row" class="gt_row gt_left gt_stub">testosterone</th>
+<td headers="stub_1_8 Expected classification" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">Unclear</td>
+<td headers="stub_1_8 france" class="gt_row gt_left" style="background-color: #B4C6E7; color: #D9654B; font-weight: bold;">Thyroid inactive</td>
+<td headers="stub_1_8 japan" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td>
+<td headers="stub_1_8 USA" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td>
+<td headers="stub_1_8 japan lab2" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td>
+<td headers="stub_1_8 belgium" class="gt_row gt_left" style="background-color: #B4C6E7; color: #D9654B; font-weight: bold;">Thyroid inactive</td>
+<td headers="stub_1_8 portugal" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td></tr>
+    <tr><th id="stub_1_9" scope="row" class="gt_row gt_left gt_stub">e2</th>
+<td headers="stub_1_9 Expected classification" class="gt_row gt_left" style="background-color: #B4C6E7; color: #000000;">Thyroid inactive</td>
+<td headers="stub_1_9 france" class="gt_row gt_left" style="background-color: #B4C6E7; color: #000000;">Thyroid inactive</td>
+<td headers="stub_1_9 japan" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td>
+<td headers="stub_1_9 USA" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td>
+<td headers="stub_1_9 japan lab2" class="gt_row gt_left" style="background-color: #B4C6E7; color: #000000;">Thyroid inactive</td>
+<td headers="stub_1_9 belgium" class="gt_row gt_left" style="background-color: #B4C6E7; color: #000000;">Thyroid inactive</td>
+<td headers="stub_1_9 portugal" class="gt_row gt_left" style="background-color: #B4C6E7; color: #000000;">Thyroid inactive</td></tr>
+    <tr><th id="stub_1_10" scope="row" class="gt_row gt_left gt_stub">acetone</th>
+<td headers="stub_1_10 Expected classification" class="gt_row gt_left" style="background-color: #B4C6E7; color: #000000;">Thyroid inactive</td>
+<td headers="stub_1_10 france" class="gt_row gt_left" style="background-color: #B4C6E7; color: #000000;">Thyroid inactive</td>
+<td headers="stub_1_10 japan" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td>
+<td headers="stub_1_10 USA" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td>
+<td headers="stub_1_10 japan lab2" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td>
+<td headers="stub_1_10 belgium" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td>
+<td headers="stub_1_10 portugal" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td></tr>
+    <tr><th id="stub_1_11" scope="row" class="gt_row gt_left gt_stub">isophorone</th>
+<td headers="stub_1_11 Expected classification" class="gt_row gt_left" style="background-color: #B4C6E7; color: #000000;">Thyroid inactive</td>
+<td headers="stub_1_11 france" class="gt_row gt_left" style="background-color: #B4C6E7; color: #000000;">Thyroid inactive</td>
+<td headers="stub_1_11 japan" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td>
+<td headers="stub_1_11 USA" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td>
+<td headers="stub_1_11 japan lab2" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td>
+<td headers="stub_1_11 belgium" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td>
+<td headers="stub_1_11 portugal" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td></tr>
+    <tr><th id="stub_1_12" scope="row" class="gt_row gt_left gt_stub">abamactine</th>
+<td headers="stub_1_12 Expected classification" class="gt_row gt_left" style="background-color: #B4C6E7; color: #000000;">Thyroid inactive</td>
+<td headers="stub_1_12 france" class="gt_row gt_left" style="background-color: #B4C6E7; color: #000000;">Thyroid inactive</td>
+<td headers="stub_1_12 japan" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td>
+<td headers="stub_1_12 USA" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td>
+<td headers="stub_1_12 japan lab2" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td>
+<td headers="stub_1_12 belgium" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td>
+<td headers="stub_1_12 portugal" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td></tr>
+    <tr><th id="stub_1_13" scope="row" class="gt_row gt_left gt_stub">methomyl</th>
+<td headers="stub_1_13 Expected classification" class="gt_row gt_left" style="background-color: #B4C6E7; color: #000000;">Thyroid inactive</td>
+<td headers="stub_1_13 france" class="gt_row gt_left" style="background-color: #B4C6E7; color: #000000;">Thyroid inactive</td>
+<td headers="stub_1_13 japan" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td>
+<td headers="stub_1_13 USA" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td>
+<td headers="stub_1_13 japan lab2" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td>
+<td headers="stub_1_13 belgium" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td>
+<td headers="stub_1_13 portugal" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;">NA</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+</div>
+<div id="references" class="section level1">
+<h1>References</h1>
+<p>OECD. 2019a. Validation Report of the Xenopus Eleutheroembryonic
+Thyroid Signaling Assay (XETA) for the Detection of Thyroid Active
+Substances. OECD.</p>
+<p>OECD. 2019b. TG 248: Xenopus Eleutheroembryonic Thyroid Assay (XETA).
+OECD. <a href="https://doi.org/10.1787/a13f80ee-en" class="uri">https://doi.org/10.1787/a13f80ee-en</a>.</p>
+<p>OECD. 2022b. Test No. 251: Rapid Androgen Disruption Activity
+Reporter (RADAR) Assay. OECD. <a href="https://doi.org/10.1787/da264d82-en" class="uri">https://doi.org/10.1787/da264d82-en</a>.</p>
+<p>OECD. 2022a. Rapid Estrogen Activity in Vivo (REACTIV) Assay (OECD
+Draft TG): Guideline for the Testing of Chemicals, Section 2: Effects on
+Biotic System. OECD.</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

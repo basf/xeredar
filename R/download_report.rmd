@@ -1,0 +1,215 @@
+title: "Statistical analysis of XETA, RADAR or REACTIV studies"
+output: word_document
+params: 
+  resultList: "resultList"
+  conclusion_summary: "conclusion_summary"
+  data : "data"
+
+
+
+### Data processing and residual diagnostics
+
+`r params$resultList[["Justify"]]`. The p-value from the Shapiro-test is: `r round(params$resultList[["NormalityTest"]]$p.value,3)` and from the Levene test: `r round(params$resultList[["LeveneTest"]][2],3)`. Treatment effects varied from `r round(min(params$resultList$Dunnetts[,6]),2)`% at treatment concentration of `r janitor::clean_names(params$resultList$Dunnetts) |> filter('% Incr'== min('% Incr')) |> rownames() |> stringr::str_extract("\\d+.\\d+|\\d+")` and `r round(max(params$resultList$Dunnetts[,6]),2)`% at treatment concentration of `r janitor::clean_names(params$resultList$Dunnetts) |> filter('% Incr'== max('% Incr')) |> rownames()  |> stringr::str_extract("\\d+.\\d+|\\d+")`.
+
+
+
+```{r echo = FALSE, warning = FALSE}
+dat <- params$data |>
+      dplyr::mutate(
+        Removed = !paste(
+        params$data$Replicate,
+        params$data$Conc,
+        params$data$Fluor) 
+         %in%
+      paste(
+        params$resultList[["ProcessedData"]]$Replicate,
+        params$resultList[["ProcessedData"]]$Conc,
+        params$resultList[["ProcessedData"]]$Fluor)) |>
+          gt::gt() |> 
+          gt::tab_header(title= "", 
+          subtitle= "Uploaded data. The 
+          column Removed indicates which measurements
+          were removed for further analysis due to potentially required
+          trimming or outlier removal for fulfilling the ANOVA 
+          assumptions of normally distributed residuals and homogeneous
+          variances among treatment groups.")
+
+dat
+
+```
+
+
+```{r echo = FALSE, warning = FALSE, dpi=600}
+norm <- plot(performance::check_normality(params$resultList[["MixedAnova"]]), type = "density")+
+    ggplot2::theme(text = ggplot2::element_text(size = 6),
+     plot.title = ggplot2::element_text(size = 9), 
+     axis.title = ggplot2::element_text(size = 7), 
+     axis.text= ggplot2::element_text(size = 5))
+hetero <-  plot(performance::check_heteroscedasticity(params$resultList[["MixedAnova"]]))+
+    ggplot2::theme(text = ggplot2::element_text(size = 6),
+     plot.title = ggplot2::element_text(size = 9),
+      axis.title = ggplot2::element_text(size = 7), 
+      axis.text= ggplot2::element_text(size = 5))
+
+ggpubr::ggarrange(norm, hetero, ncol = 2)
+
+```
+
+### Results
+
+```{r, warning=FALSE, echo=FALSE, message= FALSE, dpi=600}
+
+params$resultList[["BoxPlots"]]
+
+```
+
+
+```{r summary of params$resultList processed data, echo= FALSE, warning = FALSE}
+
+
+params$resultList[["SummaryDF"]] |>
+      dplyr::mutate_if(is.numeric, round, 2) |>  
+      gt::gt() |> 
+      gt::tab_header(title= "Data summary per treatment group.",subtitle="
+      The table displays the number of observations (N),  the mean, the standard 
+      deviation and the Coefficient of variation
+      per treatment. Conc refers to the applied 
+      treatment concentration.")
+```
+
+```{r Dunnetts test results params$resultList, warning = FALSE, echo= FALSE, label= tbl-DunnettsTest_params$resultList}
+
+
+params$resultList[["Dunnetts"]] |>
+      tibble::rownames_to_column("Contrasts") |>
+      dplyr::mutate_if(is.numeric, round, 2) |>
+      gt::gt() |>
+      gt::tab_header(title="Result table of the dunnett's
+       two-sided  many-to-one contrast test result.", subtitle = "
+       The table displays the estimated difference (Estimate) and 
+       standard error (SE) between the control and the respective
+       treatment group. The Kenward-Rogers degrees of freedom (df),
+       the t-value and the corresponding adjusted p-value (p)
+        are also displayed.")
+```
+
+```{r Decreasing Williams test result params$resultList, warning = FALSE, echo = FALSE, label = }
+
+params$resultList[["WilliamsIncrease"]] |>
+      dplyr::mutate_if(is.numeric, round, 2) |> 
+      gt::gt() |>
+      gt::tab_header(title="Result table of the increasing Williams trend test", subtitle ="
+      Y.Tilde: The amalgamated means for the respective treatment level;  Y0: The control mean; 
+      DIFF Incr: Difference between Y.Tilde and Y0; SE_DIFF: The standard error of the difference; 
+      DF: Degrees of freedom; WILL Incr: The value of the increasing Williams test statistic;
+      crit Val: The critical value for the increasing Williams test statistic at alpha = 0.05; 
+      Sign: In case the value of the increasing Williams test statistic is greater than the critical value, 
+      the result is significant (Sign = TRUE), otherwise not significant (Sign = FALSE); % Incr: The %
+      increase in the treatment groups in comparison to the control groups.")
+
+```
+
+```{r Increasing Williams test result params$resultList, echo = FALSE, warning = FALSE, label = tbl-WilliamsIncrease_params$resultList}
+
+
+params$resultList[["WilliamsDecrease"]] |>
+      dplyr::mutate_if(is.numeric, round, 2) |>
+      gt::gt() |>
+      gt::tab_header(title="Result table of the decreasing Williams trend test", subtitle = "
+      Y.Tilde: The amalgamated means for the respective treatment level; Y0: The control mean; 
+      DIFF Incr: Difference between Y.Tilde and Y0; SE_DIFF: The standard error of the difference; 
+      DF: Degrees of freedom; WILL Decr: The value of the decreasing Williams test statistic;
+      crit Val: The critical value for the decreasing Williams test statistic at alpha = 0.05; 
+      Sign: In case the value of the decreasing Williams test statistic is greater than the critical value, 
+      the result is significant (Sign = TRUE), otherwise not significant (Sign = FALSE);% Incr: The %
+      increase in the treatment groups in comparison to the control groups. When a decrease is observed
+      this value turns negative.")
+```
+
+```{r Monotonicity test results params$resultList, echo = FALSE, warning= FALSE, label = tbl-monoTest_params$resultList}
+params$resultList[["Monotonicity Test"]] |>
+      dplyr::mutate_if(is.numeric, round, 2) |>
+      gt::gt() |>
+      gt::tab_header(title= "Monotonicity test result 
+        specifying the significance of linear and quadratic contrasts 
+        on the rank transformed data", subtitle= ". The test results together with 
+        the information about the amalgamation of treatment means 
+        available in the increasing and decreasing Williams test results, 
+        as well as the summary output of the mixed ANOVA model which also 
+        provides information about linear and quadratic trends in the data,
+        can additionally serve as support to decide about the presence and absence 
+        of a monototonic treatment response reslationship.")
+
+
+```
+
+
+
+
+# Conclusion
+
+
+```{r final table resultList, warning = FALSE, echo= FALSE, label= tbl-final_table_Unparams$resultList}
+
+
+params$conclusion_summary |> 
+        gt::gt() |> 
+      gt::tab_header(title= " ",subtitle="Conclusion table summarizing the percent effect per
+       Treatment and the results of the post-hoc tests. The table displays the
+       % fluorescence induction in respect to the control. The respective 
+       post-hoc test should be selected based on on the dose-response trend in 
+       the corresponding data. The monotonicity test, the information about amalgamation of
+       treatment means in the Williams test and the summary table of the mixed ANOVA model 
+       can be a support for deciding about the presence or absence of a dose-response trend. 
+       (ns not significant,. marginally significant 
+       ( 0.05 < p > 0.1) ,* significant 
+       (p &le; 0.05), n.d. not determined)")
+
+```
+
+
+\newpage
+
+## R script to produce elements in report
+
+```{r}
+#| eval: false
+rm(list=ls())
+
+instal <- function(package){
+  if(!is.element(package, installed.packages()[,1])){{install.packages(package)}}
+}
+# StatCharrms is not available on CRAN anymore. 
+packages <- c("ARTool","broom","car","dplyr","emmeans","ggplot2","lme4","magrittr","MASS","multcomp","psych","rlang","tidyr", "kableExtra","readxl","knitr","xetaana","stringr")
+sapply(packages, instal)
+sapply(packages, FUN = function(X){do.call("require", list(X))})
+
+dat <- as.data.frame(read_excel('/Data.xls',sheet = 1, col_names = TRUE))
+dat$Replicate <- as.factor(dat$Replicate)
+dat$Conc <- factor(dat$Conc, ordered=TRUE, levels=sort(unique(dat$Conc)))
+dat$Treatment <- as.factor(dat$Treatment)
+dat$Fluor <- as.numeric(dat$Fluor)
+dat$Row <- as.factor(dat$Row)
+
+resultList <- xetaana::data_prep(dat, row = TRUE, dagostino = FALSE,
+                      trimming = TRUE, outlier = TRUE, boxcox = TRUE,
+                      artc = FALSE, alpha = 0.01)
+
+
+kable(resultList[["SummaryDF"]], digits=2)
+kable(resultList[["Dunnetts"]], digits=2)
+kable(resultList[["WilliamsDecrease"]], digits=2)
+kable(resultList [["WilliamsIncrease"]], digits=2)
+kable(resultList[["Monotonicity Test"]],digits=2)
+
+
+qqnorm(resid(resultList[["MixedAnova"]]), main="",cex=2,cex.lab=1.5, cex.axis=1)
+qqline(resid(resultList[["MixedAnova"]]), col = "red", lwd=3, lty=2)           
+plot(resid(resultList[["MixedAnova"]])~fitted(params$resultList[["MixedAnova"]]),main="", xlab ="Fitted values",ylab="Pearson residuals",cex=2, cex.lab=1.5, cex.axis=1 )
+abline(h = 0, col="blue", lwd=3, lty=2)
+
+resultList[["BoxPlots"]] + theme(text = element_text(size = 14)) 
+
+conclusion_summary <- summary(xeredar::data_summary(resultList))
+kable(conclusion_summary)
+```

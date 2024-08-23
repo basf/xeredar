@@ -1,0 +1,19 @@
+
+{
+	"name": "R - base", 
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+	
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"reditorsupport.r",
+				"rdebugger.r-debugger"
+			]
+		}
+	},
+
+
+	"postCreateCommand": "Rscript -e 'bspm::enable(); devtools::install()'"
+}

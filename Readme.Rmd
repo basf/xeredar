@@ -1,0 +1,441 @@
+---
+output: github_document
+
+---
+
+# xeredar <a href="https://dplyr.tidyverse.org"><img src="man/figures/logo.png" align="right" height="138" /></a>
+
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/basf/xeredar/actions/workflows/Package_check.yml/badge.svg)](https://github.com/basf/xeredar/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  echo = TRUE,
+  message = FALSE, 
+  warning = FALSE,
+  comment = "#>"
+)
+```
+
+```{r include=FALSE}
+library(xeredar)
+library(knitr)
+library(purrr)
+library(dplyr)
+library(stringr)
+library(tidyr)
+```
+
+# Background
+
+The package xeredar is an R-package for analysis of the New Approach Methodology (NAM) assays of XETA (Xenopus Eleutheroembryonic Thyroid), RADAR (Rapid Androgen Disruption Activity Reporter) and REACTIV (Rapid Estrogen ACTivity In Vivo) for assessing endocrine effects of chemicals on the thyroid, androgen/steroid and estrogen axis. The functionality is based on the SAS-script recommended in the Annex 13 of OECD test guideline No. 248 of the XETA assay ([2019](https://www.oecd-ilibrary.org/environment/tg-248-xenopus-eleutheroembryonic-thyroid-assay-xeta_a13f80ee-en)), written by John Green.
+
+# Data requirements
+
+Data frames that are supposed to be analyzed with xeredar needs to fulfill certain requirements. The data frame or tibble needs to contain the following column headers:
+
+```{r}
+
+knitr::kable(head(xeredar::testDataSpiked))
+
+```
+
+The type of each column should be accordingly:
+
+```{r}
+
+knitr::kable(purrr::map_df(xeredar::testDataSpiked, class))
+```
+
+
+**Replicate** (i.e. run), **Treatment** (i.e. a unique name for each treatment level in either spiked or unspiked mode) and **Row** (i.e. exposure vessel) can either be *factor* or *character* columns, but **Fluor** (i.e. measured fluorescence) must always be *numeric* and **Conc** (i.e. concentration of test item) must always contain *ordered factors*. The order of the columns is not relevant.
+
+**Replicate**, **Treatment** and **Row** can either be *factor* or *character* columns, but **Fluor** must always be *numeric* and **Conc** must always contain *ordered factors*. The order of the columns is not relevant. It is important that the decimal separator is a period instead of a comma. 
+ 
+
+
+When simply aiming to use the `data_prep()` function, the data frame needs to either contain spiked treatments or unspiked treatments. When still having spiked and unspiked treatments in one data frame they should be separated. Imagine you have a XETA data frame (dat) which contains spiked and unspiked treatments as well as the T4 positive control. The T3 or T4 additions are designated by "T3" and "T4" in the **Treatment** column. The spiked and unspiked datasets could quickly be subset using the following code:
+
+```{r eval= FALSE}
+datSpiked <- dat[grepl("T3",dat$Treatment),] # spiked data 
+
+datUnspiked <- setdiff(dat,datSpiked)
+datUnspiked <- datUnspiked[which(datUnspiked$Treatment != "T4"),] # unspiked data
+```
+
+# Running default XETA analysis
+
+To demonstrate how to run XETA analysis, we will use one of the data sets by the French lab containing the spiked and unspiked measurements from the XETA ring test as included in OECD test guideline No. 248 of the XETA assay ([2019](https://www.oecd-ilibrary.org/environment/tg-248-xenopus-eleutheroembryonic-thyroid-assay-xeta_a13f80ee-en)).
+
+```{r warning=FALSE}
+xeta_spiked <- xeredar::valid_data_xeta[["ptu_france_spiked"]]
+xeta_unspiked <- xeredar::valid_data_xeta[["ptu_france_unspiked"]]
+
+```
+
+The default XETA analysis can be run using the `data_prep()` function with either spiked or unspiked data. This function automatically decides whether trimming, outlier removal and/or transformations are conducted following the manuscript (Spyridonov et al. unpublished). The actual analysis is carried out by the `ana()` function. The `ana()` function is called by the `data_prep()` function and does not need to be called separately. For this dataset, the exposure well ID (Row of the 96 well plate) is not recorded, therefore, we set the `row` argument to `FALSE`. In this case, we use the reduced mixed ANOVA model where the exposure well ID is not included as a random effect. Please specify `row=TRUE` if the exposure well ID is recorded and you want to use the full mixed ANOVA model.
+
+```{r warning=FALSE}
+
+xeta_spiked_result <- xeredar::data_prep(dataframe = xeta_spiked, row = FALSE)
+xeta_unspiked_result <- xeredar::data_prep(dataframe = xeta_unspiked, row= FALSE)
+```
+
+Here we use the spike data as an example to demonstrate the output of the `data_prep()` function.
+
+The outputs of the `data_prep()` function are lists containing the following elements:
+
+-   A reasoning for the recommended transformation and trimming. `r xeta_spiked_result$Justify`
+
+```{r warning=FALSE}
+xeta_spiked_result$Justify
+```
+
+-   A data frame of the processed data (e.g. raw data, trimmed, transformed, or outlier removed) used for actual statistical testing following the reasoning. The box plots of the processed data per run/replicate (i.e. each panel represents each run/replicate) are also provided for visual inspection.
+
+```{r warning=FALSE, fig.width=7, fig.height=4}
+knitr::kable(head(xeta_spiked_result$ProcessedData))
+xeta_spiked_result$BoxPlots
+```
+
+-   Summary tables of the processed data (per replicate and overall)
+
+```{r warning=FALSE}
+knitr::kable(xeta_spiked_result$SummaryDF_Rep, caption="Summary statistics of fluorescence in different concentrations of test item per replicate")
+knitr::kable(xeta_spiked_result$SummaryDF, caption="Summary statistics of fluorescence in different concentrations of test item of all replicates")
+```
+
+-   Tables of results evaluated using increasing/decreasing Williams test and/or Dunnett's test, if applicable.
+
+In the the Williams' test result tables, *Y.Tilde* is the amalgamated mean of the fluorescence in each treatment group, *Y0* is the mean of the control fluorescence, *DIFF* is the estimated difference between the treatment and the control, *SE_DIFF* is the standard error of the Williams' test, *DF* is the degrees of freedom for Williams' test, *WILL Incr* or *Will Decr* is the Williams' test statistic, *crit Val* is the critical value of Williams distribution, *Sign* suggests if there is significant difference between the treatment and the control, and *%Incr* is the percent increase of the fluorescence compared to the control.
+
+In the Dunnett's test result table, *Estimate* is the estimated difference between the treatment and the control, *SE* is the standard error of the mixed ANOVA model, *t value* is the Dunnett's test statistic, *adj p* is the adjusted p value and *%Incr* is the percent increase of the fluorescence compared to the control.
+
+```{r warning=FALSE}
+knitr::kable(xeta_spiked_result$WilliamsIncrease, caption="Increasing Williams' test")
+knitr::kable(xeta_spiked_result$WilliamsDecrease, caption="Decreasing Williams' test")
+knitr::kable(xeta_spiked_result$Dunnetts, caption="Dunnett's test")
+```
+
+-   Further information about the normality test (Shapiro-Wilk), the homogeneity of variance test (Levene's test) of residuals of the mixed ANOVA model, the monotonicity test and the model fit.
+
+```{r warning=FALSE}
+xeta_spiked_result$NormalityTest
+xeta_spiked_result$LeveneTest
+xeta_spiked_result$`Monotonicity Test`
+xeta_spiked_result$MixedAnova
+```
+
+*The list output from running the data_prep() function can be summarized with the  data_summary() function.*
+
+```{r warning=FALSE}
+xeredar::data_summary(xeta_spiked_result) |> knitr::kable()
+
+
+```
+
+
+# Running default RADAR analysis
+
+To demonstrate how to run RADAR analysis, we will use one of the data sets by the Pos_mDHT_Fraunhofer_RADAR containing the spiked and unspiked measurements from the RADAR study validation in the lab Fraunhofer with an androgen axis active chemical.
+
+```{r warning=FALSE}
+radar_spiked <- xeredar::Pos_mDHT_Fraunhofer_RADAR_Spiked
+radar_unspiked <- xeredar::Pos_mDHT_Fraunhofer_RADAR_Unspiked
+
+```
+
+The default radar analysis can be run using the `data_prep()` function with either spiked or unspiked data. This function automatically decides whether trimming, outlier removal and/or transformations are conducted following the manuscript (Spyridonov et al. unpublished). The actual analysis is carried out by the `ana()` function. The `ana()` function is called by the `data_prep()` function and does not need to be called separately. the analysis the RADAR assay follows the description of the Method 2 (the mixed ANOVA approach) in the Annex 8: methods for the statistical analysis of RADAR assay data of the OECD TG 251 ([2022](https://www.oecd-ilibrary.org/environment/test-no-251-rapid-androgen-disruption-activity-reporter-radar-assay_da264d82-en)). For this dataset, the exposure well ID (Row of the 96 well plate) is not recorded, therefore, we set the `row` argument to `FALSE`. In this case, we use the reduced mixed ANOVA model where the exposure well ID is not included as a random effect. Please specify `row=TRUE` if the exposure well ID is recorded and you want to use the full mixed ANOVA model. Trimming is not required.
+
+```{r warning=FALSE, fig.show='hide'}
+
+radar_spiked_result <- xeredar::data_prep(dataframe = radar_spiked, row = FALSE, trimming=FALSE)
+radar_unspiked_result <- xeredar::data_prep(dataframe = radar_unspiked, row= FALSE, trimming=FALSE)
+```
+
+Here we use the spike data as an example to demonstrate the output of the `data_prep()` function.
+
+The outputs of the `data_prep()` function are lists containing the following elements:
+
+-   A reasoning for the recommended transformation and trimming. `r radar_spiked_result$Justify`
+
+```{r warning=FALSE}
+radar_spiked_result$Justify
+```
+
+-   A data frame of the processed data (e.g. raw data, transformed, or outlier removed) used for actual statistical testing following the reasoning. The box plots of the processed data per run/replicate (i.e. each panel represents each run/replicate) are also provided for visual inspection.
+
+```{r warning=FALSE, fig.width=7, fig.height=4}
+knitr::kable(head(radar_spiked_result$ProcessedData))
+radar_spiked_result$BoxPlots
+```
+
+-   Summary tables of the processed data (per replicate and overall)
+
+```{r warning=FALSE}
+knitr::kable(radar_spiked_result$SummaryDF_Rep, caption="Summary statistics of fluorescence in different concentrations of test item per replicate")
+knitr::kable(radar_spiked_result$SummaryDF, caption="Summary statistics of fluorescence in different concentrations of test item of all replicates")
+```
+
+-   Tables of results evaluated using increasing/decreasing Williams test and/or Dunnett's test, if applicable.
+
+In the the Williams' test result tables, *Y.Tilde* is the amalgamated mean of the fluorescence in each treatment group, *Y0* is the mean of the control fluorescence, *DIFF* is the estimated difference between the treatment and the control, *SE_DIFF* is the standard error of the Williams' test, *DF* is the degrees of freedom for Williams' test, *WILL Incr* or *Will Decr* is the Williams' test statistic, *crit Val* is the critical value of Williams distribution, *Sign* suggests if there is significant difference between the treatment and the control, and *%Incr* is the percent increase of the fluorescence compared to the control.
+
+In the Dunnett's test result table, *Estimate* is the estimated difference between the treatment and the control, *SE* is the standard error of the mixed ANOVA model, *t value* is the Dunnett's test statistic, *adj p* is the adjusted p value and *%Incr* is the percent increase of the fluorescence compared to the control.
+
+```{r warning=FALSE}
+knitr::kable(radar_spiked_result$WilliamsIncrease, caption="Increasing Williams' test")
+knitr::kable(radar_spiked_result$WilliamsDecrease, caption="Decreasing Williams' test")
+knitr::kable(radar_spiked_result$Dunnetts, caption="Dunnett's test")
+```
+
+-   Further information about the normality test (Shapiro-Wilk), the homogeneity of variance test (Levene's test) of residuals of the mixed ANOVA model, the monotonicity test and the model fit.
+
+```{r warning=FALSE}
+radar_spiked_result$NormalityTest
+radar_spiked_result$LeveneTest
+radar_spiked_result$`Monotonicity Test`
+radar_spiked_result$MixedAnova
+```
+
+*The list output from running the data_prep() function can be summarized with the  data_summary() function.*
+
+```{r warning=FALSE}
+xeredar::data_summary(radar_spiked_result) |>
+  knitr::kable()
+
+
+```
+
+
+# Running default REACTIV analysis
+
+To demonstrate how to run REACTIV analysis, we will use one artificial data set containing the spiked and unspiked measurements.
+
+```{r warning=FALSE}
+reactiv_spiked <- reactiv_data |>
+  dplyr::filter(Spiked == TRUE)
+reactiv_unspiked <- reactiv_data |>
+  dplyr::filter(Spiked == FALSE)
+
+```
+
+The default REACTIV analysis can be run using the `data_prep()` function with either spiked or unspiked data. This function automatically decides whether trimming, outlier removal and/or transformations are conducted following the manuscript (Spyridonov et al. unpublished). The actual analysis is carried out by the `ana()` function. The `ana()` function is called by the `data_prep()` function and does not need to be called separately. The analysis the REACTIV assay follows the description of the Method 2 (the mixed ANOVA approach) in the Annex 8: methods for the statistical analysis of REACTIV assay data of the Amended Draft new Test Guideline for the REACTIV assay for second WNT-review ([30.01.2024](https://www.oecd.org/chemicalsafety/testing/amended-draft-new-test-guideline-for-the-rapid-estrogen-ACTivity-in-vivo-assay.pdf)). For this assay, the `row` argument should be set to `FALSE`. Trimming is not required. In case there are residuals deviate from normality and variance homogeneity, outlier removal (e.g. by applying the Tukey rule (Green et al., 2018) and data transformation (for example log- or square-root) can be conducted.
+
+```{r warning=FALSE}
+
+reactiv_spiked_result <- xeredar::data_prep(dataframe = reactiv_spiked, row = FALSE, trimming=FALSE, boxcox = FALSE)
+reactiv_unspiked_result <- xeredar::data_prep(dataframe = reactiv_unspiked, row= FALSE, trimming=FALSE, boxcox = FALSE)
+```
+
+Here we use the spiked data as an example to demonstrate the output of the `data_prep()` function.
+
+The outputs of the `data_prep()` function are lists containing the following elements:
+
+-   A reasoning for the recommended transformation and trimming. `r reactiv_spiked_result$Justify`
+
+```{r warning=FALSE}
+reactiv_spiked_result$Justify
+```
+
+-   A data frame of the processed data (e.g. raw data, transformed, or outlier removed) used for actual statistical testing following the reasoning. The box plots of the processed data per run/replicate (i.e. each panel represents each run/replicate) are also provided for visual inspection.
+
+```{r warning=FALSE, fig.width=7, fig.height=4}
+knitr::kable(head(reactiv_spiked_result$ProcessedData))
+reactiv_spiked_result$BoxPlots
+```
+
+-   Summary tables of the processed data (per replicate and overall)
+
+```{r warning=FALSE}
+knitr::kable(reactiv_spiked_result$SummaryDF_Rep, caption="Summary statistics of fluorescence in different concentrations of test item per replicate")
+knitr::kable(reactiv_spiked_result$SummaryDF, caption="Summary statistics of fluorescence in different concentrations of test item of all replicates")
+```
+
+-   Tables of results evaluated using increasing/decreasing Williams test and/or Dunnett's test, if applicable.
+
+In the Williams' test result tables, *Y.Tilde* is the amalgamated mean of the fluorescence in each treatment group, *Y0* is the mean of the control fluorescence, *DIFF* is the estimated difference between the treatment and the control, *SE_DIFF* is the standard error of the Williams' test, *DF* is the degrees of freedom for Williams' test, *WILL Incr* or *Will Decr* is the Williams' test statistic, *crit Val* is the critical value of Williams distribution, *Sign* suggests if there is significant difference between the treatment and the control, and *%Incr* is the percent increase of the fluorescence compared to the control.
+
+In the Dunnett's test result table, *Estimate* is the estimated difference between the treatment and the control, *SE* is the standard error of the mixed ANOVA model, *t value* is the Dunnett's test statistic, *adj p* is the adjusted p value and *%Incr* is the percent increase of the fluorescence compared to the control.
+
+```{r warning=FALSE}
+knitr::kable(reactiv_spiked_result$WilliamsIncrease, caption="Increasing Williams' test")
+knitr::kable(reactiv_spiked_result$WilliamsDecrease, caption="Decreasing Williams' test")
+knitr::kable(reactiv_spiked_result$Dunnetts, caption="Dunnett's test")
+```
+
+-   Further information about the normality test (Shapiro-Wilk), the homogeneity of variance test (Levene's test) of residuals of the mixed ANOVA model, the monotonicity test and the model fit.
+
+```{r warning=FALSE}
+reactiv_spiked_result$NormalityTest
+reactiv_spiked_result$LeveneTest
+reactiv_spiked_result$`Monotonicity Test`
+reactiv_spiked_result$MixedAnova
+```
+
+*The list output from running the data_prep() function can be summarized with the  data_summary() function.*
+
+```{r warning=FALSE}
+xeredar::data_summary(reactiv_spiked_result) |>
+  knitr::kable()
+
+
+```
+
+# Validation
+
+
+In order to validate the package, we will analyze all 36 XETA ring test studies and produce a table that can be compared with the table in the validation report. The validation studies are available in the `xeredar` package. In case the produced table is in line with the table description, then the package is doing exactly what it is supposed to do and analyzed all 36 XETA ring test studies correctly.
+
+```{r warning=FALSE, message=FALSE, fig.show='hide'}
+
+
+
+out <-  !stringr::str_detect(names(xeredar::valid_data_xeta), "_combined$" )
+list_dfs <- xeredar::valid_data_xeta[out]
+data_prep_trim <- function(df){
+  df <- df |> dplyr::filter(!is.na(Fluor))
+  dat_trim <- xeredar::trim(df)$dat_trim
+  results <- xeredar::data_prep(dat_trim, row= FALSE, trim=FALSE, outlier = FALSE)
+  return(results)
+}
+results <- purrr::map(list_dfs, data_prep_trim,  .progress = TRUE)
+worked <- !purrr::map_vec(results, is.list)
+
+difficult_dfs <- list_dfs[worked]
+
+changing_alpha <- c(c(1,5) %o% 10^-(3:17), 0)
+
+decreasing_alpha <- function(df, vector){
+  for(i in vector){
+    df <- df |> filter(!is.na(Fluor))
+    dat_trim <- xeredar::trim(df)$dat_trim
+    result <- data_prep(df, row=FALSE, alpha = i, trim=FALSE, outlier = FALSE)
+    if(is.list(result)){
+      break
+    } else{
+      next
+    }
+  }
+  result[["alpha"]] <- i
+  return(result)
+}
+
+
+result_difficult_dfs <- purrr::map(.x=difficult_dfs, .f= decreasing_alpha, vector = changing_alpha)
+results_alpha_decrease <- results[map_vec(results, is.list)]
+
+results <- append(results_alpha_decrease, result_difficult_dfs)
+check_positive <- function(df){
+  if(df[["Monotonicity Test"]]$`Pr(>|t|)`[1] >= 0.01 &
+     df[["Monotonicity Test"]]$`Pr(>|t|)`[2] <= 0.01 ) {
+    return(df[["Dunnetts"]])
+  } else if (length(unique(df$WilliamsIncrease$Y.Tilde)) - 1 > floor(nrow(df$WilliamsIncrease)/2) | 
+             length(unique(df$WilliamsDecrease$Y.Tilde)) - 1 > floor(nrow(df$WilliamsDecrease)/2)) { 
+    return(list(WilliamsIncrease = df[["WilliamsIncrease"]], WilliamsDecrease = df[["WilliamsDecrease"]])) 
+  } else{
+    return(df[["Dunnetts"]])
+    } 
+}
+
+results_2 <- purrr::map(results, check_positive)
+Williams <- !purrr::map_vec(results_2, is.data.frame)
+
+significances <- function(df, Williams= FALSE){
+  if(Williams) {
+    if(length(unique(df$WilliamsIncrease$Y.Tilde)) - 1 > 
+       floor(nrow(df$WilliamsIncrease)/2)){
+      TRUE %in% df[["WilliamsIncrease"]]$Sign
+    } else{
+      TRUE %in% df[["WilliamsDecrease"]]$Sign
+    }
+  } else{
+    df[["adj p"]][length(df[["adj p"]])] < 0.05
+  }
+}
+
+prelim_thyroid_active <- purrr::map2_vec(results_2, Williams, significances)
+
+country_substance_spiked <- names(results_2) |> stringr::str_split("\\_") |> as.data.frame() |> t() |> dplyr::as_tibble() |> dplyr::rename("substance" = "V1", "country" = "V2", "spiked" = "V3") |> dplyr::mutate(Sign = prelim_thyroid_active)
+
+
+increase_h12 <- results |> purrr::map_vec(function(x) {(x[["SummaryDF"]]$Mean[nrow(x[["SummaryDF"]])] / x[["SummaryDF"]]$Mean[1])-1 })
+
+
+thyroid_active <- country_substance_spiked |> dplyr::mutate(Increase = increase_h12,
+                                                            thyroid_active = ifelse(Increase >= 0.12 & Sign == TRUE & spiked == "unspiked" |
+                                                                                      abs(Increase) >= 0.12 & Sign == TRUE & spiked == "spiked" , "Thyroid active", "Thyroid inactive")) |> 
+  dplyr::select(!Sign, !Increase) |> 
+  dplyr::summarise(thyroid_active = ifelse("Thyroid active" %in% thyroid_active, "Thyroid active", "Thyroid inactive"), .by= c(substance, country)) |> 
+  dplyr::mutate(
+    country = ifelse(country== "japan" & substance %in% c("e2", "nh3") |
+                       country == "japan2", "japan lab2", country)) |>
+  pivot_wider(names_from = country, values_from = thyroid_active) |>
+  dplyr::arrange(match(substance, c("t3", "ptu", "t4", "triac", "cefuroxime","linuron", "nh3", "testosterone","e2", "abamectine", "acetone", "isophorone", "metholmyl"))) |> 
+  mutate(`Expected classification`= c("Thyroid active", "Thyroid active", "Thyroid active", "Thyroid active", "Thyroid inactive", "Thyroid active", "Thyroid active", "Unclear", "Thyroid inactive", "Thyroid inactive","Thyroid inactive","Thyroid inactive","Thyroid inactive"))|>
+  dplyr::relocate(c(substance,`Expected classification`, france,japan, usa, `japan lab2`, belgium, portugal ))  |> 
+  dplyr::rename(USA = usa)
+```
+
+```{r}
+gt::gt(thyroid_active, rowname_col = "substance") |>
+  gt::tab_options(column_labels.text_transform = "capitalize",
+              stub.text_transform = "uppercase") |>
+  gt::data_color(columns= -substance, na_color = "white", palette = c("#c2cd94", "#b4c6e7", "white")) |>
+  gt::tab_stubhead(label = "Chemical")|>
+  gt::tab_spanner(
+    label = "Laboratory",
+    columns = c(france, japan, USA, 'japan lab2', belgium, portugal)
+  ) |>
+    gt::tab_style(
+    style = list(
+      gt::cell_text(color = "#D9654B", weight= "bold")
+    ),
+    locations = gt::cells_body(
+      columns = c(france, belgium), # not needed if coloring all columns
+      rows = 8)
+  )  |> 
+   gt::tab_header(
+    title = "Summary table of results from statistical analysis of all 36 validation studies of the ring test of the XETA test guideline. This table shows the results of the automatic analysis carried out with the data_prep() function of the xeredar R-package. Furthermore, this table summarises the results of the original analysis carried out by John Green using SAS. As both approaches led to exactly the same conclusions, only one table is shown. In case a substance was identified to be Thyroid active, the respective cell is colored green, whereas when a substance was identified to be Thyroid inactive, the cell was colored blue. For the study applying testosterone in the french lab, the writing is colored red, because in the original table in the validation document, this substance was incorrectly classified as Thyroid active due to a data transfer mistake. Furthermore, for the study applying testosterone in the belgium lab, the writing is colored red, as well, because in the validation document, a slip in the column led to incorrectly categorizing the respective results as carried out by the japanese lab2.")
+
+
+
+
+
+```
+
+# The shiny app
+
+xeredar contains an integrated shiny app that is available to the users by writing `run_app()` into the console. The only requirement to use the app is the successful installation of xeredar. When the app started, the user has a couple of options to analyse the data. These options can be adjusted by clicking on the little gear sign next to *Inputs*. The following options are available: 
+
+- **Use d'Agostino test?**
+  - The default here is that this is not selected meaning the Shapiro-Wilk test is utilized to check for residual normality. However, the RADAR TG mentions the d'Agostino test which is why it is also available to the users. 
+- **Apply 10% Trimming**
+  - The default here is that this is selected, meaning that 10% Trimming is conducted when the ANOVA assumptions are not fulfilled by the raw data. Please be aware that this does not mean that 10% Trimming is always conducted. It is only conducted, when the raw data is violating the residual normality and variance homogeneity assumptions, tested with the respective test with an adjustable alpha level. 
+- **Remove outliers**
+  - The default here is that this is selected, meaning that outlier removal is conducted when the ANOVA assumptions are not fulfilled by the raw data or by 10% Trimming, if it is selected above. 
+- **Try Box-Cox transformation**
+  - The default here is that this is selected, meaning that box-cox transformation is carried out when the ANOVA assumptions are not fulfilled by the raw or processed data (10% Trimming or outlier removal) nor by log- or square-root transformation. Box-Cox transformation is not mentioned in any of the TGs which is why it is left to the choice of the user.
+- **alpha for residual normality and variance homogeneity tests**
+  - The default here is 0.05. In the TGs the alpha level is discussed so the user is adviced to inspect the requirements of the respective study to analyze. 
+
+The next option in the little box on the top-left of the app is to set a hook or remove the hook to decide whether the exposure well ID is regarded as random term in the underlying mixed ANOVA model. In case a REACTIV study is investigated the hook should be removed. For RADAR and XETA, the hook should be placed as long as information about the exposure well ID was documented. Of course, reducing the complexity of the random term might also make sense for XETA and RADAR studies in case no variance is explained by the exposure well-ID. However, this choice is left to the user. 
+
+When own data is supposed to be analyzed xlsx files with either spiked or unspiked data can be uploaded. Please make sure that the uploaded data fulfills the Data requirements explained above. In case of insecurity, inspect the uploaded data structure of the pre-loaded example data.
+
+The app contains several output boxes about the required data processing, a conclusion table, the uploaded data, residual diagnostics plots, boxplots, a data summary table, the output of the residual normality and homogeneity tests, the monotonicity test result, the Dunnett's and increasing and decreasing Williams test result tables along with the summary table of the underlying mixed ANOVA model. 
+
+The depicted information can be downloaded in a simple report by clicking on the button ** Word report**. It takes a couple of seconds until the final docx file is produced and ready to download. Avoid clicking the button several times as this can lead to long waiting times and the production of several reports.
+
+# References
+
+OECD. 2019a. Validation Report of the Xenopus Eleutheroembryonic Thyroid Signaling Assay (XETA) for the Detection of Thyroid Active Substances. OECD.
+
+OECD. 2019b. TG 248: Xenopus Eleutheroembryonic Thyroid Assay (XETA). OECD. https://doi.org/10.1787/a13f80ee-en.
+
+OECD. 2022b. Test No. 251: Rapid Androgen Disruption Activity Reporter (RADAR) Assay. OECD. https://doi.org/10.1787/da264d82-en.
+
+OECD. 2022a. Rapid Estrogen Activity in Vivo (REACTIV) Assay (OECD Draft TG): Guideline for the Testing of Chemicals, Section 2: Effects on Biotic System. OECD.

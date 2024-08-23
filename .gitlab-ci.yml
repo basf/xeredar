@@ -1,0 +1,21 @@
+stages:
+  - test
+
+test:
+  stage: test
+  allow_failure: true
+  tags:
+    - docker
+  image: registry.roqs.basf.net/base-images/r:latest
+  before_script:
+    - Rscript -e "devtools::install()"
+  script:
+    - Rscript -e "devtools::session_info()"
+    # Check style
+    - Rscript -e "Sys.setenv(LINTR_COMMENT_BOT=FALSE); lintr::lint_package()"
+    # RUN R CMD CHECK
+    - Rscript -e "devtools::check(args = c('--timings','--no-tests'), env_vars = c('_R_CHECK_LICENSE_'=FALSE))"
+    # create coverage report
+    - Rscript -e "covr::package_coverage()"
+  coverage: '/^.*Coverage: (\d+\.\d+%)/'
+
