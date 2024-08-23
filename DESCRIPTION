@@ -14,13 +14,13 @@ Authors@R: c(
         comment = "some functions from StatCharrms"),
     person(given = "BASF SE", role = "cph"),
     person("Andrew John", "Tindall",
-        email = "tindall@watchfrog.fr", role = c("res", "rev"),
+        email = "tindall@watchfrog.fr", role = c("res"),
         comment = c(ORCID = "0000-0001-8119-0923", affiliation = "WatchFrog, Evry, FR")),
     person("David", "Du Pasquier",
-        email = "pasquier@watchfrog.fr", role = c("res", "rev"),
+        email = "pasquier@watchfrog.fr", role = c("res"),
         comment = c(affiliation = "Watchfrog, Evry, FR")),
     person("Gregory F", "Lemkine",
-        email = "lemkine@watchfrog.fr", role = c("res", "rev"),
+        email = "lemkine@watchfrog.fr", role = c("res"),
         comment = c(affiliation = "WatchFrog, Evry, FR"))
     )
 Description: The statistical evaluation follows the methodology described in Annex 13 of the OECD Test Guideline No. 248.
