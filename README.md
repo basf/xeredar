@@ -2587,28 +2587,13 @@ and analyzed all 36 XETA ring test studies correctly.
         title = "Summary table of results from statistical analysis of all 36 validation studies of the ring test of the XETA test guideline. This table shows the results of the automatic analysis carried out with the data_prep() function of the xeredar R-package. Furthermore, this table summarises the results of the original analysis carried out by John Green using SAS. As both approaches led to exactly the same conclusions, only one table is shown. In case a substance was identified to be Thyroid active, the respective cell is colored green, whereas when a substance was identified to be Thyroid inactive, the cell was colored blue. For the study applying testosterone in the french lab, the writing is colored red, because in the original table in the validation document, this substance was incorrectly classified as Thyroid active due to a data transfer mistake. Furthermore, for the study applying testosterone in the belgium lab, the writing is colored red, as well, because in the validation document, a slip in the column led to incorrectly categorizing the respective results as carried out by the japanese lab2.")
 
 
-</style>
+
 <table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
   <thead>
     <tr class="gt_heading">
       <td colspan="8" class="gt_heading gt_title gt_font_normal gt_bottom_border" style>Summary table of results from statistical analysis of all 36 validation studies of the ring test of the XETA test guideline. This table shows the results of the automatic analysis carried out with the data_prep() function of the xeredar R-package. Furthermore, this table summarises the results of the original analysis carried out by John Green using SAS. As both approaches led to exactly the same conclusions, only one table is shown. In case a substance was identified to be Thyroid active, the respective cell is colored green, whereas when a substance was identified to be Thyroid inactive, the cell was colored blue. For the study applying testosterone in the french lab, the writing is colored red, because in the original table in the validation document, this substance was incorrectly classified as Thyroid active due to a data transfer mistake. Furthermore, for the study applying testosterone in the belgium lab, the writing is colored red, as well, because in the validation document, a slip in the column led to incorrectly categorizing the respective results as carried out by the japanese lab2.</td>
     </tr>
     
-    <tr class="gt_col_headings gt_spanner_row">
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="2" colspan="1" scope="col" id="Chemical">Chemical</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="2" colspan="1" scope="col" id="Expected classification">Expected classification</th>
-      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="6" scope="colgroup" id="Laboratory">
-        <span class="gt_column_spanner">Laboratory</span>
-      </th>
-    </tr>
-    <tr class="gt_col_headings">
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="france">france</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="japan">japan</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="USA">USA</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="japan lab2">japan lab2</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="belgium">belgium</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="portugal">portugal</th>
-    </tr>
   </thead>
   <tbody class="gt_table_body">
     <tr><th id="stub_1_1" scope="row" class="gt_row gt_left gt_stub">t3</th>
