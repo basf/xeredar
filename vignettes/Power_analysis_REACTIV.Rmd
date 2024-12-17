@@ -29,7 +29,7 @@ editor_options:
 rm(list = ls())
 #devtools::install_git("https://gitlab.roqs.basf.net/WillmsIM/xetaana.git")
 #install.packages("easystats")
-lapply(c("readxl","tidyverse","xetaana","ARTool","broom","car","dplyr","emmeans","ggplot2","lme4","magrittr","MASS","multcomp","psych","tidyr", "kableExtra","knitr","purrr","gt","easystats","rlang","drc","truncnorm", "DHARMa"), require, character.only=TRUE)
+lapply(c("readxl","tidyverse","xeredar","ARTool","broom","car","dplyr","emmeans","ggplot2","lme4","magrittr","MASS","multcomp","psych","tidyr", "kableExtra","knitr","purrr","gt","easystats","rlang","drc","truncnorm", "DHARMa", "devtools"), require, character.only=TRUE)
 
 ```
 
@@ -42,58 +42,21 @@ data <- xeredar::REACTIV_valid_data_table_spiked_unspiked |>
 
 ```
 
-```{r}
-#| label: FunctionCheckAna
-#| include: false
-
-check <- function(df,resultList){
-  for(i in unique(df$Compound)){
-    print(paste0(i, "Spiked", sep=" "))
-    
-    datSpiked <- df |> filter(Compound == i &  stringr::str_detect(Treatment, "Testosté|FETAX Testo|\\+ Testosterone") )
-    
-    datSpiked$Conc <- factor(datSpiked$Conc, ordered=TRUE, levels=sort(unique(datSpiked$Conc)))
-    
-  
-    print(paste0(i, "Unspiked", sep=" "))
-    
-    datUnspiked <- df |> filter(Compound == i &  !stringr::str_detect(Treatment, "Testosté|FETAX Testo| + Testosterone") )
-    
-    datUnspiked$Conc <- factor(datUnspiked$Conc, ordered=TRUE, levels=sort(unique(datUnspiked$Conc)))
-    
-    MixedAnova <- MixedAnova <- lme4::lmer(Fluor ~ Conc+ (1|Replicate)+(1|Replicate:Conc),  data = datSpiked, REML=TRUE)
-    resultSpiked <- xetaana::ana(dataframe =datSpiked, mixedaov = MixedAnova)
-    resultSpiked[["MixedAnova"]] <- MixedAnova
-    
-    MixedAnova <- MixedAnova <- lme4::lmer(Fluor ~ Conc+ (1|Replicate)+(1|Replicate:Conc),  data = datUnspiked, REML=TRUE)
-    resultUnspiked <- xetaana::ana(dataframe =datUnspiked, mixedaov = MixedAnova)
-    resultUnspiked[["MixedAnova"]] <- MixedAnova
-  
-    
-    resultList[[i]][["Spiked"]] <- resultSpiked
-  
-    resultList[[i]][["Unspiked"]] <- resultUnspiked
-  }
-  resultList
-}
-
-
-```
 
 ```{r}
 #| label: FunctionGetVarianceInfo
 #| include: false
-GetVarianceInfo <- function(SpikedUnspiked, ListAnovas, resultList){
+GetVarianceInfo <- function(ListAnovas, resultList){
   for(i in names(ListAnovas)){
-    MeanControl <- insight::get_intercept(ListAnovas[[i]][[SpikedUnspiked]][["MixedAnova"]])
-    VarianceControl <- insight::get_varcov(ListAnovas[[i]][[SpikedUnspiked]][["MixedAnova"]])[1,1]
-    SDExperiment <- insight::get_sigma(ListAnovas[[i]][[SpikedUnspiked]][["MixedAnova"]])
+    MeanControl <- insight::get_intercept(ListAnovas[[i]])
+    VarianceControl <- insight::get_varcov(ListAnovas[[i]])[1,1]
+    SDExperiment <- insight::get_sigma(ListAnovas[[i]])
     CVControl <- SDExperiment/MeanControl
-    VarianceRep <- insight::get_variance(ListAnovas[[i]][[SpikedUnspiked]][["MixedAnova"]])$var.intercept[2]
-    VarianceConcRep <- insight::get_variance(ListAnovas[[i]][[SpikedUnspiked]][["MixedAnova"]])$var.intercept[1]
-    ICC <- performance::icc(ListAnovas[[i]][[SpikedUnspiked]][["MixedAnova"]], tolerance = 0)
+    VarianceRep <- insight::get_variance(ListAnovas[[i]])$var.intercept[2]
+    VarianceConcRep <- insight::get_variance(ListAnovas[[i]])$var.intercept[1]
+    ICC <- performance::icc(ListAnovas[[i]], tolerance = 0)
     print(ICC)
-    simultedResiduals <- DHARMa::simulateResiduals(ListAnovas[[i]][[SpikedUnspiked]][["MixedAnova"]], plot = F)
+    simultedResiduals <- DHARMa::simulateResiduals(ListAnovas[[i]], plot = F)
     zero_inflated <- as.numeric(DHARMa::testZeroInflation(simultedResiduals)[["p.value"]])
     if(!is.list(ICC)){
       ICC <- data.frame(adj_ICC = 0)
@@ -121,8 +84,12 @@ resultList
 ```{r}
 #| include: false
 resultList <- list()
-ANOVAs <- furrr::future_map(data, ~ lme4::lmer(Fluor ~ Conc + (1|Replicate) + (1|Replicate:Conc), data = .x, REML = TRUE))
+ANOVAs <- furrr::future_map(data, ~ purrr::possibly(function(df) {
+  lme4::lmer(Fluor ~ Conc + (1|Replicate) + (1|Replicate:Conc), data = df, REML = TRUE)
+}, otherwise = "error", quiet = FALSE)(.x))
 
+Variance_info <- list()
+Variance_Info <- GetVarianceInfo(ListAnovas = ANOVAs, Variance_info)
 
 ```
 

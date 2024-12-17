@@ -118,8 +118,6 @@ names <- stringr::str_replace(names, "-resultats R|-resultats  R","")
 names <- stringr::str_replace(names, "2022-CHG-Marlo-","")
 ```
 
-
-
 ```{r}
 #| include: false
 DataUSA <- extractDat(list=USA, path = path, names = names, results = CombinedDatUSA)
@@ -129,7 +127,6 @@ DataUSA <- purrr::map_df(DataUSA,~ dplyr::mutate(.x, Country = "USA"))
 CombinedDatUSA <- spiked_unspiked(DataUSA, CombinedDatUSA)
 
 ```
-
 
 ```{r}
 #| label: UKdat1
@@ -182,7 +179,6 @@ DataJapan <- map_df(DataJapan, ~as.data.frame(.x) |> dplyr::mutate(.x, Country =
 CombinedDatJapan <- spiked_unspiked(DataJapan, CombinedDatJapan)
 ```
 
-
 ```{r}
 #| label: Germanydat1
 #| include: false
@@ -207,7 +203,6 @@ DataGermany <- map_df(DataGermany, ~as.data.frame(.x) |> dplyr::mutate(.x, Count
 CombinedDatGermany <- spiked_unspiked(DataGermany, CombinedDatGermany)
 ```
 
-
 ```{r}
 #| label: Francedat1
 #| include: false
@@ -231,7 +226,6 @@ DataFrance <- map_df(DataFrance, ~as.data.frame(.x) |> dplyr::mutate(.x, Country
 CombinedDatFrance <- spiked_unspiked(DataFrance, CombinedDatFrance)
 ```
 
-
 ```{r}
 #| label: Denmarkdat1
 #| include: false
@@ -252,9 +246,6 @@ DataDenmark <- extractDat(list=Denmark, path = path, names = names, results = Co
 DataDenmark <- map_df(DataDenmark, ~as.data.frame(.x) |> dplyr::mutate(.x, Country = "Denmark"))
 CombinedDatDenmark <- spiked_unspiked(DataDenmark, CombinedDatDenmark)
 ```
-
-
-
 
 ```{r}
 

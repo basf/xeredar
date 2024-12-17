@@ -11,7 +11,7 @@ For all datasets the column Conc is a factor with specified
 levels, as the Williams test will otherwise not order the concentrations in
 the correct way.}
 \format{
-An object of class \code{list} of length 44.
+An object of class \code{list} of length 88.
 }
 \usage{
 RADAR_valid_data_table_spiked_unspiked
