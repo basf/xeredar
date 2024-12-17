@@ -1,0 +1,264 @@
+---
+title: "ValidationStudyDataExploration"
+author: "Inka Spyridonov"
+format: html
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+## Functions
+
+```{r}
+#| label: Settings
+#| include: false
+rm(list = ls())
+#devtools::install_git("https://gitlab.roqs.basf.net/WillmsIM/xetaana.git")
+#install.packages("easystats")
+lapply(c("readxl","tidyverse","xetaana","ARTool","broom","car","dplyr","emmeans","ggplot2","lme4","magrittr","MASS","multcomp","psych","tidyr", "kableExtra","knitr","purrr","gt","easystats","rlang","drc","truncnorm", "DHARMa"), require, character.only=TRUE)
+
+```
+
+```{r}
+#| label: FunctionExtractDat
+#| include: false
+extractDat <- function( list, path, names, results){
+  for(i in 1:length(list)){
+    Iter.path <- file.path(paste(path,list[[i]],sep="/"))
+    R1_Unsp <- read_xlsx(path=Iter.path,sheet = "R1", range = "B4:M20")
+    R1_Sp <- read_xlsx(path=Iter.path,sheet = "R1", range = "O4:V20")
+    R1 <- cbind(R1_Unsp, R1_Sp)
+    R1 <- R1 |> pivot_longer(cols = 1:length(unique(colnames(R1))),names_to = "Treatment", values_to = "Fluor")
+    R1$Treatment <- str_replace(R1$Treatment,"Témoin solvant|Solvent control","FETAX" )
+    R1$Treatment <- str_replace(R1$Treatment,"Testo -30µg/L","FETAX Testo" )
+    R1 <- R1 |> filter( !str_detect(R1$Treatment,"EE2+| FAD")) |> mutate(Conc= str_extract(Treatment,"\\d+,\\d+|\\d+.\\d+|\\d+"))
+    R1$Conc <- str_replace(R1$Conc, ",","\\.") 
+    R1[which(is.na(R1$Conc)),"Conc"] <- "0"
+    R1$Replicate <- "1"
+    
+    R2_Unsp <- read_xlsx(path=Iter.path,sheet = "R2", range = "B4:M20")
+    R2_Sp <- read_xlsx(path=Iter.path,sheet = "R2", range = "O4:V20")
+    R2 <- cbind(R2_Unsp, R2_Sp)
+    R2 <- R2 |> pivot_longer(cols = 1:length(unique(colnames(R2))),names_to = "Treatment", values_to = "Fluor")
+    R2$Treatment <- str_replace(R2$Treatment,"Témoin solvant|Solvent control","FETAX" )
+    R2$Treatment <- str_replace(R2$Treatment,"Testo -30µg/L","FETAX Testo" )
+    R2 <- R2 |> filter( !str_detect(R2$Treatment,"EE2+| FAD")) |> mutate(Conc= str_extract(Treatment,"\\d+,\\d+|\\d+.\\d+|\\d+"))
+    R2$Conc <- str_replace(R2$Conc, ",","\\.") 
+    R2[which(is.na(R2$Conc)),"Conc"] <- "0"
+    R2$Replicate <- "2"
+    
+    R3_Unsp <- read_xlsx(path=Iter.path,sheet = "R3", range = "B4:M20")
+    R3_Sp <- read_xlsx(path=Iter.path,sheet = "R3", range = "O4:V20")
+    R3 <- cbind(R3_Unsp, R3_Sp)
+    R3 <- R3 |> pivot_longer(cols = 1:length(unique(colnames(R3))),names_to = "Treatment", values_to = "Fluor")
+    R3$Treatment <- str_replace(R3$Treatment,"Témoin solvant|Solvent control","FETAX" )
+    R3$Treatment <- str_replace(R3$Treatment,"Testo -30µg/L","FETAX Testo" )
+    R3 <- R3 |> filter( !str_detect(R3$Treatment,"EE2+| FAD")) |> mutate(Conc= str_extract(Treatment,"\\d+,\\d+|\\d+.\\d+|\\d+"))
+    R3$Conc <- str_replace(R3$Conc, ",","\\.") 
+    R3[which(is.na(R3$Conc)),"Conc"] <- "0"
+    R3$Replicate <- "3"
+    print(i)
+    
+    New <- rbind(R1,R2,R3)
+    New <- New |> filter(!is.na(Fluor))
+    New$Replicate <- as.factor(New$Replicate)
+    New$Treatment <- as.factor(New$Treatment)
+    New$Fluor <- as.numeric(New$Fluor)
+    New$Conc <- as.numeric(as.character(New$Conc))
+    New$Compound <- names[i]
+    results[[names[i]]] <- New
+    
+  }
+  print(results)
+}
+
+```
+
+```{r}
+#| label: function_spiked_unspiked
+#| include: false
+
+spiked_unspiked <- function(df, resultList){
+  for(i in unique(df$Compound)){
+    print(paste0(i, "Spiked", sep=" "))
+    
+    Spiked <- df |> filter(Compound == i &  stringr::str_detect(Treatment, "Testosté|FETAX Testo|\\+ Testosterone") )
+    
+    Spiked$Conc <- factor(Spiked$Conc, ordered=TRUE, levels=sort(unique(Spiked$Conc)))
+    
+  
+    print(paste0(i, "Unspiked", sep=" "))
+    
+    Unspiked <- df |> filter(Compound == i &  !stringr::str_detect(Treatment, "Testosté|FETAX Testo| + Testosterone") )
+    
+    Unspiked$Conc <- factor(Unspiked$Conc, ordered=TRUE, levels=sort(unique(Unspiked$Conc)))
+    
+    resultList[[paste0(i, "_", unique(Spiked$Country))]][["Spiked"]] <- Spiked
+  
+    resultList[[paste0(i, "_", unique(Unspiked$Country))]][["Unspiked"]] <- Unspiked
+  }
+  resultList
+}
+
+
+```
+
+## creating final data object
+
+```{r}
+#| label: USAdat1
+#| include: false
+USA <- list.files(path="./data/REACTIV all data_InkaBroomed/USA/",pattern = "xlsx$")
+
+path <- file.path("./data/REACTIV all data_InkaBroomed/USA/")
+
+CombinedDatUSA <- list()
+names <- unlist(stringr::str_extract_all(USA,c("\\d{4}\\D+"))) 
+names <- stringr::str_replace(names, "-resultats R|-resultats  R","")
+names <- stringr::str_replace(names, "2022-CHG-Marlo-","")
+```
+
+
+
+```{r}
+#| include: false
+DataUSA <- extractDat(list=USA, path = path, names = names, results = CombinedDatUSA)
+
+DataUSA <- purrr::map_df(DataUSA,~ dplyr::mutate(.x, Country = "USA"))
+
+CombinedDatUSA <- spiked_unspiked(DataUSA, CombinedDatUSA)
+
+```
+
+
+```{r}
+#| label: UKdat1
+#| include: false
+
+UK <- list.files(path="./data/REACTIV all data_InkaBroomed/UK/",pattern = "xlsx$")
+UK <- UK[-12]
+
+
+
+path <- file.path("./data/REACTIV all data_InkaBroomed/UK/")
+
+CombinedDatUK <- list()
+names <- unlist(stringr::str_extract_all(UK,c("\\- \\D+"))) 
+names <- stringr::str_replace(names, "\\- ","")
+names <- stringr::str_replace(names, ".xlsx","")
+
+```
+
+```{r}
+#| label: UKdat2
+#| include: false
+
+
+DataUK <- extractDat(list=UK, path = path, names = names, results = CombinedDatUK) 
+DataUK <- purrr::map_df(DataUK,~ dplyr::mutate(.x, Country = "UK"))
+
+
+CombinedDatUK <- spiked_unspiked(DataUK, CombinedDatUK)
+```
+
+```{r}
+#| label: Japandat1
+#| include: false
+Japan <- list.files(path="./data/REACTIV all data_InkaBroomed/Japan/",pattern = "xlsx$")
+
+path <- file.path("./data/REACTIV all data_InkaBroomed/Japan/")
+
+CombinedDatJapan <- list()
+names <- Japan
+names <- stringr::str_replace(names, "_run1_3.xlsx|_run1-3.xlsx|-run1_3.xlsx","")
+
+```
+
+```{r}
+#| label: Japandat2
+#| include: false
+DataJapan <- extractDat(list=Japan, path = path, names = names, results = CombinedDatJapan)
+DataJapan <- map_df(DataJapan, ~as.data.frame(.x) |> dplyr::mutate(.x, Country = "Japan"))
+CombinedDatJapan <- spiked_unspiked(DataJapan, CombinedDatJapan)
+```
+
+
+```{r}
+#| label: Germanydat1
+#| include: false
+Germany <- list.files(path="./data/REACTIV all data_InkaBroomed/Germany/",pattern = "xlsx$")
+Germany <- Germany[-9]
+
+path <- file.path("./data/REACTIV all data_InkaBroomed/Germany/")
+
+CombinedDatGermany <- list()
+names <- Germany
+names <- stringr::str_replace(names, "Analysis-|Analysis","")
+names <- stringr::str_replace(names, "R\\d-R\\d-R\\d.xlsx|R\\d_R\\d_R\\d.xlsx","")
+names <- stringr::str_replace(names, " |-","")
+names <- stringr::str_replace(names, " ","")
+```
+
+```{r}
+#| label: Germanydat2
+#| include: false
+DataGermany <- extractDat(list=Germany, path = path, names = names, results = CombinedDatGermany)
+DataGermany <- map_df(DataGermany, ~as.data.frame(.x) |> dplyr::mutate(.x, Country = "Germany"))
+CombinedDatGermany <- spiked_unspiked(DataGermany, CombinedDatGermany)
+```
+
+
+```{r}
+#| label: Francedat1
+#| include: false
+France <- list.files(path="./data/REACTIV all data_InkaBroomed/France/",pattern = "xlsx$")
+
+
+path <- file.path("./data/REACTIV all data_InkaBroomed/France/")
+
+
+CombinedDatFrance <- list()
+names <- France
+names <- stringr::str_replace(names, "2021-CHG-ACH-|2021-CHG-CBA-|Analyse-CHG-|Analyse CHG-|Analyse CHG -|Analyse ","")
+names <- stringr::str_replace(names, ".xlsx","")
+```
+
+```{r}
+#| label: Francedat2
+#| include: false
+DataFrance <- extractDat(list=France, path = path, names = names, results = CombinedDatFrance)
+DataFrance <- map_df(DataFrance, ~as.data.frame(.x) |> dplyr::mutate(.x, Country = "France"))
+CombinedDatFrance <- spiked_unspiked(DataFrance, CombinedDatFrance)
+```
+
+
+```{r}
+#| label: Denmarkdat1
+#| include: false
+Denmark <- list.files(path="./data/REACTIV all data_InkaBroomed/Denmark/",pattern = "xlsx$")
+Denmark <- Denmark[-4]
+
+path <- file.path("./data/REACTIV all data_InkaBroomed/Denmark/")
+
+CombinedDatDenmark <- list()
+names <- Denmark
+names <- stringr::str_replace(names, "_analyses.xlsx|.xlsx ","")
+```
+
+```{r}
+#| label: Denmarkdat2
+#| include: false
+DataDenmark <- extractDat(list=Denmark, path = path, names = names, results = CombinedDatDenmark)
+DataDenmark <- map_df(DataDenmark, ~as.data.frame(.x) |> dplyr::mutate(.x, Country = "Denmark"))
+CombinedDatDenmark <- spiked_unspiked(DataDenmark, CombinedDatDenmark)
+```
+
+
+
+
+```{r}
+
+REACTIV_valid_data_table_spiked_unspiked <- c(CombinedDatUSA, CombinedDatUK, CombinedDatJapan, CombinedDatGermany, CombinedDatFrance, CombinedDatDenmark)
+
+
+```

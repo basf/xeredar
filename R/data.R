@@ -48,176 +48,24 @@
 #' in the correct way.
 "testDataUnspiked"
 
-#' Negative_Amant_IDEA_RADAR data used for testing the functions.
-#' It contains spiked and unspiked data.The column Conc is a factor with
-#' specified levels, as the Williams test will otherwise not order the
-#' concentrations in the correct way. This dataset is from the RADAR study
-#' validation in the lab IDEA with an inert chemical .
-"Negative_Amant_IDEA_RADAR"
-
-#' Negative_Amant_IDEA_RADAR_Spiked data used for testing the functions.
-#' It contains only spiked data.The column Conc is a factor with specified
+#' RADAR_valid_data_table_spiked_unspiked list of data used for testing the
+#' functions.
+#' It contains spiked and unspiked data from all substances and labs from the
+#' RADAR validation studies.
+#' For all datasets the column Conc is a factor with specified
 #' levels, as the Williams test will otherwise not order the concentrations in
-#' the correct way. This dataset is from the RADAR study validation in the lab
-#' IDEA with an inert chemical.
-"Negative_Amant_IDEA_RADAR_Spiked"
+#' the correct way.
+"RADAR_valid_data_table_spiked_unspiked"
 
-#' Negative_Amant_IDEA_RADAR_Unspiked data used for testing the functions.
-#' It contains only unspiked data.The column Conc is a factor with specified
+
+#' REACTIV_valid_data_table_spiked_unspiked list of data used for testing the
+#' functions.
+#' It contains spiked and unspiked data from all substances and labs from the
+#' REACTIV validation studies.
+#' For all datasets the column Conc is a factor with specified
 #' levels, as the Williams test will otherwise not order the concentrations in
-#' the correct way. This dataset is from the RADAR study validation in the lab
-#' IDEA with an inert chemical .
-"Negative_Amant_IDEA_RADAR_Unspiked"
-
-
-#' Negative_Amant_Watchfrog_RADAR data used for testing the functions.
-#' It contains spiked and unspiked data.The column Conc is a factor with
-#' specified levels, as the Williams test will otherwise not order the
-#' concentrations in the correct way. This dataset is from the RADAR study
-#'  validation in the lab Watchfrog with an inert chemical.
-"Negative_Amant_Watchfrog_RADAR"
-
-#' Negative_Amant_Watchfrog_RADAR_Spiked data used for testing the functions.
-#' It contains only spiked data.The column Conc is a factor with specified
-#' levels, as the Williams test will otherwise not order the concentrations in
-#' the correct way. This dataset is from the RADAR study validation in the lab
-#' Watchfrog with an inert chemical .
-"Negative_Amant_Watchfrog_RADAR_Spiked"
-
-#' Negative_Amant_Watchfrog_RADAR_Unspiked data used for testing the functions.
-#' It contains only unspiked data.The column Conc is a factor with specified
-#' levels, as the Williams test will otherwise not order the concentrations in
-#' the correct way. This dataset is from the RADAR study validation in the lab
-#' Watchfrog with an inert chemical .
-"Negative_Amant_Watchfrog_RADAR_Unspiked"
-
-#' Negative_Amant_FIWI_RADAR data used for testing the functions.
-#' It contains spiked and unspiked data.The column Conc is a factor with
-#' specified levels, as the Williams test will otherwise not order the
-#' concentrations in the correct way. This dataset is from the RADAR study
-#' validation in the lab FIWI with an inert chemical.
-"Negative_Amant_FIWI_RADAR"
-
-#' Negative_Amant_FIWI_RADAR_Spiked data used for testing the functions. It
-#' contains only spiked data.The column Conc is a factor with specified levels,
-#' as the Williams test will otherwise not order the concentrations in the
-#' correct way. This dataset is from the RADAR study validation in the lab
-#' FIWI with an inert chemical.
-"Negative_Amant_FIWI_RADAR_Spiked"
-
-#' Negative_Amant_FIWI_RADAR_Unspiked data used for testing the functions.
-#' It contains only unspiked data.
-#' The column Conc is a factor with specified levels, as the Williams test will
-#' otherwise not order the concentrations in the correct way. This dataset is
-#' from the RADAR study validation in the lab FIWI with an inert chemical.
-"Negative_Amant_FIWI_RADAR_Unspiked"
-
-#' Pos_Anas_CEFAS_RADAR data used for testing the functions. It contains spiked
-#' and unspiked data.The column Conc is a factor with specified levels, as the
-#' Williams test will otherwise not order the concentrations in the correct way.
-#' This dataset is from the RADAR study validation in the lab Cefas with an
-#' androgen axis active chemical.
-"Pos_Anas_CEFAS_RADAR"
-
-#' Pos_Anas_CEFAS_RADAR_Spiked data used for testing the functions.
-#' It contains only spiked data.The column Conc is a factor with specified
-#' levels, as the Williams test will otherwise not order the concentrations
-#' in the correct way. This dataset is from the RADAR study validation in the
-#' lab Cefas with an androgen axis active chemical.
-"Pos_Anas_CEFAS_RADAR_Spiked"
-
-#' Pos_Anas_CEFAS_RADAR_Unspiked data used for testing the functions.
-#' It contains only unspiked data.The column Conc is a factor with specified
-#' levels, as the Williams test will otherwise not order the concentrations in
-#' the correct way. This dataset is from the RADAR study validation in the lab
-#' Cefas with an androgen axis active chemical.
-"Pos_Anas_CEFAS_RADAR_Unspiked"
-
-
-#' Pos_Anas_FIWI_RADAR data used for testing the functions. It contains spiked
-#' and unspiked data.The column Conc is a factor with specified levels, as the
-#' Williams test will otherwise not order the concentrations in the correct way.
-#' This dataset is from the RADAR study validation in the lab FIWI with an
-#' androgen axis active chemical.
-"Pos_Anas_FIWI_RADAR"
-
-#' Pos_Anas_FIWI_RADAR_Spiked data used for testing the functions.
-#' It contains only spiked data.The column Conc is a factor with specified
-#' levels, as the Williams test will otherwise not order the concentrations
-#' in the correct way. This dataset is from the RADAR study validation in the
-#' lab FIWI with an androgen axis active chemical.
-"Pos_Anas_FIWI_RADAR_Spiked"
-
-#' Pos_Anas_FIWI_RADAR_Unspiked data used for testing the functions.
-#' It contains only unspiked data.The column Conc is a factor with specified
-#' levels, as the Williams test will otherwise not order the concentrations in
-#' the correct way. This dataset is from the RADAR study validation in the lab
-#' FIWI with an androgen axis active chemical.
-"Pos_Anas_FIWI_RADAR_Unspiked"
-
-
-#' Pos_Anas_IDEA_RADAR data used for testing the functions.
-#' It contains spiked and unspiked data.The column Conc is a factor with
-#' specified levels, as the Williams test will otherwise not order the
-#' concentrations in the correct way. This dataset is from the RADAR study
-#' validation in the lab IDEA with an androgen axis active chemical.
-"Pos_Anas_IDEA_RADAR"
-
-#' Pos_Anas_IDEA_RADAR_Spiked data used for testing the functions.
-#' It contains only spiked data.The column Conc is a factor with specified
-#' levels, as the Williams test will otherwise not order the concentrations in
-#' the correct way. This dataset is from the RADAR study validation in the lab
-#' IDEA with an androgen axis active chemical.
-"Pos_Anas_IDEA_RADAR_Spiked"
-
-#' Pos_Anas_IDEA_RADAR_Unspiked data used for testing the functions.
-#' It contains only unspiked data.The column Conc is a factor with specified
-#' levels, as the Williams test will otherwise not order the concentrations in
-#' the correct way. This dataset is from the RADAR study validation in the lab
-#' IDEA with an androgen axis active chemical.
-"Pos_Anas_IDEA_RADAR_Unspiked"
-
-#' Pos_Anas_Watchfrog_RADAR data used for testing the functions.
-#' It contains spiked and unspiked data.The column Conc is a factor with
-#' specified levels, as the Williams test will otherwise not order the
-#' concentrations in the correct way. This dataset is from the RADAR study
-#' validation in the lab Watchfrog with an androgen axis active chemical.
-"Pos_Anas_Watchfrog_RADAR"
-
-#' Pos_Anas_Watchfrog_RADAR_Spiked data used for testing the functions.
-#' It contains only spiked data.The column Conc is a factor with specified
-#' levels, as the Williams test will otherwise not order the concentrations in
-#' the correct way. This dataset is from the RADAR study validation in the lab
-#' Watchfrog with an androgen axis active chemical.
-"Pos_Anas_Watchfrog_RADAR_Spiked"
-
-#' Pos_Anas_Watchfrog_RADAR_Unspiked data used for testing the functions.
-#' It contains only unspiked data.The column Conc is a factor with specified
-#' levels, as the Williams test will otherwise not order the concentrations in
-#' the correct way. This dataset is from the RADAR study validation in the lab
-#' Watchfrog with an androgen axis active chemical.
-"Pos_Anas_Watchfrog_RADAR_Unspiked"
-
-#' Pos_mDHT_Fraunhofer_RADAR data used for testing the functions.
-#' It contains spiked and unspiked data.The column Conc is a factor with
-#' specified levels, as the Williams test will otherwise not order the
-#' concentrations in the correct way. This dataset is from the RADAR study
-#' validation in the lab Fraunhofer with an androgen axis active chemical.
-"Pos_mDHT_Fraunhofer_RADAR"
-
-#' Pos_mDHT_Fraunhofer_RADAR_Spiked data used for testing the functions.
-#' It contains only spiked data.The column Conc is a factor with specified
-#' levels, as the Williams test will otherwise not order the concentrations in
-#' the correct way. This dataset is from the RADAR study validation in the lab
-#' Fraunhofer with an androgen axis active chemical.
-"Pos_mDHT_Fraunhofer_RADAR_Spiked"
-
-#' Pos_mDHT_Fraunhofer_RADAR_Unspiked data used for testing the functions.
-#' It contains only unspiked data.The column Conc is a factor with specified
-#' levels, as the Williams test will otherwise not order the concentrations in
-#' the correct way. This dataset is from the RADAR study validation in the lab
-#' Fraunhofer with an androgen axis active chemical.
-"Pos_mDHT_Fraunhofer_RADAR_Unspiked"
+#' the correct way.
+"REACTIV_valid_data_table_spiked_unspiked"
 
 
 #' REACTIV data used for testing the functions.

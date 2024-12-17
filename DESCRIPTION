@@ -52,7 +52,7 @@ Imports:
     shinyWidgets,
     tibble,
     tidyr
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Depends:
     R (>= 4.3),
     Matrix

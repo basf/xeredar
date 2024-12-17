@@ -1,0 +1,298 @@
+---
+title: "Reproducing power analysis of publication"
+author: "Inka Marie Spyridonov"
+date: "2024-12-17"
+vignette: >
+  %\VignetteIndexEntry{User guide}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+To reproduce the power analysis in the publication the following code has to be executed: 
+
+
+---
+title: "ValidationStudyDataExploration"
+author: "Inka Spyridonov"
+format: html
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+## Functions
+
+```{r}
+#| label: Settings
+#| include: false
+rm(list = ls())
+#devtools::install_git("https://gitlab.roqs.basf.net/WillmsIM/xetaana.git")
+#install.packages("easystats")
+lapply(c("readxl","tidyverse","xetaana","ARTool","broom","car","dplyr","emmeans","ggplot2","lme4","magrittr","MASS","multcomp","psych","tidyr", "kableExtra","knitr","purrr","gt","easystats","rlang","drc","truncnorm", "DHARMa"), require, character.only=TRUE)
+
+```
+
+
+
+```{r}
+
+data <- xeredar::REACTIV_valid_data_table_spiked_unspiked |> 
+  purrr::list_flatten()
+
+```
+
+```{r}
+#| label: FunctionCheckAna
+#| include: false
+
+check <- function(df,resultList){
+  for(i in unique(df$Compound)){
+    print(paste0(i, "Spiked", sep=" "))
+    
+    datSpiked <- df |> filter(Compound == i &  stringr::str_detect(Treatment, "Testosté|FETAX Testo|\\+ Testosterone") )
+    
+    datSpiked$Conc <- factor(datSpiked$Conc, ordered=TRUE, levels=sort(unique(datSpiked$Conc)))
+    
+  
+    print(paste0(i, "Unspiked", sep=" "))
+    
+    datUnspiked <- df |> filter(Compound == i &  !stringr::str_detect(Treatment, "Testosté|FETAX Testo| + Testosterone") )
+    
+    datUnspiked$Conc <- factor(datUnspiked$Conc, ordered=TRUE, levels=sort(unique(datUnspiked$Conc)))
+    
+    MixedAnova <- MixedAnova <- lme4::lmer(Fluor ~ Conc+ (1|Replicate)+(1|Replicate:Conc),  data = datSpiked, REML=TRUE)
+    resultSpiked <- xetaana::ana(dataframe =datSpiked, mixedaov = MixedAnova)
+    resultSpiked[["MixedAnova"]] <- MixedAnova
+    
+    MixedAnova <- MixedAnova <- lme4::lmer(Fluor ~ Conc+ (1|Replicate)+(1|Replicate:Conc),  data = datUnspiked, REML=TRUE)
+    resultUnspiked <- xetaana::ana(dataframe =datUnspiked, mixedaov = MixedAnova)
+    resultUnspiked[["MixedAnova"]] <- MixedAnova
+  
+    
+    resultList[[i]][["Spiked"]] <- resultSpiked
+  
+    resultList[[i]][["Unspiked"]] <- resultUnspiked
+  }
+  resultList
+}
+
+
+```
+
+```{r}
+#| label: FunctionGetVarianceInfo
+#| include: false
+GetVarianceInfo <- function(SpikedUnspiked, ListAnovas, resultList){
+  for(i in names(ListAnovas)){
+    MeanControl <- insight::get_intercept(ListAnovas[[i]][[SpikedUnspiked]][["MixedAnova"]])
+    VarianceControl <- insight::get_varcov(ListAnovas[[i]][[SpikedUnspiked]][["MixedAnova"]])[1,1]
+    SDExperiment <- insight::get_sigma(ListAnovas[[i]][[SpikedUnspiked]][["MixedAnova"]])
+    CVControl <- SDExperiment/MeanControl
+    VarianceRep <- insight::get_variance(ListAnovas[[i]][[SpikedUnspiked]][["MixedAnova"]])$var.intercept[2]
+    VarianceConcRep <- insight::get_variance(ListAnovas[[i]][[SpikedUnspiked]][["MixedAnova"]])$var.intercept[1]
+    ICC <- performance::icc(ListAnovas[[i]][[SpikedUnspiked]][["MixedAnova"]], tolerance = 0)
+    print(ICC)
+    simultedResiduals <- DHARMa::simulateResiduals(ListAnovas[[i]][[SpikedUnspiked]][["MixedAnova"]], plot = F)
+    zero_inflated <- as.numeric(DHARMa::testZeroInflation(simultedResiduals)[["p.value"]])
+    if(!is.list(ICC)){
+      ICC <- data.frame(adj_ICC = 0)
+    } else{
+      ICC <- ICC |> broom::tidy() 
+      ICC <- ICC[1,3] |> rename(adj_ICC = mean)
+    }
+    resultList[[i]]$MeanControl <- MeanControl
+    resultList[[i]]$SDExperiment <- SDExperiment
+    resultList[[i]]$CVControl <- CVControl
+    resultList[[i]]$SDRep <- sqrt(VarianceRep)
+    resultList[[i]]$SDConcRep <- sqrt(VarianceConcRep)
+    resultList[[i]]$ICC <- ICC
+    resultList[[i]]$zeroInflated <- zero_inflated
+    
+  }
+resultList
+  }
+```
+
+### USA
+
+#### Spiked
+
+```{r}
+#| include: false
+resultList <- list()
+ANOVAs <- furrr::future_map(data, ~ lme4::lmer(Fluor ~ Conc + (1|Replicate) + (1|Replicate:Conc), data = .x, REML = TRUE))
+
+
+```
+
+```{r}
+#| include: false
+
+InfoUSAdfSpiked <-  dplyr::bind_rows(GetVarianceInfo("Spiked", resultUSAPerCompound, resultList = resultList), .id="Compound") |> mutate(Spiked = TRUE, Country = "USA")
+```
+
+#### Unspiked
+
+```{r}
+#| include: false
+InfoUSAdfUnspiked <- dplyr::bind_rows(GetVarianceInfo("Unspiked", resultUSAPerCompound, resultList = resultList),.id="Compound") |> mutate(Spiked = FALSE, Country = "USA")
+```
+
+### UK
+
+#### Spiked
+
+```{r}
+#| include: false
+resultList <- list()
+resultUK <- check(df= DataUK, resultList=resultList)
+
+```
+
+```{r}
+#| include: false
+InfoUKdfSpiked <- dplyr::bind_rows(GetVarianceInfo("Spiked", resultUK, resultList = resultList), .id="Compound") |> mutate(Spiked = TRUE, Country = "UK")
+```
+
+#### Unspiked
+
+```{r}
+#| include: false
+InfoUKdfUnspiked <- dplyr::bind_rows(GetVarianceInfo("Unspiked", resultUK, resultList = resultList), .id="Compound") |> mutate(Spiked = FALSE, Country = "UK")
+```
+
+### Japan
+
+#### Spiked
+
+```{r}
+#| include: false
+resultList <- list()
+resultJapan <- check(df= DataJapan, resultList=resultList)
+
+```
+
+```{r}
+#| include: false
+InfoJapandfSpiked <- dplyr::bind_rows(GetVarianceInfo("Spiked", resultJapan, resultList = resultList), .id="Compound") |> mutate(Spiked = TRUE, Country = "Japan")
+```
+
+#### Unspiked
+
+```{r}
+#| include: false
+InfoJapandfUnspiked <- dplyr::bind_rows(GetVarianceInfo("Unspiked", resultJapan, resultList = resultList), .id="Compound") |> mutate(Spiked = FALSE, Country = "Japan")
+```
+
+### Germany
+
+#### Spiked
+
+```{r}
+#| include: false
+resultList <- list()
+resultGermany <- check(df= DataGermany, resultList=resultList)
+
+```
+
+```{r}
+#| include: false
+InfoGermanydfSpiked <- dplyr::bind_rows(GetVarianceInfo("Spiked", resultGermany, resultList = resultList), .id="Compound") |> mutate(Spiked = TRUE, Country = "Germany")
+```
+
+#### Unspiked
+
+```{r}
+#| include: false
+InfoGermanydfUnspiked <- dplyr::bind_rows(GetVarianceInfo("Unspiked", resultGermany, resultList = resultList), .id="Compound") |> mutate(Spiked = FALSE, Country = "Germany")
+```
+
+### France
+
+#### Spiked
+
+```{r}
+#| include: false
+resultList <- list()
+resultFrance <- check(df= DataFrance, resultList=resultList)
+
+```
+
+```{r}
+#| include: false
+InfoFrancedfSpiked <- dplyr::bind_rows(GetVarianceInfo("Spiked", resultFrance, resultList = resultList), .id="Compound") |> mutate(Spiked = TRUE, Country = "France")
+```
+
+#### Unspiked
+
+```{r}
+#| include: false
+InfoFrancedfUnspiked <- dplyr::bind_rows(GetVarianceInfo("Unspiked", resultFrance, resultList = resultList), .id="Compound") |> mutate(Spiked = FALSE, Country = "France")
+```
+
+### Denmark
+
+#### Spiked
+
+```{r}
+#| include: false
+#| eval: false
+resultList <- list()
+resultDenmark <- check(df= DataDenmark, resultList=resultList)
+
+```
+
+```{r}
+#| eval: false
+#| include: false
+InfoDenmarkdfSpiked <- dplyr::bind_rows(GetVarianceInfo("Spiked", resultDenmark, resultList = resultList), .id="Compound") |> mutate(Spiked = TRUE, Country = "Denmark")
+```
+
+#### Unspiked
+
+```{r}
+#| include: false
+#| eval: false
+InfoDenmarkdfUnspiked <- dplyr::bind_rows(GetVarianceInfo("Unspiked", resultDenmark, resultList = resultList), .id="Compound") |> mutate(Spiked = FALSE, Country = "Denmark")
+
+```
+
+## Combining all countries
+
+```{r}
+SimulationInfo <- rbind(InfoUSAdfSpiked,InfoUSAdfUnspiked, InfoUKdfSpiked, InfoUKdfUnspiked, InfoJapandfSpiked, InfoJapandfUnspiked, InfoGermanydfSpiked, InfoGermanydfUnspiked, InfoFrancedfSpiked, InfoFrancedfUnspiked, InfoDenmarkdfSpiked, InfoDenmarkdfUnspiked)
+
+```
+
+### 
+
+```{r}
+#| echo: false
+#| label: tbl_summaryInfoAll
+#| tbl-cap: "Control mean and variance information as well as random term variance information from all labs and compounds. Furthermore, the spacing factor used in each study and the number of treatments is shown. This table serves as basis for data simulation."
+
+SimulationInfo <- SimulationInfo |> unnest(cols=ICC) 
+
+SimulationInfo <- SimulationInfo  |> filter(zeroInflated > 0.05)
+
+
+save(SimulationInfo, file="SimulationInfoWTzeroInflated.rda")
+
+
+
+```
+
+## Justifying mixed Model
+
+```{r}
+SimulationInfo |> 
+  dplyr::select(adj_ICC, Country, Spiked) |> 
+  dplyr::mutate(Spiked = if_else(Spiked == TRUE, "Spiked", "Unspiked")) |>
+  ggplot(aes(y= as.numeric(adj_ICC), x= Country, color = Spiked))+
+  geom_jitter(alpha= 0.5,  width = 0.2)+
+  geom_abline(slope=0, intercept= 0.1337804)+
+  labs(color='Spiked or Unspiked?')+
+  ylab(label="adjusted ICC value")+
+  xlab(label="")
+```
