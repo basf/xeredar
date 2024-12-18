@@ -1,255 +1,495 @@
 ---
-title: "ValidationStudyDataExploration"
-author: "Inka Spyridonov"
-format: html
-editor: visual
-editor_options: 
-  chunk_output_type: console
+title: "Reproducing power analysis of publication"
+author: "Inka Marie Spyridonov"
+date: "2024-12-17"
+vignette: >
+  %\VignetteIndexEntry{User guide}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
-## Functions
 
-```{r}
-#| label: Settings
-#| include: false
-rm(list = ls())
-#devtools::install_git("https://gitlab.roqs.basf.net/WillmsIM/xetaana.git")
-#install.packages("easystats")
-lapply(c("readxl","tidyverse","xetaana","ARTool","broom","car","dplyr","emmeans","ggplot2","lme4","magrittr","MASS","multcomp","psych","tidyr", "kableExtra","knitr","purrr","gt","easystats","rlang","drc","truncnorm", "DHARMa"), require, character.only=TRUE)
+To reproduce the power analysis in the publication the following code has to be executed: 
 
-```
 
-```{r}
-#| label: FunctionExtractDat
-#| include: false
-extractDat <- function( list, path, names, results){
-  for(i in 1:length(list)){
-    Iter.path <- file.path(paste(path,list[[i]],sep="/"))
-    R1_Unsp <- read_xlsx(path=Iter.path,sheet = "R1", range = "B4:M20")
-    R1_Sp <- read_xlsx(path=Iter.path,sheet = "R1", range = "O4:V20")
-    R1 <- cbind(R1_Unsp, R1_Sp)
-    R1 <- R1 |> pivot_longer(cols = 1:length(unique(colnames(R1))),names_to = "Treatment", values_to = "Fluor")
-    R1$Treatment <- str_replace(R1$Treatment,"Témoin solvant|Solvent control","FETAX" )
-    R1$Treatment <- str_replace(R1$Treatment,"Testo -30µg/L","FETAX Testo" )
-    R1 <- R1 |> filter( !str_detect(R1$Treatment,"EE2+| FAD")) |> mutate(Conc= str_extract(Treatment,"\\d+,\\d+|\\d+.\\d+|\\d+"))
-    R1$Conc <- str_replace(R1$Conc, ",","\\.") 
-    R1[which(is.na(R1$Conc)),"Conc"] <- "0"
-    R1$Replicate <- "1"
-    
-    R2_Unsp <- read_xlsx(path=Iter.path,sheet = "R2", range = "B4:M20")
-    R2_Sp <- read_xlsx(path=Iter.path,sheet = "R2", range = "O4:V20")
-    R2 <- cbind(R2_Unsp, R2_Sp)
-    R2 <- R2 |> pivot_longer(cols = 1:length(unique(colnames(R2))),names_to = "Treatment", values_to = "Fluor")
-    R2$Treatment <- str_replace(R2$Treatment,"Témoin solvant|Solvent control","FETAX" )
-    R2$Treatment <- str_replace(R2$Treatment,"Testo -30µg/L","FETAX Testo" )
-    R2 <- R2 |> filter( !str_detect(R2$Treatment,"EE2+| FAD")) |> mutate(Conc= str_extract(Treatment,"\\d+,\\d+|\\d+.\\d+|\\d+"))
-    R2$Conc <- str_replace(R2$Conc, ",","\\.") 
-    R2[which(is.na(R2$Conc)),"Conc"] <- "0"
-    R2$Replicate <- "2"
-    
-    R3_Unsp <- read_xlsx(path=Iter.path,sheet = "R3", range = "B4:M20")
-    R3_Sp <- read_xlsx(path=Iter.path,sheet = "R3", range = "O4:V20")
-    R3 <- cbind(R3_Unsp, R3_Sp)
-    R3 <- R3 |> pivot_longer(cols = 1:length(unique(colnames(R3))),names_to = "Treatment", values_to = "Fluor")
-    R3$Treatment <- str_replace(R3$Treatment,"Témoin solvant|Solvent control","FETAX" )
-    R3$Treatment <- str_replace(R3$Treatment,"Testo -30µg/L","FETAX Testo" )
-    R3 <- R3 |> filter( !str_detect(R3$Treatment,"EE2+| FAD")) |> mutate(Conc= str_extract(Treatment,"\\d+,\\d+|\\d+.\\d+|\\d+"))
-    R3$Conc <- str_replace(R3$Conc, ",","\\.") 
-    R3[which(is.na(R3$Conc)),"Conc"] <- "0"
-    R3$Replicate <- "3"
-    print(i)
-    
-    New <- rbind(R1,R2,R3)
-    New <- New |> filter(!is.na(Fluor))
-    New$Replicate <- as.factor(New$Replicate)
-    New$Treatment <- as.factor(New$Treatment)
-    New$Fluor <- as.numeric(New$Fluor)
-    New$Conc <- as.numeric(as.character(New$Conc))
-    New$Compound <- names[i]
-    results[[names[i]]] <- New
+
+## Variance component analysis 
+### Functions 
+
+```{r eval=FALSE}
+GetVarianceInfo <- function(ListAnovas, resultList){
+  for(i in names(ListAnovas)){
+    MeanControl <- insight::get_intercept(ListAnovas[[i]])
+    VarianceControl <- insight::get_varcov(ListAnovas[[i]])[1,1]
+    SDExperiment <- insight::get_sigma(ListAnovas[[i]])
+    CVControl <- SDExperiment/MeanControl
+    VarianceRep <- insight::get_variance(ListAnovas[[i]])$var.intercept[2]
+    VarianceConcRep <- insight::get_variance(ListAnovas[[i]])$var.intercept[1]
+    ICC <- performance::icc(ListAnovas[[i]], tolerance = 0)
+    print(ICC)
+    simultedResiduals <- DHARMa::simulateResiduals(ListAnovas[[i]], plot = F)
+    zero_inflated <- as.numeric(DHARMa::testZeroInflation(simultedResiduals)[["p.value"]])
+    if(!is.list(ICC)){
+      ICC <- data.frame(adj_ICC = 0)
+    } else{
+      ICC <- ICC |> broom::tidy() 
+      ICC <- ICC[1,3] |> rename(adj_ICC = mean)
+    }
+    resultList[[i]]$MeanControl <- MeanControl
+    resultList[[i]]$SDExperiment <- SDExperiment
+    resultList[[i]]$CVControl <- CVControl
+    resultList[[i]]$SDRep <- sqrt(VarianceRep)
+    resultList[[i]]$SDConcRep <- sqrt(VarianceConcRep)
+    resultList[[i]]$ICC <- ICC
+    resultList[[i]]$zeroInflated <- zero_inflated
     
   }
-  print(results)
-}
+resultList
+  }
+```
+
+### Analysis
+
+```{r eval=TRUE}
+
+#devtools::install_git("https://gitlab.roqs.basf.net/WillmsIM/xetaana.git")
+#install.packages("easystats")
+lapply(c("tidyverse","xeredar","tidyr", "purrr", "furrr", "gt","easystats","rlang","drc", "DHARMa", "devtools"), require, character.only = TRUE)
 
 ```
 
-```{r}
-#| label: function_spiked_unspiked
-#| include: false
+```{r eval=FALSE}
 
-spiked_unspiked <- function(df, resultList){
-  for(i in unique(df$Compound)){
-    print(paste0(i, "Spiked", sep=" "))
+data <- xeredar::REACTIV_valid_data_table_spiked_unspiked |> 
+  purrr::list_flatten()
+
+```
+
+
+```{r eval=FALSE}
+resultList <- list()
+ANOVAs <- furrr::future_map(data, ~ purrr::possibly(function(df) {
+  lme4::lmer(Fluor ~ Conc + (1|Replicate) + (1|Replicate:Conc), data = df, REML = TRUE)
+}, otherwise = "error", quiet = FALSE)(.x))
+
+Variance_info <- list()
+Variance_Info <- GetVarianceInfo(ListAnovas = ANOVAs, Variance_info) 
+
+check <- purrr::imap(Variance_Info, ~ dplyr::tibble(MeanControl = .x$MeanControl,
+  SDExperiment = .x$SDExperiment,
+  CVControl = .x$CVControl, 
+  SDRep = .x$SDRep,
+  SDConcRep = .x$SDConcRep,
+  adj_ICC = .x$ICC$adj_ICC,
+  Spiked = !stringr::str_detect(.y, "Unspiked"),
+  Compound = stringr::str_extract(.y, "^[^_]+"),
+  Country = stringr::str_extract(.y, "(?<=_)[^_]+(?=_)"),
+  zeroInflated = .x$zeroInflated))
+
+
+Simulation_Info <- bind_rows(check)
+
+SimulationInfoWTzeroInflated <- Simulation_Info  |> 
+  filter(zeroInflated > 0.05) |> 
+  dplyr::relocate(Compound)
+
+```
+
+
+```{r eval=TRUE}
+
+
+
+gt::gt(xeredar::SimulationInfoWTzeroInflated) |> gt::tab_caption(caption = "Summary table of information from the validation studies determined using the GetVarianceInfo() function. The first column specifies the respective compound tested, the second the estimated mean control measurement of the respective study, the third column refers to the standard deviation throughout the experiment, also referred to as residual standard deviation and the fourth column contains the Coefficient of Variation (CV) determined by dividing the SDExperiment column with the MeanControl column. The SDRep column contains information about the standard deviation explained through the replicate, followed by the standard deviation explained by the replicate treatment interaction. The adj_ICC column contains the adjusted intra-class Correlation Coefficient, followed by the column SPiked which specifies whether the previous data referes to spiked samples (TRUE) or unspiked samples (FALSE). The last column (Country) contains information about the lab in which the respective study was carried out.")
+```
+
+```{r eval=TRUE}
+xeredar::SimulationInfoWTzeroInflated |> 
+  dplyr::select(adj_ICC, Country, Spiked) |> 
+  dplyr::mutate(Spiked = if_else(Spiked == TRUE, "Spiked", "Unspiked")) |>
+  ggplot(aes(y= as.numeric(adj_ICC), x= Country, color = Spiked))+
+  geom_jitter(alpha= 0.5,  width = 0.2)+
+  geom_abline(slope=0, intercept= 0.1337804)+
+  labs(color='Spiked or Unspiked?')+
+  ylab(label="adjusted ICC value")+
+  xlab(label="")
+```
+
+
+## Data simulation
+### Functions
+
+```{r eval=FALSE}
+
+# function for lognormal dose response model for simulating the increasing scenarios
+LogNorm <- function(dose, b, c, d, e) {
+            .expr1 <- d - c
+            .expr4 <- log(dose) - log(e)
+            .expr5 <- b * .expr4
+            .expr6 <- pnorm(.expr5[1,1])
+            .expr9 <- dnorm(.expr5[1,1])
+            .value <- c + .expr1 * .expr6
+            .value
+            }
+
+# function for generating the expected mean values for each simulated concentration based on information of the original studies and the respective simulated inflection point of the log-normal model 
+createMeans <- function(dfEmpty, variabledf,c = 2.5e+05,b=1.2){
+  for(i in 1:nrow(variabledf)){
+  y <- LogNorm(dose = variabledf[i,"Conc"], b = b, c = c , d = c*4, e = variabledf[i,"e"])
+  dfEmpty[[i]] <- data.frame("e" = variabledf[i,"e"], "Conc" = variabledf[i,"Conc"], "Mean" = y, "percEffect" = ((y-c)/c)*100)
+  }
+  dfEmpty
+}
+
+# function for 
+MeanValuesAllStudies <- function(SimulationInfo, dfEmpty, variabledf, b = 1.2){
+  MeanValuesStudy <- list()
+  for(i in 1:nrow(SimulationInfo)){
+    Means <- dplyr::bind_rows(createMeans(dfEmpty = dfEmpty, variabledf = variabledf, c = as.numeric(SimulationInfo[[i, "MeanControl"]]), b = b))
+    Means$ValidStudy <- paste(Means$e, i)
+    Means$MeanControl <- SimulationInfo[[i, "MeanControl"]]
+    Means$SDExperiment <- SimulationInfo[[i, "SDExperiment"]]
+    Means$CVControl <- SimulationInfo[[i, "CVControl"]]
+    Means$SDRep <- SimulationInfo[[i,"SDRep"]]
+    Means$SDConcRep <- SimulationInfo[[i,"SDConcRep"]]
+    MeanValuesStudy[[i]] <- Means
+  }
+  MeanValuesStudy
+}
+
+
+SimulateNow_HomoVar <- function(Spiked = TRUE, MeanValues, nEmbryoperConc=8, nConc=6, nRep=3, doses=c(0,0.16,0.8,4,20,100), Repetitions=1000)
+  {
+  simulatedDF <- list()
+  simulatedList <- list()
+  for(r in 1:Repetitions){
     
-    Spiked <- df |> filter(Compound == i &  stringr::str_detect(Treatment, "Testosté|FETAX Testo|\\+ Testosterone") )
+    if(Spiked==TRUE){
+      
+      for(i in MeanValues[,"ValidStudy"]){
+        
+        StudySelect <- MeanValues |> filter(ValidStudy==i)
+        StudySelect$sdPredMean <- as.numeric(StudySelect$SDExperiment)
+        dosesSp <- c(c(0),doses)
+        df <- data.frame(Replicate =rep(1:nRep, each=(nEmbryoperConc*nConc)+nEmbryoperConc), Conc = rep(dosesSp, each=nEmbryoperConc, times=3))
+        df$RepRand <- rep(rnorm(max(df$Replicate),0, as.numeric(unique(StudySelect$SDRep))),each=(nEmbryoperConc*nConc)+nEmbryoperConc)
+        ConcRepRand <- rnorm(nrow(unique(df[c("Conc","Replicate")])),0, as.numeric(unique(StudySelect$SDConcRep)))
+        df$ConcRepRand <- rep(c(ConcRepRand[1], ConcRepRand[1:6],ConcRepRand[7], ConcRepRand[7:12], ConcRepRand[13], ConcRepRand[13:18]), each=nEmbryoperConc)
+        df$Mean <- left_join(df,StudySelect, by=join_by(Conc))[,"Mean"]
+        df$FluorFixed <- purrr::modify2(df$Mean, left_join(df,StudySelect, by=join_by(Conc))[,"sdPredMean"], ~ rnorm(n = 1,mean = .x, sd=.y))
+        df$Fluor <- df$FluorFixed+df$RepRand+df$ConcRepRand
+        simulatedDF[[i]] <- df[,c("Replicate","Conc","Fluor")]
+        }
+      }
+    else{
+      
+      for(i in MeanValues[,"ValidStudy"]){
+        
+        StudySelect <- MeanValues |> filter(ValidStudy==i)
+        StudySelect$sdPredMean <- as.numeric(StudySelect$SDExperiment)
+        df <- data.frame(Replicate =rep(1:nRep, each=nEmbryoperConc*nConc), Conc = rep(doses, each=nEmbryoperConc, times=3))
+        df$RepRand <- rep(rnorm(max(df$Replicate),0, as.numeric(unique(StudySelect$SDRep))),each=nEmbryoperConc*nConc)
+        df$ConcRepRand <- rnorm(nrow(unique(df[c("Conc","Replicate")])),0, as.numeric(unique(StudySelect$SDConcRep)))
+        df$Mean <- left_join(df,StudySelect, by=join_by(Conc))[,"Mean"]
+        df$FluorFixed <- purrr::modify2(df$Mean, left_join(df,StudySelect, by=join_by(Conc))[,"sdPredMean"], ~ rnorm(n = 1,mean = .x, sd=.y))
+        df$Fluor <- df$FluorFixed+df$RepRand+df$ConcRepRand
+        df[,c("Replicate","Conc","Fluor")]
+        simulatedDF[[i]] <- df[,c("Replicate","Conc","Fluor")]
+      }
+      
+    }
     
-    Spiked$Conc <- factor(Spiked$Conc, ordered=TRUE, levels=sort(unique(Spiked$Conc)))
-    
+    simulatedList[[r]] <- simulatedDF
+  }
+  simulatedList
   
-    print(paste0(i, "Unspiked", sep=" "))
-    
-    Unspiked <- df |> filter(Compound == i &  !stringr::str_detect(Treatment, "Testosté|FETAX Testo| + Testosterone") )
-    
-    Unspiked$Conc <- factor(Unspiked$Conc, ordered=TRUE, levels=sort(unique(Unspiked$Conc)))
-    
-    resultList[[paste0(i, "_", unique(Spiked$Country))]][["Spiked"]] <- Spiked
-  
-    resultList[[paste0(i, "_", unique(Unspiked$Country))]][["Unspiked"]] <- Unspiked
+}
+```
+
+
+
+
+```{r eval=FALSE}
+
+Conc <- c(0,0.16,0.8,4,20,100)
+e <- c(9,20, 49,81, 123, 153,200,260,330,400, Inf)
+
+variables <- expand_grid(e = e,Conc = Conc)
+
+DFwithMeansperConc <- list()
+SimInfoSpiked <- xeredar::SimulationInfoWTzeroInflated |> dplyr::filter(Spiked == TRUE)
+SimInfoUnspiked <- xeredar::SimulationInfoWTzeroInflated |> dplyr::filter(Spiked == FALSE)
+
+dfEmpty <- list()
+MeansAllStudiesperConcSpiked <- dplyr::bind_rows(MeanValuesAllStudies(SimulationInfo = SimInfoSpiked, dfEmpty = dfEmpty,variabledf = variables, b = 1.2 ))
+
+MeansAllStudiesperConcUnspiked <- dplyr::bind_rows(MeanValuesAllStudies(SimulationInfo = SimInfoUnspiked, dfEmpty = dfEmpty,variabledf = variables, b = 1.2 ))
+
+SimDatSpiked_Homo <-  SimulateNow_HomoVar(Spiked=TRUE, MeanValues = MeansAllStudiesperConcSpiked, Repetitions=25)
+
+SimDatUnspiked_Homo <- SimulateNow_HomoVar(Spiked=FALSE, MeanValues = MeansAllStudiesperConcUnspiked, Repetitions=25)
+```
+
+
+## Analyzing simulated data 
+
+```{r eval=FALSE}
+
+ConvertStructure <- function(ListObject){
+  for(i in 1:length(ListObject)){
+  ListObject[[i]]$Conc <- factor(ListObject[[i]]$Conc, ordered=TRUE, levels = sort(unique(ListObject[[i]]$Conc)))
+  ListObject[[i]]$Replicate <- factor(ListObject[[i]]$Replicate)
+  ListObject[[i]]$Treatment <- ListObject[[i]]$Conc
+  }
+  ListObject
+}
+SimDatSpikedFLAT <- purrr::list_flatten(SimDatSpiked_Homo, name_repair="universal")
+SimDatUnspikedFLAT <- purrr::list_flatten(SimDatUnspiked_Homo, name_repair="universal")
+
+SimDatSpikedFLAT<- ConvertStructure(ListObject=SimDatSpikedFLAT)
+SimDatUnspikedFLAT <- ConvertStructure(ListObject=SimDatUnspikedFLAT)
+
+ResultsSpiked_dataPrep_alpha0 <- SimDatSpikedFLAT |> furrr::future_map(\(df) xeredar::data_prep(df, row = FALSE, trimming = FALSE, boxcox = FALSE, alpha = 0)[c("Dunnetts", "WilliamsDecrease", "WilliamsIncrease", "Justify", "Monotonicity Test")])
+usethis::use_data(ResultsSpiked_dataPrep_alpha0)
+
+ResultsUnspiked_dataPrep_alpha0 <- SimDatUnspikedFLAT |> furrr::future_map(\(df) xeredar::data_prep(df, row = FALSE, trimming = FALSE, boxcox = FALSE, alpha = 0)[c("Dunnetts", "WilliamsDecrease", "WilliamsIncrease", "Justify", "Monotonicity Test")])
+usethis::use_data(ResultsUnspiked_dataPrep_alpha0)
+
+
+MeanSpikedControls <- function(ListObject){
+  ResultList <- list()
+  for(i in 1:length(ListObject)){
+    ControlMeans <- ListObject[[i]] |> 
+      filter(Conc=="0") |> 
+      summarise(mean(Fluor, na.rm=TRUE), .by=Replicate)
+    ResultList[[i]] <- ControlMeans
+  }
+  ResultList
+}
+NormalizationFunc <- function(MeanDataList, SimuDataList){
+  resultList <- list()
+  for(i in 1:length(SimuDataList)){
+    SimuDat <- SimuDataList[[i]]
+    MeanDat <- MeanDataList[[i]]
+    SimuDat$NormFluor <- NA
+    for(k in 1:nrow(SimuDat)){
+      
+      if(SimuDat[k,"Replicate"]=="1"){
+        
+      SimuDat[k,"NormFluor"] <- SimuDat[k,"Fluor"]/MeanDat[1,2]
+        }else if(SimuDat[k,"Replicate"]=="2"){
+      SimuDat[k,"NormFluor"] <- SimuDat[k,"Fluor"]/MeanDat[2,2]
+      }else{
+      SimuDat[k,"NormFluor"] <- SimuDat[k,"Fluor"]/MeanDat[3,2]
+      }
+      
+    }
+      
+      
+    resultList[[i]] <- SimuDat
   }
   resultList
 }
+SimInfoSpiked <- Simulation_Info |> dplyr::filter(Spiked == TRUE)
+SimInfoUnspiked <- Simulation_Info |> dplyr::filter(Spiked == FALSE)
+
+SimInfoSpiked <- rowid_as_column(SimInfoSpiked)
+SimInfoUnspiked <- rowid_as_column(SimInfoUnspiked)
+
+SimInfoMatch_SpikedUnspiked <- full_join(SimInfoSpiked |> dplyr::select(rowid, Country, Compound),
+          SimInfoUnspiked |> dplyr::select(rowid, Country, Compound), by= c("Compound", "Country")
+          ) |> rename(id_spiked = rowid.x, id_unspiked = rowid.y)
+MeanSpikedControlsRep <- MeanSpikedControls(SimDatSpikedFLAT)
+
+SimInfoMatch_SpikedUnspiked <- SimInfoMatch_SpikedUnspiked |> filter(!is.na(id_unspiked))
+
+SimDatSpikedFLAT_ForUnspiked <- SimDatSpikedFLAT 
+
+names(SimDatSpikedFLAT_ForUnspiked) <-
+  stringr::str_extract(names(SimDatSpikedFLAT), pattern = "(?<=\\.\\.\\d{1,3}\\.|Inf\\.)\\d+")
+
+SimDatSpikedFLAT_ForUnspiked <- SimDatSpikedFLAT_ForUnspiked[names(SimDatSpikedFLAT_ForUnspiked) %in% as.character(SimInfoMatch_SpikedUnspiked$id_unspiked)]
+
+MeanSpikedControlsRep_UNSPIKED <- MeanSpikedControls(SimDatSpikedFLAT_ForUnspiked)
 
 
+SimDatUnspikedFLATNormalized <- NormalizationFunc(MeanSpikedControlsRep_UNSPIKED, SimDatUnspikedFLAT)
+
+SimDatSpikedFLATNormalized <- NormalizationFunc(MeanSpikedControlsRep, SimDatSpikedFLAT)
+possDunneTT = possibly(.f = PMCMRplus::dunnettTest, otherwise = "Error")
+
+
+ResultsUnspiked_pooledDunnett  <- SimDatUnspikedFLATNormalized |> furrr::future_map(\(df) possDunneTT(df$NormFluor,df$Conc, alternative = "two.sided"), .options = furrr::furrr_options(seed = TRUE))
+usethis::use_data(ResultsUnspiked_pooledDunnett)
+names(ResultsUnspiked_pooledDunnett) <- names(ResultsUnspiked_dataPrep_alpha0)
+usethis::use_data(ResultsUnspiked_pooledDunnett, overwrite = TRUE)
+
+ResultsSpiked_pooledDunnett  <- SimDatSpikedFLATNormalized |> furrr::future_map(\(df) possDunneTT(df$NormFluor,df$Conc, alternative = "two.sided"), .options = furrr::furrr_options(seed = TRUE))
+names(ResultsSpiked_pooledDunnett) <- names(ResultsSpiked_dataPrep_alpha0)
+usethis::use_data(ResultsSpiked_pooledDunnett, overwrite = TRUE)
+
+possDunns = possibly(.f = PMCMRplus::kwManyOneDunnTest, otherwise = "Error")
+
+
+ResultsUnspiked_pooledDunns <- SimDatUnspikedFLATNormalized |> furrr::future_map(\(df) possDunns(df$NormFluor,df$Conc, alternative = "two.sided", p.adjust.method = "holm"), .options = furrr::furrr_options(seed = TRUE))
+names(ResultsUnspiked_pooledDunns) <- names(ResultsUnspiked_dataPrep_alpha0)
+usethis::use_data(ResultsUnspiked_pooledDunns, overwrite = TRUE)
+
+ResultsSpiked_pooledDunns  <- SimDatSpikedFLATNormalized |> furrr::future_map(\(df) possDunns(df$NormFluor,df$Conc, alternative = "two.sided", p.adjust.method = "holm"), .options = furrr::furrr_options(seed = TRUE))
+names(ResultsSpiked_pooledDunns) <- names(ResultsSpiked_dataPrep_alpha0)
+usethis::use_data(ResultsSpiked_pooledDunns, overwrite = TRUE)
 ```
 
-## creating final data object
 
-```{r}
-#| label: USAdat1
-#| include: false
-USA <- list.files(path="./data/REACTIV all data_InkaBroomed/USA/",pattern = "xlsx$")
+## Presenting results 
 
-path <- file.path("./data/REACTIV all data_InkaBroomed/USA/")
 
-CombinedDatUSA <- list()
-names <- unlist(stringr::str_extract_all(USA,c("\\d{4}\\D+"))) 
-names <- stringr::str_replace(names, "-resultats R|-resultats  R","")
-names <- stringr::str_replace(names, "2022-CHG-Marlo-","")
+```{r eval=FALSE}
+
+extract_interestMixed <- function(input_list, name="WilliamsIncrease", name_pval="PvalmixedWilliamsIncrease", test_type= "williams"){
+  result <-  purrr::list_flatten(input_list)
+  result <- result[names(result)[stringr::str_detect(names(result),name)]]
+  names(result) <- str_remove(names(result), paste0("_",name))
+  result <- purrr::list_flatten(result, name_repair = "universal")
+  result <- dplyr::bind_rows(result, .id = "StudyID")
+  if(test_type == "williams"){
+    result <- mutate(result, !!name_pval := ifelse(result$Sign == TRUE, 1, 0))
+    result$Conc = as.numeric(result$Conc)
+  } else if( test_type == "dunnetts_mixed"){
+    result <- mutate(result, !!name_pval := ifelse(result$`adj p` < 0.05, 1, 0))
+    result$Conc <- as.numeric(stringr::str_extract(row.names(result), "\\d+.\\d+|\\d+"))
+  } 
+  result
+}
+
+
+extract_interestPooled <- function(input_list, name_pval="SignPooledDunnetts"){
+  
+  result <-  purrr::list_flatten(input_list, name_repair="universal")
+  
+  possPMCMRTable = possibly(.f = rcompanion::PMCMRTable, otherwise = "Error")
+    
+  result <- input_list |> furrr::future_map(\(df) possPMCMRTable(df,reverse = TRUE,   digits = 3))
+  result <- dplyr::bind_rows(result, .id="StudyID")
+  result$Conc <- as.numeric(stringr::str_extract(result$Comparison, "^\\d+.\\d+|^\\d+"))
+  result <- mutate(result, !!name_pval := ifelse(as.numeric(result$p.value) < 0.01, 1, 0))
+}
+
+get_results_table <- function(EC50_values = c("\\.\\.9\\.", "\\.\\.20\\.", "\\.\\.49\\.","\\.\\.81\\.", "\\.\\.123\\.", "\\.\\.153\\.",  "\\.\\.200\\.", "\\.\\.260\\.", "\\.\\.330\\.", "\\.\\.400\\.", "Inf\\."), Spiked = TRUE){
+  
+  furrr::future_map(EC50_values, function(x){
+    
+    spike_type <- ifelse(Spiked, "Spiked", "Unspiked")
+    Name <- names(get(paste0("Results", spike_type, "_pooledDunnett")))[stringr::str_starts(names(get(paste0("Results", spike_type, "_pooledDunnett"))),x)]
+
+    # Assuming the required data is in your global environment
+    # Replace with actual names of your data
+    results_Dunnetts <- get(paste0("Results", spike_type, "_pooledDunnett"))[Name]
+    PooledDunnetts <- extract_interestPooled(input_list = results_Dunnetts, name_pval = "SignPooledDunnetts")
+    
+    results_Dunns <- get(paste0("Results", spike_type, "_pooledDunns"))[Name]
+    pooledDunns <- extract_interestPooled(input_list = results_Dunns, name_pval = "SignpooledDunns")
+    
+    results_dataPrep_alpha0 <- get(paste0("Results", spike_type, "_dataPrep_alpha0"))[Name]
+    mixedDunnett <- extract_interestMixed(input_list= results_dataPrep_alpha0, name = "Dunnetts", name_pval = "PvalmixedDunnett", test_type = "dunnetts_mixed" )
+    mixedWilliamsIncrease <- extract_interestMixed(input_list= results_dataPrep_alpha0, name = "WilliamsIncrease", name_pval = "PvalmixedWilliamsIncrease", test_type = "williams" )
+    
+    dfs = list(
+      mixedDunnett[,c("Conc","StudyID","PvalmixedDunnett")],
+      PooledDunnetts[,c("Conc","StudyID","SignPooledDunnetts")],
+      pooledDunns[,c("Conc","StudyID","SignpooledDunns")],
+      mixedWilliamsIncrease[,c("Conc","StudyID","PvalmixedWilliamsIncrease")]
+    )
+    
+    df <- purrr::reduce(dfs, dplyr::full_join, by=c("Conc","StudyID"))
+    
+    result <- df %>% dplyr::summarise(
+      mixedDunnett = mean(PvalmixedDunnett, na.rm=TRUE), 
+      PooledDunnetts = mean(SignPooledDunnetts, na.rm=TRUE),
+      pooledDunns = mean(SignpooledDunns, na.rm = TRUE),
+      mixedWilliamsIncrease = mean(PvalmixedWilliamsIncrease, na.rm = TRUE),
+      .by = Conc
+    )  %>% 
+      tidyr::pivot_longer(cols = mixedDunnett:mixedWilliamsIncrease, names_to = "Test", values_to = "PercentSign") 
+
+    result
+  })
+}
 ```
 
-```{r}
-#| include: false
-DataUSA <- extractDat(list=USA, path = path, names = names, results = CombinedDatUSA)
+```{r eval=FALSE}
 
-DataUSA <- purrr::map_df(DataUSA,~ dplyr::mutate(.x, Country = "USA"))
+resultsSpiked_power_reactive  <- get_results_table()
+resultsUnspiked_power_reactive <- get_results_table(Spiked = FALSE)
 
-CombinedDatUSA <- spiked_unspiked(DataUSA, CombinedDatUSA)
+resultsSpiked_power_reactive <- xeredar::resultsSpiked_power_reactive
 
+names(resultsSpiked_power_reactive) <- c("9", "20", "49", "81", "123", "153", "200", "260", "330", "400", "Inf")
+
+perc_effect_e_dose_Spiked <- xeredar::MeansAllStudiesperConcSpiked |> 
+  dplyr::select(e, Conc, percEffect) |> 
+  dplyr::mutate(across(everything(), round, digits = 2 )) |>
+  dplyr::distinct() |>
+  dplyr::mutate(e = as.character(e))
+
+resultsSpiked_power_reactive  <- dplyr::bind_rows(resultsSpiked_power_reactive, .id = "e") 
+
+resultsSpiked_power_reactive <- dplyr::left_join(resultsSpiked_power_reactive, perc_effect_e_dose_Spiked, by = c("e", "Conc"))
+
+resultsUnspiked_power_reactive <- xeredar::resultsUnspiked_power_reactive
+
+names(resultsUnspiked_power_reactive) <- c("9", "20", "49", "81", "123", "153", "200", "260", "330", "400", "Inf")
+
+perc_effect_e_dose_Unspiked <- xeredar::MeansAllStudiesperConcUnspiked |> 
+  dplyr::select(e, Conc, percEffect) |> 
+  dplyr::mutate(across(everything(), round, digits = 2 )) |>
+  dplyr::distinct() |>
+  dplyr::mutate(e = as.character(e))
+
+
+resultsUnspiked_power_reactive  <- dplyr::bind_rows(resultsUnspiked_power_reactive, .id = "e") 
+
+resultsUnspiked_power_reactive <- dplyr::left_join(resultsUnspiked_power_reactive, perc_effect_e_dose_Unspiked)
+
+usethis::use_data(resultsUnspiked_power_reactive, overwrite = TRUE)
 ```
 
-```{r}
-#| label: UKdat1
-#| include: false
+```{r eval=TRUE}
+breaks=c("mixedDunnett","PooledDunnetts","pooledDunns" ,"mixedWilliamsIncrease")
 
-UK <- list.files(path="./data/REACTIV all data_InkaBroomed/UK/",pattern = "xlsx$")
-UK <- UK[-12]
+labels=c("mixed Dunnett", "Pooled Dunnetts","Pooled Dunns","mixed Williams")
 
+type1_error_Spiked <- xeredar::resultsSpiked_power_reactive |> dplyr::arrange(e, percEffect) |> filter(percEffect <= 1) |>
+  ggplot2::ggplot(aes(x=PercentSign, color=Test))+
+  geom_boxplot( alpha= 0.5)+
+  scale_x_continuous(labels = scales::percent, trans = "log10")+
+  xlab("% significant tests")
 
+power_Spiked <- xeredar::resultsSpiked_power_reactive |> dplyr::arrange(e, percEffect) |>  dplyr::filter(Conc==100) |>
+  ggplot2::ggplot(ggplot2::aes(x=percEffect, y=PercentSign, color=Test))+
+  ggplot2::geom_line(linewidth=1.2)+
+  ggplot2::geom_hline(x=as.numeric(0:300), yintercept=0.8)+
+  ggplot2::scale_color_discrete(name  ="Tests",
+                      breaks = breaks,
+                      labels = labels)+
+  ggplot2::ylab("% significant")+
+  ggplot2::xlab("% effect")
 
-path <- file.path("./data/REACTIV all data_InkaBroomed/UK/")
+power_Unspiked <- xeredar::resultsUnspiked_power_reactive |> dplyr::arrange(e, percEffect) |>  dplyr::filter(Conc==100) |>
+  ggplot2::ggplot(ggplot2::aes(x=percEffect, y=PercentSign, color=Test))+
+  ggplot2::geom_line(linewidth=1.2)+
+  ggplot2::geom_hline(x=as.numeric(0:300), yintercept=0.8)+
+  ggplot2::scale_color_discrete(name  ="Tests",
+                      breaks = breaks,
+                      labels = labels)+
+  ggplot2::ylab("% significant")+
+  ggplot2::xlab("% effect")
 
-CombinedDatUK <- list()
-names <- unlist(stringr::str_extract_all(UK,c("\\- \\D+"))) 
-names <- stringr::str_replace(names, "\\- ","")
-names <- stringr::str_replace(names, ".xlsx","")
+type1_error_Spiked <- xeredar::resultsSpiked_power_reactive |> dplyr::arrange(e, percEffect) |> filter(percEffect <= 1) |>
+  ggplot2::ggplot(aes(x=PercentSign, color=Test))+
+  geom_boxplot( alpha= 0.5)+
+  scale_x_continuous(labels = scales::percent, trans = "log10")+
+  xlab("% significant tests")
 
-```
-
-```{r}
-#| label: UKdat2
-#| include: false
-
-
-DataUK <- extractDat(list=UK, path = path, names = names, results = CombinedDatUK) 
-DataUK <- purrr::map_df(DataUK,~ dplyr::mutate(.x, Country = "UK"))
-
-
-CombinedDatUK <- spiked_unspiked(DataUK, CombinedDatUK)
-```
-
-```{r}
-#| label: Japandat1
-#| include: false
-Japan <- list.files(path="./data/REACTIV all data_InkaBroomed/Japan/",pattern = "xlsx$")
-
-path <- file.path("./data/REACTIV all data_InkaBroomed/Japan/")
-
-CombinedDatJapan <- list()
-names <- Japan
-names <- stringr::str_replace(names, "_run1_3.xlsx|_run1-3.xlsx|-run1_3.xlsx","")
-
-```
-
-```{r}
-#| label: Japandat2
-#| include: false
-DataJapan <- extractDat(list=Japan, path = path, names = names, results = CombinedDatJapan)
-DataJapan <- map_df(DataJapan, ~as.data.frame(.x) |> dplyr::mutate(.x, Country = "Japan"))
-CombinedDatJapan <- spiked_unspiked(DataJapan, CombinedDatJapan)
-```
-
-```{r}
-#| label: Germanydat1
-#| include: false
-Germany <- list.files(path="./data/REACTIV all data_InkaBroomed/Germany/",pattern = "xlsx$")
-Germany <- Germany[-9]
-
-path <- file.path("./data/REACTIV all data_InkaBroomed/Germany/")
-
-CombinedDatGermany <- list()
-names <- Germany
-names <- stringr::str_replace(names, "Analysis-|Analysis","")
-names <- stringr::str_replace(names, "R\\d-R\\d-R\\d.xlsx|R\\d_R\\d_R\\d.xlsx","")
-names <- stringr::str_replace(names, " |-","")
-names <- stringr::str_replace(names, " ","")
-```
-
-```{r}
-#| label: Germanydat2
-#| include: false
-DataGermany <- extractDat(list=Germany, path = path, names = names, results = CombinedDatGermany)
-DataGermany <- map_df(DataGermany, ~as.data.frame(.x) |> dplyr::mutate(.x, Country = "Germany"))
-CombinedDatGermany <- spiked_unspiked(DataGermany, CombinedDatGermany)
-```
-
-```{r}
-#| label: Francedat1
-#| include: false
-France <- list.files(path="./data/REACTIV all data_InkaBroomed/France/",pattern = "xlsx$")
-
-
-path <- file.path("./data/REACTIV all data_InkaBroomed/France/")
-
-
-CombinedDatFrance <- list()
-names <- France
-names <- stringr::str_replace(names, "2021-CHG-ACH-|2021-CHG-CBA-|Analyse-CHG-|Analyse CHG-|Analyse CHG -|Analyse ","")
-names <- stringr::str_replace(names, ".xlsx","")
-```
-
-```{r}
-#| label: Francedat2
-#| include: false
-DataFrance <- extractDat(list=France, path = path, names = names, results = CombinedDatFrance)
-DataFrance <- map_df(DataFrance, ~as.data.frame(.x) |> dplyr::mutate(.x, Country = "France"))
-CombinedDatFrance <- spiked_unspiked(DataFrance, CombinedDatFrance)
-```
-
-```{r}
-#| label: Denmarkdat1
-#| include: false
-Denmark <- list.files(path="./data/REACTIV all data_InkaBroomed/Denmark/",pattern = "xlsx$")
-Denmark <- Denmark[-4]
-
-path <- file.path("./data/REACTIV all data_InkaBroomed/Denmark/")
-
-CombinedDatDenmark <- list()
-names <- Denmark
-names <- stringr::str_replace(names, "_analyses.xlsx|.xlsx ","")
-```
-
-```{r}
-#| label: Denmarkdat2
-#| include: false
-DataDenmark <- extractDat(list=Denmark, path = path, names = names, results = CombinedDatDenmark)
-DataDenmark <- map_df(DataDenmark, ~as.data.frame(.x) |> dplyr::mutate(.x, Country = "Denmark"))
-CombinedDatDenmark <- spiked_unspiked(DataDenmark, CombinedDatDenmark)
-```
-
-```{r}
-
-REACTIV_valid_data_table_spiked_unspiked <- c(CombinedDatUSA, CombinedDatUK, CombinedDatJapan, CombinedDatGermany, CombinedDatFrance, CombinedDatDenmark)
-
-
+power_Spiked + power_Unspiked
 ```

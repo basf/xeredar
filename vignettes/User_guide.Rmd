@@ -140,8 +140,8 @@ xeredar::data_summary(xeta_spiked_result) |> knitr::kable()
 To demonstrate how to run RADAR analysis, we will use one of the data sets by the Pos_mDHT_Fraunhofer_RADAR containing the spiked and unspiked measurements from the RADAR study validation in the lab Fraunhofer with an androgen axis active chemical.
 
 ```{r warning=FALSE}
-radar_spiked <- xeredar::RADAR_valid
-radar_unspiked <- xeredar::Pos_mDHT_Fraunhofer_RADAR_Unspiked
+radar_spiked <- xeredar::RADAR_valid_data_table_spiked_unspiked[["mDHTFRAUNH_Spiked"]]
+radar_unspiked <-  xeredar::RADAR_valid_data_table_spiked_unspiked[["mDHTFRAUNH_Unspiked"]]
 
 ```
 
@@ -213,10 +213,8 @@ xeredar::data_summary(radar_spiked_result) |>
 To demonstrate how to run REACTIV analysis, we will use one artificial data set containing the spiked and unspiked measurements.
 
 ```{r warning=FALSE}
-reactiv_spiked <- reactiv_data |>
-  dplyr::filter(Spiked == TRUE)
-reactiv_unspiked <- reactiv_data |>
-  dplyr::filter(Spiked == FALSE)
+reactiv_spiked <- xeredar::REACTIV_valid_data_table_spiked_unspiked[["Anastrozole_UK"]]$Spiked 
+reactiv_unspiked <- xeredar::REACTIV_valid_data_table_spiked_unspiked[["Anastrozole_UK"]]$Unspiked 
 
 ```
 
