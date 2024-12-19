@@ -1,13 +1,4 @@
 Background
-# xeredar <a href="https://dplyr.tidyverse.org"><img src="man/figures/logo.png" align="right" height="138" /></a>
-
-<!-- badges: start -->
-
-[![R-CMD-check](https://github.com/basf/xeredar/actions/workflows/Package_check.yml/badge.svg)](https://github.com/basf/xeredar/actions/workflows/R-CMD-check.yaml)
-<!-- badges: end -->
-
-
-
 ==========
 
 The package xeredar is an R-package for analysis of the New Approach

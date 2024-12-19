@@ -18,7 +18,10 @@ knitr::opts_chunk$set(
 ```
 
 ```{r include=FALSE}
-library(xeredar)
+devtools::load_all(
+
+)
+
 library(knitr)
 library(purrr)
 library(dplyr)

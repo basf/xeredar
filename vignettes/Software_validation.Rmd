@@ -7,11 +7,31 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+
 ## Reproducible environment
 
-xeredar comes with a reproducible environment in form of a nix file (default.nix) [info about nix](https://nix.dev/) that was created with the R-package [rix](https://ropensci.github.io/rix/index.html).
+In case you want to make sure that you are creating the exact same output as presented in the publication, you need to create the reproducible environment using [`rix`](https://ropensci.github.io/rix/index.html) and [`nix`](https://nixos.org/). Using `rix`, you can run the following function to create your nix shell. 
 
-When working in the nix-shell that is built from the default.nix file with the command `nix-build`, the exact same results are received as presented in this vignette. 
+```{r eval = FALSE}
+rix::rix(
+  r_ver = "latest",
+  r_pkgs = c("tidyverse", "tidyr", "purrr", "furrr", "gt","easystats","rlang", "DHARMa", "devtools", "patchwork", "rmarkdown"),
+  system_pkgs = NULL,
+  tex_pkgs = c("amsmath"),
+  git_pkgs = list(package_name = "xeredar",
+                  repo_url = "https://github.com/basf/xeredar",
+                  commit = "2b85763"),
+  ide = "rstudio",
+  project_path = "./vignettes",
+  overwrite = TRUE
+)
+
+```
+
+Once the default.nix file was created in the path you specified in the command above (`project_path`) you need to type `nix-build` into the terminal. Once the shell was built you can open it via `nix-shell`. You can open Rstudio by first running this line in the terminal: `export QT_XCB_GL_INTEGRATION=none` and then running `rstudio`. Rstudio will open and you will have access to all files located at the path you specified in the `rix` function. You can run the script as usual. Through this approach, the code and results are reproducible.
+
+The following sections contain the code that needs to be executed to reproduce the analysis.
+
 
 ## Code for validation
 
@@ -38,9 +58,9 @@ changing_alpha <- c(c(1,5) %o% 10^-(3:17), 0)
 
 decreasing_alpha <- function(df, vector){
   for(i in vector){
-    df <- df |> filter(!is.na(Fluor))
+    df <- df |> dplyr::filter(!is.na(Fluor))
     dat_trim <- xeredar::trim(df)$dat_trim
-    result <- data_prep(df, row=FALSE, alpha = i, trim=FALSE, outlier = FALSE)
+    result <- xeredar::data_prep(df, row=FALSE, alpha = i, trim=FALSE, outlier = FALSE)
     if(is.list(result)){
       break
     } else{
@@ -53,7 +73,7 @@ decreasing_alpha <- function(df, vector){
 
 
 result_difficult_dfs <- purrr::map(.x=difficult_dfs, .f= decreasing_alpha, vector = changing_alpha)
-results_alpha_decrease <- results[map_vec(results, is.list)]
+results_alpha_decrease <- results[purrr::map_vec(results, is.list)]
 
 results <- append(results_alpha_decrease, result_difficult_dfs)
 check_positive <- function(df){
@@ -86,10 +106,17 @@ significances <- function(df, Williams= FALSE){
 
 prelim_thyroid_active <- purrr::map2_vec(results_2, Williams, significances)
 
-country_substance_spiked <- names(results_2) |> stringr::str_split("\\_") |> as.data.frame() |> t() |> dplyr::as_tibble() |> dplyr::rename("substance" = "V1", "country" = "V2", "spiked" = "V3") |> dplyr::mutate(Sign = prelim_thyroid_active)
+country_substance_spiked <- names(results_2) |>
+  stringr::str_split("\\_") |>
+  as.data.frame() |> t() |>
+  dplyr::as_tibble() |>
+  dplyr::rename("substance" = "V1", "country" = "V2", "spiked" = "V3") |>
+  dplyr::mutate(Sign = prelim_thyroid_active)
 
 
-increase_h12 <- results |> purrr::map_vec(function(x) {(x[["SummaryDF"]]$Mean[nrow(x[["SummaryDF"]])] / x[["SummaryDF"]]$Mean[1])-1 })
+increase_h12 <- results |> purrr::map_vec(function(x) {
+  (x[["SummaryDF"]]$Mean[nrow(x[["SummaryDF"]])] / x[["SummaryDF"]]$Mean[1])-1 
+  })
 
 
 thyroid_active <- country_substance_spiked |> dplyr::mutate(Increase = increase_h12,
@@ -100,9 +127,9 @@ thyroid_active <- country_substance_spiked |> dplyr::mutate(Increase = increase_
   dplyr::mutate(
     country = ifelse(country== "japan" & substance %in% c("e2", "nh3") |
                        country == "japan2", "japan lab2", country)) |>
-  pivot_wider(names_from = country, values_from = thyroid_active) |>
+  tidyr::pivot_wider(names_from = country, values_from = thyroid_active) |>
   dplyr::arrange(match(substance, c("t3", "ptu", "t4", "triac", "cefuroxime","linuron", "nh3", "testosterone","e2", "abamectine", "acetone", "isophorone", "metholmyl"))) |> 
-  mutate(`Expected classification`= c("Thyroid active", "Thyroid active", "Thyroid active", "Thyroid active", "Thyroid inactive", "Thyroid active", "Thyroid active", "Unclear", "Thyroid inactive", "Thyroid inactive","Thyroid inactive","Thyroid inactive","Thyroid inactive"))|>
+  dplyr::mutate(`Expected classification`= c("Thyroid active", "Thyroid active", "Thyroid active", "Thyroid active", "Thyroid inactive", "Thyroid active", "Thyroid active", "Unclear", "Thyroid inactive", "Thyroid inactive","Thyroid inactive","Thyroid inactive","Thyroid inactive"))|>
   dplyr::relocate(c(substance,`Expected classification`, france,japan, usa, `japan lab2`, belgium, portugal ))  |> 
   dplyr::rename(USA = usa)
 ```

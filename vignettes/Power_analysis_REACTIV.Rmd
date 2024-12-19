@@ -8,29 +8,29 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+## Reproducible environment
 
-To reproduce the power analysis in the publication the following code has to be executed. 
-
-In case you want to make sure that you are creating the exact same output as presented here, you need to create the reproducible environment using `rix` and `nix`. Using `rix`, you can run the following function to create your nix shell. 
+In case you want to make sure that you are creating the exact same output as presented in the publication, you need to create the reproducible environment using `rix` and `nix`. Using `rix`, you can run the following function to create your nix shell. 
 
 ```{r eval = FALSE}
 rix::rix(
   r_ver = "latest",
-  r_pkgs = c("tidyverse", "tidyr", "purrr", "furrr", "gt","easystats","rlang","drc", "DHARMa", "devtools", "pathwork", "rmarkdown"),
+  r_pkgs = c("tidyverse", "tidyr", "purrr", "furrr", "gt","easystats","rlang", "DHARMa", "devtools", "patchwork", "rmarkdown"),
   system_pkgs = NULL,
   tex_pkgs = c("amsmath"),
   git_pkgs = list(package_name = "xeredar",
-                  rep_url = "https://github.com/basf/xeredar",
+                  repo_url = "https://github.com/basf/xeredar",
                   commit = "2b85763"),
   ide = "rstudio",
   project_path = "./vignettes",
   overwrite = TRUE
 )
 
-
 ```
 
+Once the default.nix file was created in the path you specified in the command above (`project_path`) you need to type `nix-build` into the terminal. Once the shell was built you can open it via `nix-shell`. You can open Rstudio by first running this line in the terminal: `export QT_XCB_GL_INTEGRATION=none` and then running `rstudio`. Rstudio will open and you will have access to all files located at the path you specified in the `rix` function. You can run the script as usual. Through this approach, the code and results are reproducible.
 
+The following sections contain the code that needs to be executed to reproduce the analysis.
 
 ## Variance component analysis 
 ### Functions 

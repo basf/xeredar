@@ -1,0 +1,199 @@
+---
+title: "Analysis of all RADAR validation studies"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{User guide}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+## Reproducible environment
+
+In case you want to make sure that you are creating the exact same output as presented in the publication, you need to create the reproducible environment using `rix` and `nix`. Using `rix`, you can run the following function to create your nix shell. 
+
+```{r eval = FALSE}
+rix::rix(
+  r_ver = "latest",
+  r_pkgs = c("tidyverse", "tidyr", "purrr", "furrr", "gt","easystats","rlang", "DHARMa", "devtools", "patchwork", "rmarkdown"),
+  system_pkgs = NULL,
+  tex_pkgs = c("amsmath"),
+  git_pkgs = list(package_name = "xeredar",
+                  repo_url = "https://github.com/basf/xeredar",
+                  commit = "2b85763"),
+  ide = "rstudio",
+  project_path = "./vignettes",
+  overwrite = TRUE
+)
+
+```
+
+Once the default.nix file was created in the path you specified in the command above (`project_path`) you need to type `nix-build` into the terminal. Once the shell was built you can open it via `nix-shell`. You can open Rstudio by first running this line in the terminal: `export QT_XCB_GL_INTEGRATION=none` and then running `rstudio`. Rstudio will open and you will have access to all files located at the path you specified in the `rix` function. You can run the script as usual. Through this approach, the code and results are reproducible.
+
+The following sections contain the code that needs to be executed to reproduce the analysis.
+
+
+```{r}
+
+
+
+# for(i in unique(RADAR_valid_data_table$Compound)){
+#   for(j in unique(RADAR_valid_data_table$lab)){
+#     dat <- RADAR_valid_data_table |> 
+#       dplyr::filter(Compound == i & lab == j) 
+#     if(!nrow(dat) == 0){
+#       RADAR_valid_data[[paste0(i,j)]] <- dat
+#     } else{
+#       next
+#     }
+#   }
+# }
+
+
+decreasing_alpha <- function(df, vector){
+  for(i in vector){
+    result <- xeredar::data_prep(df, row=FALSE, alpha = i, trim=FALSE, outlier = FALSE)
+    if(is.list(result)){
+      break
+    } else{
+      next
+    }
+  }
+  result[["alpha"]] <- i
+  return(result)
+}
+
+
+# RADAR_valid_data_table_spiked_unspiked <- purrr::map(RADAR_valid_data, spiked_unspiked) 
+
+
+changing_alpha <- sort(c(c(1,5) %o% 10^-(2:17), 0), decreasing = TRUE)[-1]
+
+
+check <- function(list_dfs, id){
+  result <- tryCatch({
+    decreasing_alpha(list_dfs, changing_alpha)
+    }, error = function(e) {
+      list(error = paste("Error xeredar provides an error"))
+      })
+  setNames(list(result), id)
+}
+
+
+anovas <- purrr::imap(xeredar::RADAR_valid_data_table_spiked_unspiked, ~ check(.x, .y)) |> purrr::flatten()
+
+
+
+
+check_positive <- function(df){
+  if(length(df) ==1){
+    return(NA)}
+  
+  if(df[["Monotonicity Test"]]$`Pr(>|t|)`[1] >= 0.01 &
+     df[["Monotonicity Test"]]$`Pr(>|t|)`[2] <= 0.01 ) {
+    return(df[["Dunnetts"]])
+  } else if (length(unique(df$WilliamsIncrease$Y.Tilde)) - 1 > floor(nrow(df$WilliamsIncrease)/2) | 
+             length(unique(df$WilliamsDecrease$Y.Tilde)) - 1 > floor(nrow(df$WilliamsDecrease)/2)) { 
+    return(list(WilliamsIncrease = df[["WilliamsIncrease"]], WilliamsDecrease = df[["WilliamsDecrease"]])) 
+  } else{
+    return(df[["Dunnetts"]])
+  } 
+}
+
+
+resultList <- 
+
+anovas_unspiked <- anovas[stringr::str_detect(names(anovas), "Unspiked")]
+anovas_spiked<- anovas[!stringr::str_detect(names(anovas), "Unspiked")]
+
+
+results_Spiked <- purrr::map(anovas_spiked, check_positive)
+results_Unspiked <- purrr::map(anovas_unspiked, check_positive)
+
+
+Williams_Spiked <- !purrr::map_vec(results_Spiked, is.data.frame)
+Williams_Unspiked <- !purrr::map_vec(results_Unspiked, is.data.frame)
+
+significances <- function(df, Williams= FALSE){
+  if(!is.list(df)){
+    return(NA)}
+  if(Williams) {
+    if(TRUE %in% df[["WilliamsIncrease"]]$Sign){
+        return("sign_Incr")
+      }
+    if(TRUE %in% df[["WilliamsDecrease"]]$Sign){
+        return("sign_Decr")
+      }
+    else{
+      return("Nonsignificant")
+    }
+    }
+  else{
+    if(df[["adj p"]][length(df[["adj p"]])] < 0.05){
+      if(df[["Estimate"]][length(df[["Estimate"]])] > 0){
+        return("sign_Incr")
+      } else{
+        return("sign_Decr")
+      }
+    } else{
+      return("Nonsignificant")
+  }
+  }
+}
+
+significances_Spiked <- purrr::map2(results_Spiked, Williams_Spiked, significances) |>
+  dplyr::bind_rows(.id = "CompoundLab") |> 
+  tidyr::pivot_longer(
+    cols = 1:44,  
+    names_to = "CompoundLab",        
+    values_to = "Spiked_sign"              
+  ) |> 
+    dplyr::mutate(CompoundLab = stringr::str_remove(CompoundLab,"_Spiked"))
+
+
+significances_Unspiked <- purrr::map2(results_Unspiked, Williams_Unspiked, significances) |> 
+  dplyr::bind_rows(.id = "CompoundLab") |> 
+  tidyr::pivot_longer(
+    cols = 1:44,  
+    names_to = "CompoundLab",        
+    values_to = "Unspiked_sign"              
+  ) |> 
+    dplyr::mutate(CompoundLab = stringr::str_remove(CompoundLab,"_Unspiked"))
+
+
+desired_order <- c(
+  "AmantadineWATCHFR", "AmantadineCEFAS", "AmantadineFIWI", "AmantadineFRAUNH", "AmantidineIDEA",
+  "LDopaWATCHFR", "ArabinoseWATCHFR", "CefuroximeWATCHFR", "CefuroximeCEFAS", "CefuroximeFIWI",
+  "CefuroximeFRAUNH", "CefuroximeIDEA", "CromolynWATCHFR", "CromolynCEFAS", "CromolynFIWI",
+  "CromolynIDEA", "AnastrazoleWATCHFR", "AnastrozoleCEFAS", "AnastrozoleFIWI", "AnastrozoleIDEA",
+  "ProchlorazWATCHFR", "DutasterideWATCHFR", "CyproteroneWATCHFR", "FenitrothionWATCHFR",
+  "FenitrothionCEFAS", "FenitrothionFIWI", "FenitrothionIDEA", "EstradiolWATCHFR", "mDHTWATCHFR",
+  "mDHTCEFAS", "mDHTFIWI", "mDHTFRAUNH", "mDHTIDEA", "TrenboloneWATCHFR", "LinuronWATCHFR",
+  "LinuronCEFAS", "LinuronFIWI", "LinuronFRAUNH", "LinuronIDEA", "VinclozolinWATCHFR",
+  "VinclozolinCEFAS", "VinclozolinFIWI", "VinclozolinFRAUNH", "VinclozolinIDEA"
+)
+
+
+
+
+Result_Radar_valid <- dplyr::full_join(significances_Spiked, significances_Unspiked) |>
+    dplyr::mutate(`Known Mode of Action` = 
+    dplyr::case_when(
+        stringr::str_detect(CompoundLab, "Amantadine|Amantidine|LDopa|Arabinose|Cefuroxime|Cromolyn")~ "no EAS MoA",
+        stringr::str_detect(CompoundLab, "Anastrozole|Anastrazole") ~ "steroidogenesis (anti-E): aromatase inhibitor (competitive)",
+        stringr::str_detect(CompoundLab, "Prochloraz") ~ "steroidogenesis (anti-E): aromatase inhibitor (transcriptional)",
+        stringr::str_detect(CompoundLab, "Dutasteride") ~ "steroidogenesis: 5alpha reductase inhibitor; AR antagonist (high conc.)",
+        stringr::str_detect(CompoundLab, "Cyproterone|Fenitrothion")  ~ "anti-A: AR antagonist",
+        stringr::str_detect(CompoundLab, "Estradiol") ~ "E: ER agonist; steroidogenesis (anti-A): aromatase inducer",
+        stringr::str_detect(CompoundLab, "mDHT|Trenbolone") ~ "A: non-aromatizable AR agonist",
+        stringr::str_detect(CompoundLab, "Linuron") ~ "anti-A: AR antagonist; anti-E",
+        stringr::str_detect(CompoundLab, "Vinclozolin") ~ "anti-A: AR antagonist; E: weak ER agonist"
+    ),
+    CompoundLab = factor(CompoundLab, levels = desired_order)) |>
+        dplyr::arrange(CompoundLab) |> 
+        dplyr::mutate(`Final Conclusion` = c('A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive','active', 'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive','A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'S-active', 'S-active','S-active', 'inactive', 'inactive', 'A-active', 'A-active', 'A-active', 'A-active', 'A-active', 'A-ative','S-active', 'A-active', 'A-active', 'A-active', 'A-active', 'A-active', 'A-active', 'A-active', 'A-active''inactive', 'inactive', 'A-active', 'A-active', 'A-active', 'A-active', 'inactive', 'A-active')) |> 
+    dplyr::relocate(c("CompoundLab", "Known Mode of Action", "Spiked_sign", "Unspiked_sign", "Final conclusion"))
+        
+
+gt::gt(Result_Radar_valid)
+
