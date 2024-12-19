@@ -30,6 +30,14 @@ library(tidyr)
 
 The package xeredar is an R-package for analysis of the New Approach Methodology (NAM) assays of XETA (Xenopus Eleutheroembryonic Thyroid), RADAR (Rapid Androgen Disruption Activity Reporter) and REACTIV (Rapid Estrogen ACTivity In Vivo) for assessing endocrine effects of chemicals on the thyroid, androgen/steroid and estrogen axis. The functionality is based on the SAS-script recommended in the Annex 13 of OECD test guideline No. 248 of the XETA assay ([2019](https://www.oecd-ilibrary.org/environment/tg-248-xenopus-eleutheroembryonic-thyroid-assay-xeta_a13f80ee-en)), written by John Green.
 
+# Installation 
+You can install xeredar using one of the followig commands: 
+```{r eval=FALSE}
+devtools::install_github("basf/xeredar")
+
+pak::pkg_install("basf/xeredar")
+```
+
 # Data requirements
 
 Data frames that are supposed to be analyzed with xeredar needs to fulfill certain requirements. The data frame or tibble needs to contain the following column headers:
