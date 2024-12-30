@@ -73,3 +73,27 @@
 #' levels, as the Williams test will otherwise not order the concentrations in
 #' the correct way. This dataset is an artificiald dataset.
 "reactiv_data"
+
+#' Mean values for each concentration group, compound and concentration for the power analysis 
+#' based on REACTIV validation data. Based on these mean values, the simulation is carried out.
+"MeansAllStudiesperConcSpiked"
+
+#' Mean values for each concentration group, compound and concentration for the power analysis 
+#' based on REACTIV validation data. Based on these mean values, the simulation is carried out.
+"MeansAllStudiesperConcUnspiked"
+
+#' Data containing information from variance analysis of original REACTIV validation studies. 
+#' Based on this data, and on MeansAllStudiesperConcSpiked and MeansAllStudiesperConcUnspiked the simualted data is created.
+"Simulation_Info"
+
+
+#' Data containing information from variance analysis of original REACTIV validation studies only that the zero inflated studies were filtered out. 
+#' Based on this data, and on MeansAllStudiesperConcSpiked and MeansAllStudiesperConcUnspiked the simualted data is created.
+"SimulationInfoWTzeroInflated"
+
+#' Results  of power analysis of simulated spiked REACTIV data
+"resultsSpiked_power_reactive"
+
+
+#' Results  of power analysis of simulated unspiked REACTIV data
+"resultsUnspiked_power_reactive"

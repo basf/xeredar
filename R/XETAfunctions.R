@@ -341,35 +341,43 @@ anova_assumpts <- function(dagostino, mixedaov, alpha) {
 #'  row = FALSE)
 #'
 #' # RADAR example androgen axis active chemical (data from validation studies)
-#' result4_1 <- data_prep(xeredar::Pos_Anas_CEFAS_RADAR_Unspiked,
+#' result4_1 <- data_prep(
+#' xeredar::RADAR_valid_data_table_spiked_unspiked[["AnastrozoleCEFAS_Unspiked"]],
 #'   row = FALSE, dagostino = TRUE, trimming = TRUE, outlier = TRUE,
 #'   boxcox = FALSE, artc = FALSE, alpha = 0
 #' )
-#' result4_2 <- data_prep(xeredar::Pos_Anas_CEFAS_RADAR_Spiked,
+#' result4_2 <- data_prep(
+#' xeredar::RADAR_valid_data_table_spiked_unspiked[["AnastrozoleCEFAS_Spiked"]],
 #'   row = FALSE, dagostino = TRUE, trimming = FALSE, outlier = FALSE,
 #'   boxcox = FALSE, alpha = 0
 #' )
-#' result5_1 <- data_prep(xeredar::Pos_Anas_FIWI_RADAR_Unspiked,
+#' result5_1 <- data_prep(
+#' xeredar::RADAR_valid_data_table_spiked_unspiked[["AnastrozoleFIWI_Unspiked"]],
 #'   row = FALSE,
 #'   dagostino = TRUE, trimming = TRUE, outlier = FALSE,
 #'   boxcox = FALSE, artc = FALSE, alpha = 0.05
 #' )
-#' result5_2 <- data_prep(xeredar::Pos_Anas_FIWI_RADAR_Spiked,
+#' result5_2 <- data_prep(
+#' xeredar::RADAR_valid_data_table_spiked_unspiked[["AnastrozoleFIWI_Spiked"]],
 #'   row = FALSE,
 #'   dagostino = TRUE, trimming = FALSE
 #' )
-#' result6_1 <- data_prep(xeredar::Pos_Anas_IDEA_RADAR_Unspiked,
+#' result6_1 <- data_prep(
+#' xeredar::RADAR_valid_data_table_spiked_unspiked[["AnastrozoleFIWI_Unspiked"]],
 #'   row = FALSE,
 #'   dagostino = TRUE, trimming = FALSE
 #' )
-#' result6_2 <- data_prep(xeredar::Pos_Anas_IDEA_RADAR_Spiked,
+#' result6_2 <- data_prep(
+#' xeredar::RADAR_valid_data_table_spiked_unspiked[["AnastrozoleIDEA_Spiked"]],
 #'   row = FALSE,
 #'   dagostino = TRUE, trimming = FALSE
 #' )
-#' result7_1 <- data_prep(xeredar::Pos_Anas_Watchfrog_RADAR_Unspiked,
+#' result7_1 <- data_prep(
+#' xeredar::RADAR_valid_data_table_spiked_unspiked[["AnastrazoleWATCHFR_Unspiked"]],
 #'   row = FALSE, dagostino = TRUE, trimming = FALSE
 #' )
-#' result7_2 <- data_prep(xeredar::Pos_Anas_Watchfrog_RADAR_Spiked,
+#' result7_2 <- data_prep(
+#' xeredar::RADAR_valid_data_table_spiked_unspiked[["AnastrazoleWATCHFR_Spiked"]],
 #'   row = FALSE,
 #'   dagostino = TRUE, trimming = FALSE
 #' )

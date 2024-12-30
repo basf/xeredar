@@ -1,9 +1,9 @@
 ---
-title: "Reproducing power analysis of publication"
+title: "Creating simulated REACTIV data for power analysis of publication"
 author: "Inka Marie Spyridonov"
 date: "2024-12-17"
 vignette: >
-  %\VignetteIndexEntry{User guide}
+  %\VignetteIndexEntry{Creating simulated REACTIV data for power analysis}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

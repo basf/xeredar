@@ -1,9 +1,9 @@
 ---
-title: "Reproducing power analysis of publication"
+title: "Reproducing power analysis based on REACTIV validation studies of publication"
 author: "Inka Marie Spyridonov"
 date: "2024-12-17"
 vignette: >
-  %\VignetteIndexEntry{User guide}
+  %\VignetteIndexEntry{Power analysis based on REACTIV validation studies}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -70,12 +70,11 @@ resultList
 ### Analysis
 
 ```{r eval=TRUE, output=FALSE}
-
+devtools::install_github("thomasp85/patchwork")
 #devtools::install_github("basf/xeredar")
-#install.packages("easystats")
-lapply(c("tidyverse","xeredar","tidyr", "purrr", "furrr", "gt","easystats","rlang","drc", "DHARMa", "devtools", "pathwork"), require, character.only = TRUE)
+purrr::map(c("dplyr","tidyr", "purrr", "furrr", "gt","easystats","rlang","drc", "DHARMa", "devtools", "patchwork", "ggplot2"), require, character.only = TRUE)
 library(patchwork)
-devtools::load_all()
+library(dplyr)
 ```
 
 ```{r eval=FALSE}

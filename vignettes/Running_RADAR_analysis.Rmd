@@ -2,7 +2,7 @@
 title: "Analysis of all RADAR validation studies"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{User guide}
+  %\VignetteIndexEntry{Analysis of RADAR validation studies}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -33,21 +33,9 @@ Once the default.nix file was created in the path you specified in the command a
 The following sections contain the code that needs to be executed to reproduce the analysis.
 
 
+
+### Functions
 ```{r}
-
-
-
-# for(i in unique(RADAR_valid_data_table$Compound)){
-#   for(j in unique(RADAR_valid_data_table$lab)){
-#     dat <- RADAR_valid_data_table |> 
-#       dplyr::filter(Compound == i & lab == j) 
-#     if(!nrow(dat) == 0){
-#       RADAR_valid_data[[paste0(i,j)]] <- dat
-#     } else{
-#       next
-#     }
-#   }
-# }
 
 
 decreasing_alpha <- function(df, vector){
@@ -64,8 +52,6 @@ decreasing_alpha <- function(df, vector){
 }
 
 
-# RADAR_valid_data_table_spiked_unspiked <- purrr::map(RADAR_valid_data, spiked_unspiked) 
-
 
 changing_alpha <- sort(c(c(1,5) %o% 10^-(2:17), 0), decreasing = TRUE)[-1]
 
@@ -78,10 +64,6 @@ check <- function(list_dfs, id){
       })
   setNames(list(result), id)
 }
-
-
-anovas <- purrr::imap(xeredar::RADAR_valid_data_table_spiked_unspiked, ~ check(.x, .y)) |> purrr::flatten()
-
 
 
 
@@ -101,18 +83,6 @@ check_positive <- function(df){
 }
 
 
-resultList <- 
-
-anovas_unspiked <- anovas[stringr::str_detect(names(anovas), "Unspiked")]
-anovas_spiked<- anovas[!stringr::str_detect(names(anovas), "Unspiked")]
-
-
-results_Spiked <- purrr::map(anovas_spiked, check_positive)
-results_Unspiked <- purrr::map(anovas_unspiked, check_positive)
-
-
-Williams_Spiked <- !purrr::map_vec(results_Spiked, is.data.frame)
-Williams_Unspiked <- !purrr::map_vec(results_Unspiked, is.data.frame)
 
 significances <- function(df, Williams= FALSE){
   if(!is.list(df)){
@@ -141,6 +111,39 @@ significances <- function(df, Williams= FALSE){
   }
 }
 
+
+
+```
+
+### Checking all RADAR validation studies for ED activity
+
+
+```{r eval=TRUE, output=FALSE}
+devtools::install_github("thomasp85/patchwork")
+#devtools::install_github("basf/xeredar")
+purrr::map(c("tidyverse","tidyr", "purrr", "furrr", "gt","easystats","rlang","drc", "DHARMa", "devtools", "patchwork"), require, character.only = TRUE)
+library(patchwork)
+```
+
+
+
+```{r eval = TRUE, output = FALSE}
+
+
+anovas <- purrr::imap(xeredar::RADAR_valid_data_table_spiked_unspiked, ~ check(.x, .y)) |> purrr::flatten()
+
+
+resultList <- 
+
+anovas_unspiked <- anovas[stringr::str_detect(names(anovas), "Unspiked")]
+anovas_spiked<- anovas[!stringr::str_detect(names(anovas), "Unspiked")]
+
+results_Spiked <- purrr::map(anovas_spiked, check_positive)
+results_Unspiked <- purrr::map(anovas_unspiked, check_positive)
+
+Williams_Spiked <- !purrr::map_vec(results_Spiked, is.data.frame)
+Williams_Unspiked <- !purrr::map_vec(results_Unspiked, is.data.frame)
+
 significances_Spiked <- purrr::map2(results_Spiked, Williams_Spiked, significances) |>
   dplyr::bind_rows(.id = "CompoundLab") |> 
   tidyr::pivot_longer(
@@ -161,6 +164,7 @@ significances_Unspiked <- purrr::map2(results_Unspiked, Williams_Unspiked, signi
     dplyr::mutate(CompoundLab = stringr::str_remove(CompoundLab,"_Unspiked"))
 
 
+
 desired_order <- c(
   "AmantadineWATCHFR", "AmantadineCEFAS", "AmantadineFIWI", "AmantadineFRAUNH", "AmantidineIDEA",
   "LDopaWATCHFR", "ArabinoseWATCHFR", "CefuroximeWATCHFR", "CefuroximeCEFAS", "CefuroximeFIWI",
@@ -170,30 +174,118 @@ desired_order <- c(
   "FenitrothionCEFAS", "FenitrothionFIWI", "FenitrothionIDEA", "EstradiolWATCHFR", "mDHTWATCHFR",
   "mDHTCEFAS", "mDHTFIWI", "mDHTFRAUNH", "mDHTIDEA", "TrenboloneWATCHFR", "LinuronWATCHFR",
   "LinuronCEFAS", "LinuronFIWI", "LinuronFRAUNH", "LinuronIDEA", "VinclozolinWATCHFR",
-  "VinclozolinCEFAS", "VinclozolinFIWI", "VinclozolinFRAUNH", "VinclozolinIDEA"
+  "VinclozolinCEFAS", "VinclozolinFIWI", "VinclozolinFRAUNH", "vinclozolinIDEA"
 )
-
-
-
 
 Result_Radar_valid <- dplyr::full_join(significances_Spiked, significances_Unspiked) |>
     dplyr::mutate(`Known Mode of Action` = 
-    dplyr::case_when(
-        stringr::str_detect(CompoundLab, "Amantadine|Amantidine|LDopa|Arabinose|Cefuroxime|Cromolyn")~ "no EAS MoA",
-        stringr::str_detect(CompoundLab, "Anastrozole|Anastrazole") ~ "steroidogenesis (anti-E): aromatase inhibitor (competitive)",
-        stringr::str_detect(CompoundLab, "Prochloraz") ~ "steroidogenesis (anti-E): aromatase inhibitor (transcriptional)",
-        stringr::str_detect(CompoundLab, "Dutasteride") ~ "steroidogenesis: 5alpha reductase inhibitor; AR antagonist (high conc.)",
-        stringr::str_detect(CompoundLab, "Cyproterone|Fenitrothion")  ~ "anti-A: AR antagonist",
-        stringr::str_detect(CompoundLab, "Estradiol") ~ "E: ER agonist; steroidogenesis (anti-A): aromatase inducer",
-        stringr::str_detect(CompoundLab, "mDHT|Trenbolone") ~ "A: non-aromatizable AR agonist",
-        stringr::str_detect(CompoundLab, "Linuron") ~ "anti-A: AR antagonist; anti-E",
-        stringr::str_detect(CompoundLab, "Vinclozolin") ~ "anti-A: AR antagonist; E: weak ER agonist"
+        dplyr::case_when(
+            stringr::str_detect(CompoundLab, "Amantadine|Amantidine|LDopa|Arabinose|Cefuroxime|Cromolyn") ~ "no EAS MoA",
+            stringr::str_detect(CompoundLab, "Anastrozole|Anastrazole") ~ "steroidogenesis (anti-E): aromatase inhibitor (competitive)",
+            stringr::str_detect(CompoundLab, "Prochloraz") ~ "steroidogenesis (anti-E): aromatase inhibitor (transcriptional)",
+            stringr::str_detect(CompoundLab, "Dutasteride") ~ "steroidogenesis: 5alpha reductase inhibitor; AR antagonist (high conc.)",
+            stringr::str_detect(CompoundLab, "Cyproterone|Fenitrothion") ~ "anti-A: AR antagonist",
+            stringr::str_detect(CompoundLab, "Estradiol") ~ "E: ER agonist; steroidogenesis (anti-A): aromatase inducer",
+            stringr::str_detect(CompoundLab, "mDHT|Trenbolone") ~ "A: non-aromatizable AR agonist",
+            stringr::str_detect(CompoundLab, "Linuron") ~ "anti-A: AR antagonist; anti-E",
+            stringr::str_detect(CompoundLab, "Vinclozolin|vinclozolin") ~ "anti-A: AR antagonist; E: weak ER agonist"
+        ),
+        CompoundLab = factor(CompoundLab, levels = desired_order)
+    ) |>
+    dplyr::arrange(CompoundLab) |> 
+    dplyr::mutate(`Final Conclusion` = c(
+        'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'active', 'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'S-active', 'S-active', 'S-active', 'inactive', 'inactive', 'A-active', 'A-active', 'A-active', 'A-active', 'A-active', 'A-active','S-active', 'A-active', 'A-active', 'A-active', 'A-active', 'A-active', 'A-active', 'A-active', 'A-active', 'inactive', 'A-active', 'A-active', 'A-active','A-active','A-active',' A-active', 'A-active'
+    ))  |>
+    dplyr::mutate(Compound= stringr::str_remove(CompoundLab, "WATCHFR|CEFAS|FIWI|FARUNH|IDEA"),
+                  Lab = stringr::str_extract(CompoundLab, "WATCHFR|CEFAS|FIWI|FRAUNH|IDEA")) |> 
+    dplyr::select(-CompoundLab) |>
+    dplyr::relocate(c("Compound", "Lab", "Known Mode of Action", "Spiked_sign", "Unspiked_sign", "Final Conclusion"))
+```
+
+
+```{r eval=TRUE}
+gt::gt(Result_Radar_valid) |>
+    gt::tab_style(
+    style = list(
+      gt::cell_fill(color = "green")
     ),
-    CompoundLab = factor(CompoundLab, levels = desired_order)) |>
-        dplyr::arrange(CompoundLab) |> 
-        dplyr::mutate(`Final Conclusion` = c('A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive','active', 'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive','A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'S-active', 'S-active','S-active', 'inactive', 'inactive', 'A-active', 'A-active', 'A-active', 'A-active', 'A-active', 'A-ative','S-active', 'A-active', 'A-active', 'A-active', 'A-active', 'A-active', 'A-active', 'A-active', 'A-active''inactive', 'inactive', 'A-active', 'A-active', 'A-active', 'A-active', 'inactive', 'A-active')) |> 
-    dplyr::relocate(c("CompoundLab", "Known Mode of Action", "Spiked_sign", "Unspiked_sign", "Final conclusion"))
-        
+    locations = gt::cells_body(
+      columns = c(`Final Conclusion`), # not needed if coloring all columns
+      rows = c(1:6, 8:19, 22:36, 38:42, 43:44))) |> 
+    gt::tab_style(
+      style = list(
+      gt::cell_fill(color = "red")
+      ),
+      locations = gt::cells_body(
+        columns = (`Final Conclusion`),
+        rows = 7
+      )
+    ) |> 
+    gt::tab_style(
+      style = list(
+      gt::cell_fill(color = "blue")
+      ),
+      locations = gt::cells_body(
+        columns = (`Final Conclusion`),
+        rows = c(20:21, 37)
+      )
+    ) |> 
+  gt::tab_style(
+      style = list(
+      gt::cell_fill(color = "orange")
+      ),
+      locations = gt::cells_body(
+        columns = (Unspiked_sign),
+        rows = c(9, 18, 25)
+      )
+    ) |>
+  gt::tab_style(
+      style = list(
+      gt::cell_fill(color = "purple")
+      ),
+      locations = gt::cells_body(
+        columns = (Unspiked_sign),
+        rows = c(7,27,35)
+      )
+    ) |>
+  gt::tab_style(
+      style = list(
+      gt::cell_fill(color = "purple")
+      ),
+      locations = gt::cells_body(
+        columns = (Spiked_sign),
+        rows = c(20:21, 34, 37)
+      )
+    )
+```
 
-gt::gt(Result_Radar_valid)
+```{r eval=TRUE, fig.width=8, fig.height=16}
+arabinoseWATCHFR_unspiked <- xeredar::RADAR_valid_data_table_spiked_unspiked[["ArabinoseWATCHFR_Unspiked"]] |> 
+  ggplot2::ggplot(ggplot2::aes(x= Conc, y = Fluor)) + 
+  ggplot2::geom_boxplot() + 
+  ggplot2::facet_wrap(ggplot2::vars(Replicate)) +
+  ggplot2::ggtitle("Arabinose Watchfrog spiked")
 
+anastrozoleIDEA_spiked <- xeredar::RADAR_valid_data_table_spiked_unspiked[["AnastrozoleIDEA_Spiked"]] |>
+   ggplot2::ggplot(ggplot2::aes(x= Conc, y = Fluor)) +
+    ggplot2::geom_boxplot() + 
+    ggplot2::facet_wrap(ggplot2::vars(Replicate)) +
+    ggplot2::ggtitle("Anastrozole IDEA spiked")
+
+prochlorazWATCHFR_spiked <- xeredar::RADAR_valid_data_table_spiked_unspiked[["ProchlorazWATCHFR_Spiked"]] |>
+   ggplot2::ggplot(ggplot2::aes(x= Conc, y = Fluor)) +
+    ggplot2::geom_boxplot() + 
+    ggplot2::facet_wrap(ggplot2::vars(Replicate)) +
+    ggplot2::ggtitle("Procholoraz Watchfrog spiked")
+
+fenitrothionIDEA_spiked <- xeredar::RADAR_valid_data_table_spiked_unspiked[["LinuronFIWI_Spiked"]] |>
+  ggplot2::ggplot(ggplot2::aes(x= Conc, y = Fluor)) + 
+    ggplot2::geom_boxplot() + 
+    ggplot2::facet_wrap(ggplot2::vars(Replicate)) +
+    ggplot2::ggtitle("Linuron FIWI spiked")
+
+arabinoseWATCHFR_unspiked/
+anastrozoleIDEA_spiked/
+prochlorazWATCHFR_spiked/
+fenitrothionIDEA_spiked
+```

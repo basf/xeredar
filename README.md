@@ -1,4 +1,4 @@
-Background
+
 # xeredar <a href="https://dplyr.tidyverse.org"><img src="man/figures/logo.png" align="right" height="138" /></a>
 
 <!-- badges: start -->
@@ -7,7 +7,7 @@ Background
 <!-- badges: end -->
 
 
-
+Background
 ==========
 
 The package xeredar is an R-package for analysis of the New Approach

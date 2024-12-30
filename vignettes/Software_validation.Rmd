@@ -2,7 +2,7 @@
 title: "Software validation"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{User guide}
+  %\VignetteIndexEntry{Software validation}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
