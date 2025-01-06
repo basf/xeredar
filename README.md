@@ -4,6 +4,7 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/basf/xeredar/actions/workflows/Package_check.yml/badge.svg)](https://github.com/basf/xeredar/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/basf/xeredar/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/basf/xeredar/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 
