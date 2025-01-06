@@ -50,11 +50,11 @@ resultList
 
 ### Analysis
 
-```{r eval=TRUE}
+```{r eval=TRUE, echo=TRUE, results='hide', message=FALSE, warning=FALSE, fig.show='hide'}
 
 #devtools::install_git("https://gitlab.roqs.basf.net/WillmsIM/xetaana.git")
 #install.packages("easystats")
-lapply(c("tidyverse","xeredar","tidyr", "purrr", "furrr", "gt","easystats","rlang","drc", "DHARMa", "devtools"), require, character.only = TRUE)
+lapply(c("tidyverse","xeredar","tidyr", "purrr", "furrr", "gt","easystats","rlang","drc", "DHARMa", "devtools", "ggplot2"), require, character.only = TRUE)
 
 ```
 
@@ -106,12 +106,12 @@ gt::gt(xeredar::SimulationInfoWTzeroInflated) |> gt::tab_caption(caption = "Summ
 ```{r eval=TRUE}
 xeredar::SimulationInfoWTzeroInflated |> 
   dplyr::select(adj_ICC, Country, Spiked) |> 
-  dplyr::mutate(Spiked = if_else(Spiked == TRUE, "Spiked", "Unspiked")) |>
-  ggplot(aes(y= as.numeric(adj_ICC), x= Country, color = Spiked))+
-  geom_jitter(alpha= 0.5,  width = 0.2)+
-  geom_abline(slope=0, intercept= 0.1337804)+
-  labs(color='Spiked or Unspiked?')+
-  ylab(label="adjusted ICC value")+
+  dplyr::mutate(Spiked = dplyr::if_else(Spiked == TRUE, "Spiked", "Unspiked")) |>
+  ggplot2::ggplot(aes(y= as.numeric(adj_ICC), x= Country, color = Spiked)) +
+  geom_jitter(alpha= 0.5,  width = 0.2) +
+  geom_abline(slope=0, intercept= 0.1337804) +
+  labs(color='Spiked or Unspiked?') +
+  ylab(label="adjusted ICC value") +
   xlab(label="")
 ```
 
@@ -451,45 +451,5 @@ resultsUnspiked_power_reactive  <- dplyr::bind_rows(resultsUnspiked_power_reacti
 
 resultsUnspiked_power_reactive <- dplyr::left_join(resultsUnspiked_power_reactive, perc_effect_e_dose_Unspiked)
 
-usethis::use_data(resultsUnspiked_power_reactive, overwrite = TRUE)
 ```
 
-```{r eval=TRUE}
-breaks=c("mixedDunnett","PooledDunnetts","pooledDunns" ,"mixedWilliamsIncrease")
-
-labels=c("mixed Dunnett", "Pooled Dunnetts","Pooled Dunns","mixed Williams")
-
-type1_error_Spiked <- xeredar::resultsSpiked_power_reactive |> dplyr::arrange(e, percEffect) |> filter(percEffect <= 1) |>
-  ggplot2::ggplot(aes(x=PercentSign, color=Test))+
-  geom_boxplot( alpha= 0.5)+
-  scale_x_continuous(labels = scales::percent, trans = "log10")+
-  xlab("% significant tests")
-
-power_Spiked <- xeredar::resultsSpiked_power_reactive |> dplyr::arrange(e, percEffect) |>  dplyr::filter(Conc==100) |>
-  ggplot2::ggplot(ggplot2::aes(x=percEffect, y=PercentSign, color=Test))+
-  ggplot2::geom_line(linewidth=1.2)+
-  ggplot2::geom_hline(x=as.numeric(0:300), yintercept=0.8)+
-  ggplot2::scale_color_discrete(name  ="Tests",
-                      breaks = breaks,
-                      labels = labels)+
-  ggplot2::ylab("% significant")+
-  ggplot2::xlab("% effect")
-
-power_Unspiked <- xeredar::resultsUnspiked_power_reactive |> dplyr::arrange(e, percEffect) |>  dplyr::filter(Conc==100) |>
-  ggplot2::ggplot(ggplot2::aes(x=percEffect, y=PercentSign, color=Test))+
-  ggplot2::geom_line(linewidth=1.2)+
-  ggplot2::geom_hline(x=as.numeric(0:300), yintercept=0.8)+
-  ggplot2::scale_color_discrete(name  ="Tests",
-                      breaks = breaks,
-                      labels = labels)+
-  ggplot2::ylab("% significant")+
-  ggplot2::xlab("% effect")
-
-type1_error_Spiked <- xeredar::resultsSpiked_power_reactive |> dplyr::arrange(e, percEffect) |> filter(percEffect <= 1) |>
-  ggplot2::ggplot(aes(x=PercentSign, color=Test))+
-  geom_boxplot( alpha= 0.5)+
-  scale_x_continuous(labels = scales::percent, trans = "log10")+
-  xlab("% significant tests")
-
-power_Spiked + power_Unspiked
-```

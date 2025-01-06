@@ -69,7 +69,7 @@ resultList
 
 ### Analysis
 
-```{r eval=TRUE, output=FALSE}
+```{r eval=TRUE, echo=TRUE, results='hide', message=FALSE}
 devtools::install_github("thomasp85/patchwork")
 #devtools::install_github("basf/xeredar")
 purrr::map(c("dplyr","tidyr", "purrr", "furrr", "gt","easystats","rlang","drc", "DHARMa", "devtools", "patchwork", "ggplot2"), require, character.only = TRUE)

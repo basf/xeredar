@@ -1,6 +1,7 @@
 ---
 title: "Analysis of all RADAR validation studies"
-output: rmarkdown::html_vignette
+author: "Inka Marie Spyridonov"
+date: "2024-12-17"
 vignette: >
   %\VignetteIndexEntry{Analysis of RADAR validation studies}
   %\VignetteEngine{knitr::rmarkdown}
@@ -35,9 +36,7 @@ The following sections contain the code that needs to be executed to reproduce t
 
 
 ### Functions
-```{r}
-
-
+```{r eval=TRUE, echo=TRUE, results='hide', message=FALSE}
 decreasing_alpha <- function(df, vector){
   for(i in vector){
     result <- xeredar::data_prep(df, row=FALSE, alpha = i, trim=FALSE, outlier = FALSE)
@@ -111,14 +110,12 @@ significances <- function(df, Williams= FALSE){
   }
 }
 
-
-
 ```
 
 ### Checking all RADAR validation studies for ED activity
 
 
-```{r eval=TRUE, output=FALSE}
+```{r eval=TRUE, echo=TRUE, results='hide', message=FALSE}
 devtools::install_github("thomasp85/patchwork")
 #devtools::install_github("basf/xeredar")
 purrr::map(c("tidyverse","tidyr", "purrr", "furrr", "gt","easystats","rlang","drc", "DHARMa", "devtools", "patchwork"), require, character.only = TRUE)
@@ -127,13 +124,10 @@ library(patchwork)
 
 
 
-```{r eval = TRUE, output = FALSE}
+```{r eval=TRUE, echo=TRUE, results='hide', message=FALSE, warning=FALSE, fig.show='hide'}
 
 
 anovas <- purrr::imap(xeredar::RADAR_valid_data_table_spiked_unspiked, ~ check(.x, .y)) |> purrr::flatten()
-
-
-resultList <- 
 
 anovas_unspiked <- anovas[stringr::str_detect(names(anovas), "Unspiked")]
 anovas_spiked<- anovas[!stringr::str_detect(names(anovas), "Unspiked")]
@@ -203,7 +197,7 @@ Result_Radar_valid <- dplyr::full_join(significances_Spiked, significances_Unspi
 ```
 
 
-```{r eval=TRUE}
+```{r eval=TRUE, echo=TRUE, message=FALSE}
 gt::gt(Result_Radar_valid) |>
     gt::tab_style(
     style = list(

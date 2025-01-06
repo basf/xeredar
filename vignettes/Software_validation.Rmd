@@ -159,11 +159,6 @@ gt::gt(thyroid_active, rowname_col = "substance") |>
 ```
 
 
-##
-
-
-
-
 
 
 
