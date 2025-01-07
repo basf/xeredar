@@ -10,11 +10,11 @@ vignette: >
 
 ## Reproducible environment
 
-In case you want to make sure that you are creating the exact same output as presented in the publication, you need to create the reproducible environment using [`rix`](https://ropensci.github.io/rix/index.html) and [`nix`](https://nixos.org/). Using `rix`, you can run the following function to create your nix shell. 
+In case you want to make sure that you are creating the exact same output as presented in the publication, you need to create the reproducible environment using `rix` and `nix`. Using `rix`, you can run the following function to create your nix script. The nix script is however already in the vignettes folder within `xeredar` available as default.nix file.
 
 ```{r eval = FALSE}
 rix::rix(
-  r_ver = "latest",
+  r_ver = "4.4.0",
   r_pkgs = c("tidyverse", "tidyr", "purrr", "furrr", "gt","easystats","rlang", "DHARMa", "devtools", "patchwork", "rmarkdown"),
   system_pkgs = NULL,
   tex_pkgs = c("amsmath"),

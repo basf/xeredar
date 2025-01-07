@@ -3,7 +3,7 @@ title: "Analysis of all RADAR validation studies"
 author: "Inka Marie Spyridonov"
 date: "2024-12-17"
 vignette: >
-  %\VignetteIndexEntry{Analysis of RADAR validation studies}
+  %\VignetteIndexEntry{Analysis of all RADAR validation studies}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -11,11 +11,11 @@ vignette: >
 
 ## Reproducible environment
 
-In case you want to make sure that you are creating the exact same output as presented in the publication, you need to create the reproducible environment using `rix` and `nix`. Using `rix`, you can run the following function to create your nix shell. 
+In case you want to make sure that you are creating the exact same output as presented in the publication, you need to create the reproducible environment using `rix` and `nix`. Using `rix`, you can run the following function to create your nix script. The nix script is however already in the vignettes folder within `xeredar` available as default.nix file.
 
 ```{r eval = FALSE}
 rix::rix(
-  r_ver = "latest",
+  r_ver = "4.4.0",
   r_pkgs = c("tidyverse", "tidyr", "purrr", "furrr", "gt","easystats","rlang", "DHARMa", "devtools", "patchwork", "rmarkdown"),
   system_pkgs = NULL,
   tex_pkgs = c("amsmath"),
@@ -190,10 +190,11 @@ Result_Radar_valid <- dplyr::full_join(significances_Spiked, significances_Unspi
     dplyr::mutate(`Final Conclusion` = c(
         'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'active', 'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'A(S)-inactive', 'S-active', 'S-active', 'S-active', 'inactive', 'inactive', 'A-active', 'A-active', 'A-active', 'A-active', 'A-active', 'A-active','S-active', 'A-active', 'A-active', 'A-active', 'A-active', 'A-active', 'A-active', 'A-active', 'A-active', 'inactive', 'A-active', 'A-active', 'A-active','A-active','A-active',' A-active', 'A-active'
     ))  |>
-    dplyr::mutate(Compound= stringr::str_remove(CompoundLab, "WATCHFR|CEFAS|FIWI|FARUNH|IDEA"),
+    dplyr::mutate(Compound= stringr::str_remove(CompoundLab, "WATCHFR|CEFAS|FIWI|FRAUNH|IDEA"),
                   Lab = stringr::str_extract(CompoundLab, "WATCHFR|CEFAS|FIWI|FRAUNH|IDEA")) |> 
     dplyr::select(-CompoundLab) |>
-    dplyr::relocate(c("Compound", "Lab", "Known Mode of Action", "Spiked_sign", "Unspiked_sign", "Final Conclusion"))
+    dplyr::relocate(c("Compound", "Lab", "Known Mode of Action", "Spiked_sign", "Unspiked_sign", "Final Conclusion")) |> 
+    dplyr::mutate(Compound = dplyr::if_else(Compound == "vinclozolin", "Vinclozolin", Compound))
 ```
 
 
@@ -258,7 +259,7 @@ arabinoseWATCHFR_unspiked <- xeredar::RADAR_valid_data_table_spiked_unspiked[["A
   ggplot2::ggplot(ggplot2::aes(x= Conc, y = Fluor)) + 
   ggplot2::geom_boxplot() + 
   ggplot2::facet_wrap(ggplot2::vars(Replicate)) +
-  ggplot2::ggtitle("Arabinose Watchfrog spiked")
+  ggplot2::ggtitle("Arabinose Watchfrog unspiked")
 
 anastrozoleIDEA_spiked <- xeredar::RADAR_valid_data_table_spiked_unspiked[["AnastrozoleIDEA_Spiked"]] |>
    ggplot2::ggplot(ggplot2::aes(x= Conc, y = Fluor)) +
@@ -278,8 +279,15 @@ fenitrothionIDEA_spiked <- xeredar::RADAR_valid_data_table_spiked_unspiked[["Lin
     ggplot2::facet_wrap(ggplot2::vars(Replicate)) +
     ggplot2::ggtitle("Linuron FIWI spiked")
 
+fenitrothionCEFAS_spiked <- xeredar::RADAR_valid_data_table_spiked_unspiked[["LinuronCEFAS_Spiked"]] |>
+  ggplot2::ggplot(ggplot2::aes(x= Conc, y = Fluor)) + 
+    ggplot2::geom_boxplot() + 
+    ggplot2::facet_wrap(ggplot2::vars(Replicate)) +
+    ggplot2::ggtitle("Linuron CEFAS spiked")
+
 arabinoseWATCHFR_unspiked/
 anastrozoleIDEA_spiked/
 prochlorazWATCHFR_spiked/
-fenitrothionIDEA_spiked
+fenitrothionIDEA_spiked/
+fenitrothionCEFAS_spiked
 ```

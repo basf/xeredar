@@ -1,0 +1,1632 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.39">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Inka Marie Spyridonov">
+<meta name="dcterms.date" content="2024-12-17">
+
+<title>Analysis of all RADAR validation studies</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="Running_RADAR_analysis_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Running_RADAR_analysis_files/libs/quarto-html/quarto.js"></script>
+<script src="Running_RADAR_analysis_files/libs/quarto-html/popper.min.js"></script>
+<script src="Running_RADAR_analysis_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Running_RADAR_analysis_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Running_RADAR_analysis_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Running_RADAR_analysis_files/libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Running_RADAR_analysis_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Running_RADAR_analysis_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Running_RADAR_analysis_files/libs/bootstrap/bootstrap-2d683456488a95f49d575510940602d7.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Analysis of all RADAR validation studies</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Inka Marie Spyridonov </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">December 17, 2024</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="reproducible-environment" class="level2">
+<h2 class="anchored" data-anchor-id="reproducible-environment">Reproducible environment</h2>
+<p>In case you want to make sure that you are creating the exact same output as presented in the publication, you need to create the reproducible environment using <code>rix</code> and <code>nix</code>. Using <code>rix</code>, you can run the following function to create your nix script. The nix script is in the vignettes folder within <code>xeredar</code> available as default.nix file.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>rix<span class="sc">::</span><span class="fu">rix</span>(</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">r_ver =</span> <span class="st">"4.4.0"</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">r_pkgs =</span> <span class="fu">c</span>(<span class="st">"tidyverse"</span>, <span class="st">"tidyr"</span>, <span class="st">"purrr"</span>, <span class="st">"furrr"</span>, <span class="st">"gt"</span>,<span class="st">"easystats"</span>,<span class="st">"rlang"</span>, <span class="st">"DHARMa"</span>, <span class="st">"devtools"</span>, <span class="st">"patchwork"</span>, <span class="st">"rmarkdown"</span>),</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">system_pkgs =</span> <span class="cn">NULL</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">tex_pkgs =</span> <span class="fu">c</span>(<span class="st">"amsmath"</span>),</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">git_pkgs =</span> <span class="fu">list</span>(<span class="at">package_name =</span> <span class="st">"xeredar"</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>                  <span class="at">repo_url =</span> <span class="st">"https://github.com/basf/xeredar"</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>                  <span class="at">commit =</span> <span class="st">"2b85763"</span>),</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">ide =</span> <span class="st">"rstudio"</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">project_path =</span> <span class="st">"./vignettes"</span>,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Once the default.nix file was created in the path you specified in the command above (<code>project_path</code>) you need to type <code>nix-build</code> into the terminal. Once the shell was built you can open it via <code>nix-shell</code>. You can open Rstudio by first running this line in the terminal: <code>export QT_XCB_GL_INTEGRATION=none</code> and then running <code>rstudio</code>. Rstudio will open and you will have access to all files located at the path you specified in the <code>rix</code> function. You can run the script as usual. Through this approach, the code and results are reproducible.</p>
+<p>The following sections contain the code that needs to be executed to reproduce the analysis.</p>
+<section id="functions" class="level3">
+<h3 class="anchored" data-anchor-id="functions">Functions</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>decreasing_alpha <span class="ot">&lt;-</span> <span class="cf">function</span>(df, vector){</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> vector){</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    result <span class="ot">&lt;-</span> xeredar<span class="sc">::</span><span class="fu">data_prep</span>(df, <span class="at">row=</span><span class="cn">FALSE</span>, <span class="at">alpha =</span> i, <span class="at">trim=</span><span class="cn">FALSE</span>, <span class="at">outlier =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">is.list</span>(result)){</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>      <span class="cf">break</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span>{</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>      <span class="cf">next</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  result[[<span class="st">"alpha"</span>]] <span class="ot">&lt;-</span> i</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(result)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>changing_alpha <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">c</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">5</span>) <span class="sc">%o%</span> <span class="dv">10</span><span class="sc">^-</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">17</span>), <span class="dv">0</span>), <span class="at">decreasing =</span> <span class="cn">TRUE</span>)[<span class="sc">-</span><span class="dv">1</span>]</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>check <span class="ot">&lt;-</span> <span class="cf">function</span>(list_dfs, id){</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  result <span class="ot">&lt;-</span> <span class="fu">tryCatch</span>({</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">decreasing_alpha</span>(list_dfs, changing_alpha)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    }, <span class="at">error =</span> <span class="cf">function</span>(e) {</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>      <span class="fu">list</span>(<span class="at">error =</span> <span class="fu">paste</span>(<span class="st">"Error xeredar provides an error"</span>))</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>      })</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setNames</span>(<span class="fu">list</span>(result), id)</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>check_positive <span class="ot">&lt;-</span> <span class="cf">function</span>(df){</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">length</span>(df) <span class="sc">==</span><span class="dv">1</span>){</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="cn">NA</span>)}</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(df[[<span class="st">"Monotonicity Test"</span>]]<span class="sc">$</span><span class="st">`</span><span class="at">Pr(&gt;|t|)</span><span class="st">`</span>[<span class="dv">1</span>] <span class="sc">&gt;=</span> <span class="fl">0.01</span> <span class="sc">&amp;</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>     df[[<span class="st">"Monotonicity Test"</span>]]<span class="sc">$</span><span class="st">`</span><span class="at">Pr(&gt;|t|)</span><span class="st">`</span>[<span class="dv">2</span>] <span class="sc">&lt;=</span> <span class="fl">0.01</span> ) {</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(df[[<span class="st">"Dunnetts"</span>]])</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">length</span>(<span class="fu">unique</span>(df<span class="sc">$</span>WilliamsIncrease<span class="sc">$</span>Y.Tilde)) <span class="sc">-</span> <span class="dv">1</span> <span class="sc">&gt;</span> <span class="fu">floor</span>(<span class="fu">nrow</span>(df<span class="sc">$</span>WilliamsIncrease)<span class="sc">/</span><span class="dv">2</span>) <span class="sc">|</span> </span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>             <span class="fu">length</span>(<span class="fu">unique</span>(df<span class="sc">$</span>WilliamsDecrease<span class="sc">$</span>Y.Tilde)) <span class="sc">-</span> <span class="dv">1</span> <span class="sc">&gt;</span> <span class="fu">floor</span>(<span class="fu">nrow</span>(df<span class="sc">$</span>WilliamsDecrease)<span class="sc">/</span><span class="dv">2</span>)) { </span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">WilliamsIncrease =</span> df[[<span class="st">"WilliamsIncrease"</span>]], <span class="at">WilliamsDecrease =</span> df[[<span class="st">"WilliamsDecrease"</span>]])) </span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span>{</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(df[[<span class="st">"Dunnetts"</span>]])</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>  } </span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>significances <span class="ot">&lt;-</span> <span class="cf">function</span>(df, <span class="at">Williams=</span> <span class="cn">FALSE</span>){</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.list</span>(df)){</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="cn">NA</span>)}</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(Williams) {</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="cn">TRUE</span> <span class="sc">%in%</span> df[[<span class="st">"WilliamsIncrease"</span>]]<span class="sc">$</span>Sign){</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>        <span class="fu">return</span>(<span class="st">"sign_Incr"</span>)</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="cn">TRUE</span> <span class="sc">%in%</span> df[[<span class="st">"WilliamsDecrease"</span>]]<span class="sc">$</span>Sign){</span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>        <span class="fu">return</span>(<span class="st">"sign_Decr"</span>)</span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>{</span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(<span class="st">"Nonsignificant"</span>)</span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span>{</span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(df[[<span class="st">"adj p"</span>]][<span class="fu">length</span>(df[[<span class="st">"adj p"</span>]])] <span class="sc">&lt;</span> <span class="fl">0.05</span>){</span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(df[[<span class="st">"Estimate"</span>]][<span class="fu">length</span>(df[[<span class="st">"Estimate"</span>]])] <span class="sc">&gt;</span> <span class="dv">0</span>){</span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>        <span class="fu">return</span>(<span class="st">"sign_Incr"</span>)</span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>      } <span class="cf">else</span>{</span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>        <span class="fu">return</span>(<span class="st">"sign_Decr"</span>)</span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span>{</span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(<span class="st">"Nonsignificant"</span>)</span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="checking-all-radar-validation-studies-for-ed-activity" class="level3">
+<h3 class="anchored" data-anchor-id="checking-all-radar-validation-studies-for-ed-activity">Checking all RADAR validation studies for ED activity</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"thomasp85/patchwork"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#devtools::install_github("basf/xeredar")</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>purrr<span class="sc">::</span><span class="fu">map</span>(<span class="fu">c</span>(<span class="st">"tidyverse"</span>,<span class="st">"tidyr"</span>, <span class="st">"purrr"</span>, <span class="st">"furrr"</span>, <span class="st">"gt"</span>,<span class="st">"easystats"</span>,<span class="st">"rlang"</span>,<span class="st">"drc"</span>, <span class="st">"DHARMa"</span>, <span class="st">"devtools"</span>, <span class="st">"patchwork"</span>), require, <span class="at">character.only =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>anovas <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">imap</span>(xeredar<span class="sc">::</span>RADAR_valid_data_table_spiked_unspiked, <span class="sc">~</span> <span class="fu">check</span>(.x, .y)) <span class="sc">|&gt;</span> purrr<span class="sc">::</span><span class="fu">flatten</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>anovas_unspiked <span class="ot">&lt;-</span> anovas[stringr<span class="sc">::</span><span class="fu">str_detect</span>(<span class="fu">names</span>(anovas), <span class="st">"Unspiked"</span>)]</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>anovas_spiked<span class="ot">&lt;-</span> anovas[<span class="sc">!</span>stringr<span class="sc">::</span><span class="fu">str_detect</span>(<span class="fu">names</span>(anovas), <span class="st">"Unspiked"</span>)]</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>results_Spiked <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map</span>(anovas_spiked, check_positive)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>results_Unspiked <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map</span>(anovas_unspiked, check_positive)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>Williams_Spiked <span class="ot">&lt;-</span> <span class="sc">!</span>purrr<span class="sc">::</span><span class="fu">map_vec</span>(results_Spiked, is.data.frame)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>Williams_Unspiked <span class="ot">&lt;-</span> <span class="sc">!</span>purrr<span class="sc">::</span><span class="fu">map_vec</span>(results_Unspiked, is.data.frame)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>significances_Spiked <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map2</span>(results_Spiked, Williams_Spiked, significances) <span class="sc">|&gt;</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">bind_rows</span>(<span class="at">.id =</span> <span class="st">"CompoundLab"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">pivot_longer</span>(</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">44</span>,  </span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"CompoundLab"</span>,        </span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"Spiked_sign"</span>              </span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">CompoundLab =</span> stringr<span class="sc">::</span><span class="fu">str_remove</span>(CompoundLab,<span class="st">"_Spiked"</span>))</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>significances_Unspiked <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map2</span>(results_Unspiked, Williams_Unspiked, significances) <span class="sc">|&gt;</span> </span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">bind_rows</span>(<span class="at">.id =</span> <span class="st">"CompoundLab"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">pivot_longer</span>(</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">44</span>,  </span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"CompoundLab"</span>,        </span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"Unspiked_sign"</span>              </span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">CompoundLab =</span> stringr<span class="sc">::</span><span class="fu">str_remove</span>(CompoundLab,<span class="st">"_Unspiked"</span>))</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>desired_order <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>  <span class="st">"AmantadineWATCHFR"</span>, <span class="st">"AmantadineCEFAS"</span>, <span class="st">"AmantadineFIWI"</span>, <span class="st">"AmantadineFRAUNH"</span>, <span class="st">"AmantidineIDEA"</span>,</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>  <span class="st">"LDopaWATCHFR"</span>, <span class="st">"ArabinoseWATCHFR"</span>, <span class="st">"CefuroximeWATCHFR"</span>, <span class="st">"CefuroximeCEFAS"</span>, <span class="st">"CefuroximeFIWI"</span>,</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>  <span class="st">"CefuroximeFRAUNH"</span>, <span class="st">"CefuroximeIDEA"</span>, <span class="st">"CromolynWATCHFR"</span>, <span class="st">"CromolynCEFAS"</span>, <span class="st">"CromolynFIWI"</span>,</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>  <span class="st">"CromolynIDEA"</span>, <span class="st">"AnastrazoleWATCHFR"</span>, <span class="st">"AnastrozoleCEFAS"</span>, <span class="st">"AnastrozoleFIWI"</span>, <span class="st">"AnastrozoleIDEA"</span>,</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>  <span class="st">"ProchlorazWATCHFR"</span>, <span class="st">"DutasterideWATCHFR"</span>, <span class="st">"CyproteroneWATCHFR"</span>, <span class="st">"FenitrothionWATCHFR"</span>,</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>  <span class="st">"FenitrothionCEFAS"</span>, <span class="st">"FenitrothionFIWI"</span>, <span class="st">"FenitrothionIDEA"</span>, <span class="st">"EstradiolWATCHFR"</span>, <span class="st">"mDHTWATCHFR"</span>,</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>  <span class="st">"mDHTCEFAS"</span>, <span class="st">"mDHTFIWI"</span>, <span class="st">"mDHTFRAUNH"</span>, <span class="st">"mDHTIDEA"</span>, <span class="st">"TrenboloneWATCHFR"</span>, <span class="st">"LinuronWATCHFR"</span>,</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>  <span class="st">"LinuronCEFAS"</span>, <span class="st">"LinuronFIWI"</span>, <span class="st">"LinuronFRAUNH"</span>, <span class="st">"LinuronIDEA"</span>, <span class="st">"VinclozolinWATCHFR"</span>,</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>  <span class="st">"VinclozolinCEFAS"</span>, <span class="st">"VinclozolinFIWI"</span>, <span class="st">"VinclozolinFRAUNH"</span>, <span class="st">"vinclozolinIDEA"</span></span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>Result_Radar_valid <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">full_join</span>(significances_Spiked, significances_Unspiked) <span class="sc">|&gt;</span></span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="st">`</span><span class="at">Known Mode of Action</span><span class="st">`</span> <span class="ot">=</span> </span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>        dplyr<span class="sc">::</span><span class="fu">case_when</span>(</span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>            stringr<span class="sc">::</span><span class="fu">str_detect</span>(CompoundLab, <span class="st">"Amantadine|Amantidine|LDopa|Arabinose|Cefuroxime|Cromolyn"</span>) <span class="sc">~</span> <span class="st">"no EAS MoA"</span>,</span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>            stringr<span class="sc">::</span><span class="fu">str_detect</span>(CompoundLab, <span class="st">"Anastrozole|Anastrazole"</span>) <span class="sc">~</span> <span class="st">"steroidogenesis (anti-E): aromatase inhibitor (competitive)"</span>,</span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>            stringr<span class="sc">::</span><span class="fu">str_detect</span>(CompoundLab, <span class="st">"Prochloraz"</span>) <span class="sc">~</span> <span class="st">"steroidogenesis (anti-E): aromatase inhibitor (transcriptional)"</span>,</span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>            stringr<span class="sc">::</span><span class="fu">str_detect</span>(CompoundLab, <span class="st">"Dutasteride"</span>) <span class="sc">~</span> <span class="st">"steroidogenesis: 5alpha reductase inhibitor; AR antagonist (high conc.)"</span>,</span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>            stringr<span class="sc">::</span><span class="fu">str_detect</span>(CompoundLab, <span class="st">"Cyproterone|Fenitrothion"</span>) <span class="sc">~</span> <span class="st">"anti-A: AR antagonist"</span>,</span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a>            stringr<span class="sc">::</span><span class="fu">str_detect</span>(CompoundLab, <span class="st">"Estradiol"</span>) <span class="sc">~</span> <span class="st">"E: ER agonist; steroidogenesis (anti-A): aromatase inducer"</span>,</span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a>            stringr<span class="sc">::</span><span class="fu">str_detect</span>(CompoundLab, <span class="st">"mDHT|Trenbolone"</span>) <span class="sc">~</span> <span class="st">"A: non-aromatizable AR agonist"</span>,</span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>            stringr<span class="sc">::</span><span class="fu">str_detect</span>(CompoundLab, <span class="st">"Linuron"</span>) <span class="sc">~</span> <span class="st">"anti-A: AR antagonist; anti-E"</span>,</span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>            stringr<span class="sc">::</span><span class="fu">str_detect</span>(CompoundLab, <span class="st">"Vinclozolin|vinclozolin"</span>) <span class="sc">~</span> <span class="st">"anti-A: AR antagonist; E: weak ER agonist"</span></span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a>        <span class="at">CompoundLab =</span> <span class="fu">factor</span>(CompoundLab, <span class="at">levels =</span> desired_order)</span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">arrange</span>(CompoundLab) <span class="sc">|&gt;</span> </span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="st">`</span><span class="at">Final Conclusion</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a>        <span class="st">'A(S)-inactive'</span>, <span class="st">'A(S)-inactive'</span>, <span class="st">'A(S)-inactive'</span>, <span class="st">'A(S)-inactive'</span>, <span class="st">'A(S)-inactive'</span>, <span class="st">'A(S)-inactive'</span>, <span class="st">'active'</span>, <span class="st">'A(S)-inactive'</span>, <span class="st">'A(S)-inactive'</span>, <span class="st">'A(S)-inactive'</span>, <span class="st">'A(S)-inactive'</span>, <span class="st">'A(S)-inactive'</span>, <span class="st">'A(S)-inactive'</span>, <span class="st">'A(S)-inactive'</span>, <span class="st">'A(S)-inactive'</span>, <span class="st">'A(S)-inactive'</span>, <span class="st">'S-active'</span>, <span class="st">'S-active'</span>, <span class="st">'S-active'</span>, <span class="st">'inactive'</span>, <span class="st">'inactive'</span>, <span class="st">'A-active'</span>, <span class="st">'A-active'</span>, <span class="st">'A-active'</span>, <span class="st">'A-active'</span>, <span class="st">'A-active'</span>, <span class="st">'A-active'</span>,<span class="st">'S-active'</span>, <span class="st">'A-active'</span>, <span class="st">'A-active'</span>, <span class="st">'A-active'</span>, <span class="st">'A-active'</span>, <span class="st">'A-active'</span>, <span class="st">'A-active'</span>, <span class="st">'A-active'</span>, <span class="st">'A-active'</span>, <span class="st">'inactive'</span>, <span class="st">'A-active'</span>, <span class="st">'A-active'</span>, <span class="st">'A-active'</span>,<span class="st">'A-active'</span>,<span class="st">'A-active'</span>,<span class="st">' A-active'</span>, <span class="st">'A-active'</span></span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>    ))  <span class="sc">|&gt;</span></span>
+<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">Compound=</span> stringr<span class="sc">::</span><span class="fu">str_remove</span>(CompoundLab, <span class="st">"WATCHFR|CEFAS|FIWI|FRAUNH|IDEA"</span>),</span>
+<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Lab =</span> stringr<span class="sc">::</span><span class="fu">str_extract</span>(CompoundLab, <span class="st">"WATCHFR|CEFAS|FIWI|FRAUNH|IDEA"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>CompoundLab) <span class="sc">|&gt;</span></span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">relocate</span>(<span class="fu">c</span>(<span class="st">"Compound"</span>, <span class="st">"Lab"</span>, <span class="st">"Known Mode of Action"</span>, <span class="st">"Spiked_sign"</span>, <span class="st">"Unspiked_sign"</span>, <span class="st">"Final Conclusion"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">Compound =</span> dplyr<span class="sc">::</span><span class="fu">if_else</span>(Compound <span class="sc">==</span> <span class="st">"vinclozolin"</span>, <span class="st">"Vinclozolin"</span>, Compound))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>gt<span class="sc">::</span><span class="fu">gt</span>(Result_Radar_valid) <span class="sc">|&gt;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">tab_style</span>(</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">style =</span> <span class="fu">list</span>(</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>      gt<span class="sc">::</span><span class="fu">cell_fill</span>(<span class="at">color =</span> <span class="st">"green"</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">locations =</span> gt<span class="sc">::</span><span class="fu">cells_body</span>(</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">columns =</span> <span class="fu">c</span>(<span class="st">`</span><span class="at">Final Conclusion</span><span class="st">`</span>), <span class="co"># not needed if coloring all columns</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">rows =</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>, <span class="dv">8</span><span class="sc">:</span><span class="dv">19</span>, <span class="dv">22</span><span class="sc">:</span><span class="dv">36</span>, <span class="dv">38</span><span class="sc">:</span><span class="dv">42</span>, <span class="dv">43</span><span class="sc">:</span><span class="dv">44</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">tab_style</span>(</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">style =</span> <span class="fu">list</span>(</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>      gt<span class="sc">::</span><span class="fu">cell_fill</span>(<span class="at">color =</span> <span class="st">"red"</span>)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">locations =</span> gt<span class="sc">::</span><span class="fu">cells_body</span>(</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">columns =</span> (<span class="st">`</span><span class="at">Final Conclusion</span><span class="st">`</span>),</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">rows =</span> <span class="dv">7</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span> </span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">tab_style</span>(</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>      <span class="at">style =</span> <span class="fu">list</span>(</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>      gt<span class="sc">::</span><span class="fu">cell_fill</span>(<span class="at">color =</span> <span class="st">"blue"</span>)</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>      <span class="at">locations =</span> gt<span class="sc">::</span><span class="fu">cells_body</span>(</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>        <span class="at">columns =</span> (<span class="st">`</span><span class="at">Final Conclusion</span><span class="st">`</span>),</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>        <span class="at">rows =</span> <span class="fu">c</span>(<span class="dv">20</span><span class="sc">:</span><span class="dv">21</span>, <span class="dv">37</span>)</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span> </span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>  gt<span class="sc">::</span><span class="fu">tab_style</span>(</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>      <span class="at">style =</span> <span class="fu">list</span>(</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>      gt<span class="sc">::</span><span class="fu">cell_fill</span>(<span class="at">color =</span> <span class="st">"orange"</span>)</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>      <span class="at">locations =</span> gt<span class="sc">::</span><span class="fu">cells_body</span>(</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>        <span class="at">columns =</span> (Unspiked_sign),</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>        <span class="at">rows =</span> <span class="fu">c</span>(<span class="dv">9</span>, <span class="dv">18</span>, <span class="dv">25</span>)</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>  gt<span class="sc">::</span><span class="fu">tab_style</span>(</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>      <span class="at">style =</span> <span class="fu">list</span>(</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>      gt<span class="sc">::</span><span class="fu">cell_fill</span>(<span class="at">color =</span> <span class="st">"purple"</span>)</span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>      <span class="at">locations =</span> gt<span class="sc">::</span><span class="fu">cells_body</span>(</span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>        <span class="at">columns =</span> (Unspiked_sign),</span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>        <span class="at">rows =</span> <span class="fu">c</span>(<span class="dv">7</span>,<span class="dv">27</span>,<span class="dv">35</span>)</span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>  gt<span class="sc">::</span><span class="fu">tab_style</span>(</span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>      <span class="at">style =</span> <span class="fu">list</span>(</span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>      gt<span class="sc">::</span><span class="fu">cell_fill</span>(<span class="at">color =</span> <span class="st">"purple"</span>)</span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>      <span class="at">locations =</span> gt<span class="sc">::</span><span class="fu">cells_body</span>(</span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>        <span class="at">columns =</span> (Spiked_sign),</span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>        <span class="at">rows =</span> <span class="fu">c</span>(<span class="dv">20</span><span class="sc">:</span><span class="dv">21</span>, <span class="dv">34</span>, <span class="dv">37</span>)</span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="uehsjrjlbj" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#uehsjrjlbj table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#uehsjrjlbj thead, #uehsjrjlbj tbody, #uehsjrjlbj tfoot, #uehsjrjlbj tr, #uehsjrjlbj td, #uehsjrjlbj th {
+  border-style: none;
+}
+
+#uehsjrjlbj p {
+  margin: 0;
+  padding: 0;
+}
+
+#uehsjrjlbj .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#uehsjrjlbj .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#uehsjrjlbj .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#uehsjrjlbj .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#uehsjrjlbj .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#uehsjrjlbj .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#uehsjrjlbj .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#uehsjrjlbj .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#uehsjrjlbj .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#uehsjrjlbj .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#uehsjrjlbj .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#uehsjrjlbj .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#uehsjrjlbj .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#uehsjrjlbj .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#uehsjrjlbj .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#uehsjrjlbj .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#uehsjrjlbj .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#uehsjrjlbj .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#uehsjrjlbj .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#uehsjrjlbj .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#uehsjrjlbj .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#uehsjrjlbj .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#uehsjrjlbj .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#uehsjrjlbj .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#uehsjrjlbj .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#uehsjrjlbj .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#uehsjrjlbj .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#uehsjrjlbj .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#uehsjrjlbj .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#uehsjrjlbj .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#uehsjrjlbj .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#uehsjrjlbj .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#uehsjrjlbj .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#uehsjrjlbj .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#uehsjrjlbj .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#uehsjrjlbj .gt_left {
+  text-align: left;
+}
+
+#uehsjrjlbj .gt_center {
+  text-align: center;
+}
+
+#uehsjrjlbj .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#uehsjrjlbj .gt_font_normal {
+  font-weight: normal;
+}
+
+#uehsjrjlbj .gt_font_bold {
+  font-weight: bold;
+}
+
+#uehsjrjlbj .gt_font_italic {
+  font-style: italic;
+}
+
+#uehsjrjlbj .gt_super {
+  font-size: 65%;
+}
+
+#uehsjrjlbj .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#uehsjrjlbj .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#uehsjrjlbj .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#uehsjrjlbj .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#uehsjrjlbj .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#uehsjrjlbj .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#uehsjrjlbj .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#uehsjrjlbj .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#uehsjrjlbj div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="Compound" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Compound</th>
+<th id="Lab" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Lab</th>
+<th id="Known-Mode-of-Action" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Known Mode of Action</th>
+<th id="Spiked_sign" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Spiked_sign</th>
+<th id="Unspiked_sign" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Unspiked_sign</th>
+<th id="Final-Conclusion" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Final Conclusion</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="Compound">Amantadine</td>
+<td class="gt_row gt_left" headers="Lab">WATCHFR</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">no EAS MoA</td>
+<td class="gt_row gt_left" headers="Spiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A(S)-inactive</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Compound">Amantadine</td>
+<td class="gt_row gt_left" headers="Lab">CEFAS</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">no EAS MoA</td>
+<td class="gt_row gt_left" headers="Spiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A(S)-inactive</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Compound">Amantadine</td>
+<td class="gt_row gt_left" headers="Lab">FIWI</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">no EAS MoA</td>
+<td class="gt_row gt_left" headers="Spiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A(S)-inactive</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Compound">Amantadine</td>
+<td class="gt_row gt_left" headers="Lab">FRAUNH</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">no EAS MoA</td>
+<td class="gt_row gt_left" headers="Spiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A(S)-inactive</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Compound">Amantidine</td>
+<td class="gt_row gt_left" headers="Lab">IDEA</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">no EAS MoA</td>
+<td class="gt_row gt_left" headers="Spiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A(S)-inactive</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Compound">LDopa</td>
+<td class="gt_row gt_left" headers="Lab">WATCHFR</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">no EAS MoA</td>
+<td class="gt_row gt_left" headers="Spiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A(S)-inactive</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Compound">Arabinose</td>
+<td class="gt_row gt_left" headers="Lab">WATCHFR</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">no EAS MoA</td>
+<td class="gt_row gt_left" headers="Spiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Unspiked_sign" style="background-color: #A020F0">sign_Incr</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #FF0000">active</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Compound">Cefuroxime</td>
+<td class="gt_row gt_left" headers="Lab">WATCHFR</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">no EAS MoA</td>
+<td class="gt_row gt_left" headers="Spiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A(S)-inactive</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Compound">Cefuroxime</td>
+<td class="gt_row gt_left" headers="Lab">CEFAS</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">no EAS MoA</td>
+<td class="gt_row gt_left" headers="Spiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Unspiked_sign" style="background-color: #FFA500">sign_Decr</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A(S)-inactive</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Compound">Cefuroxime</td>
+<td class="gt_row gt_left" headers="Lab">FIWI</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">no EAS MoA</td>
+<td class="gt_row gt_left" headers="Spiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A(S)-inactive</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Compound">Cefuroxime</td>
+<td class="gt_row gt_left" headers="Lab">FRAUNH</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">no EAS MoA</td>
+<td class="gt_row gt_left" headers="Spiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A(S)-inactive</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Compound">Cefuroxime</td>
+<td class="gt_row gt_left" headers="Lab">IDEA</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">no EAS MoA</td>
+<td class="gt_row gt_left" headers="Spiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">NA</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A(S)-inactive</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Compound">Cromolyn</td>
+<td class="gt_row gt_left" headers="Lab">WATCHFR</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">no EAS MoA</td>
+<td class="gt_row gt_left" headers="Spiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A(S)-inactive</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Compound">Cromolyn</td>
+<td class="gt_row gt_left" headers="Lab">CEFAS</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">no EAS MoA</td>
+<td class="gt_row gt_left" headers="Spiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A(S)-inactive</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Compound">Cromolyn</td>
+<td class="gt_row gt_left" headers="Lab">FIWI</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">no EAS MoA</td>
+<td class="gt_row gt_left" headers="Spiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A(S)-inactive</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Compound">Cromolyn</td>
+<td class="gt_row gt_left" headers="Lab">IDEA</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">no EAS MoA</td>
+<td class="gt_row gt_left" headers="Spiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">NA</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A(S)-inactive</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Compound">Anastrazole</td>
+<td class="gt_row gt_left" headers="Lab">WATCHFR</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">steroidogenesis (anti-E): aromatase inhibitor (competitive)</td>
+<td class="gt_row gt_left" headers="Spiked_sign">sign_Incr</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">S-active</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Compound">Anastrozole</td>
+<td class="gt_row gt_left" headers="Lab">CEFAS</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">steroidogenesis (anti-E): aromatase inhibitor (competitive)</td>
+<td class="gt_row gt_left" headers="Spiked_sign">sign_Incr</td>
+<td class="gt_row gt_left" headers="Unspiked_sign" style="background-color: #FFA500">sign_Decr</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">S-active</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Compound">Anastrozole</td>
+<td class="gt_row gt_left" headers="Lab">FIWI</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">steroidogenesis (anti-E): aromatase inhibitor (competitive)</td>
+<td class="gt_row gt_left" headers="Spiked_sign">sign_Incr</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">S-active</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Compound">Anastrozole</td>
+<td class="gt_row gt_left" headers="Lab">IDEA</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">steroidogenesis (anti-E): aromatase inhibitor (competitive)</td>
+<td class="gt_row gt_left" headers="Spiked_sign" style="background-color: #A020F0">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #0000FF">inactive</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Compound">Prochloraz</td>
+<td class="gt_row gt_left" headers="Lab">WATCHFR</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">steroidogenesis (anti-E): aromatase inhibitor (transcriptional)</td>
+<td class="gt_row gt_left" headers="Spiked_sign" style="background-color: #A020F0">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #0000FF">inactive</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Compound">Dutasteride</td>
+<td class="gt_row gt_left" headers="Lab">WATCHFR</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">steroidogenesis: 5alpha reductase inhibitor; AR antagonist (high conc.)</td>
+<td class="gt_row gt_left" headers="Spiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">sign_Incr</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A-active</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Compound">Cyproterone</td>
+<td class="gt_row gt_left" headers="Lab">WATCHFR</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">anti-A: AR antagonist</td>
+<td class="gt_row gt_left" headers="Spiked_sign">sign_Decr</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A-active</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Compound">Fenitrothion</td>
+<td class="gt_row gt_left" headers="Lab">WATCHFR</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">anti-A: AR antagonist</td>
+<td class="gt_row gt_left" headers="Spiked_sign">sign_Decr</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A-active</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Compound">Fenitrothion</td>
+<td class="gt_row gt_left" headers="Lab">CEFAS</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">anti-A: AR antagonist</td>
+<td class="gt_row gt_left" headers="Spiked_sign">sign_Decr</td>
+<td class="gt_row gt_left" headers="Unspiked_sign" style="background-color: #FFA500">sign_Decr</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A-active</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Compound">Fenitrothion</td>
+<td class="gt_row gt_left" headers="Lab">FIWI</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">anti-A: AR antagonist</td>
+<td class="gt_row gt_left" headers="Spiked_sign">sign_Decr</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A-active</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Compound">Fenitrothion</td>
+<td class="gt_row gt_left" headers="Lab">IDEA</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">anti-A: AR antagonist</td>
+<td class="gt_row gt_left" headers="Spiked_sign">sign_Decr</td>
+<td class="gt_row gt_left" headers="Unspiked_sign" style="background-color: #A020F0">sign_Incr</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A-active</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Compound">Estradiol</td>
+<td class="gt_row gt_left" headers="Lab">WATCHFR</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">E: ER agonist; steroidogenesis (anti-A): aromatase inducer</td>
+<td class="gt_row gt_left" headers="Spiked_sign">sign_Decr</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">S-active</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Compound">mDHT</td>
+<td class="gt_row gt_left" headers="Lab">WATCHFR</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">A: non-aromatizable AR agonist</td>
+<td class="gt_row gt_left" headers="Spiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">sign_Incr</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A-active</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Compound">mDHT</td>
+<td class="gt_row gt_left" headers="Lab">CEFAS</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">A: non-aromatizable AR agonist</td>
+<td class="gt_row gt_left" headers="Spiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">sign_Incr</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A-active</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Compound">mDHT</td>
+<td class="gt_row gt_left" headers="Lab">FIWI</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">A: non-aromatizable AR agonist</td>
+<td class="gt_row gt_left" headers="Spiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">sign_Incr</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A-active</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Compound">mDHT</td>
+<td class="gt_row gt_left" headers="Lab">FRAUNH</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">A: non-aromatizable AR agonist</td>
+<td class="gt_row gt_left" headers="Spiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">sign_Incr</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A-active</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Compound">mDHT</td>
+<td class="gt_row gt_left" headers="Lab">IDEA</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">A: non-aromatizable AR agonist</td>
+<td class="gt_row gt_left" headers="Spiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">sign_Incr</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A-active</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Compound">Trenbolone</td>
+<td class="gt_row gt_left" headers="Lab">WATCHFR</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">A: non-aromatizable AR agonist</td>
+<td class="gt_row gt_left" headers="Spiked_sign" style="background-color: #A020F0">sign_Incr</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">sign_Incr</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A-active</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Compound">Linuron</td>
+<td class="gt_row gt_left" headers="Lab">WATCHFR</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">anti-A: AR antagonist; anti-E</td>
+<td class="gt_row gt_left" headers="Spiked_sign">sign_Decr</td>
+<td class="gt_row gt_left" headers="Unspiked_sign" style="background-color: #A020F0">sign_Incr</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A-active</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Compound">Linuron</td>
+<td class="gt_row gt_left" headers="Lab">CEFAS</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">anti-A: AR antagonist; anti-E</td>
+<td class="gt_row gt_left" headers="Spiked_sign">sign_Decr</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A-active</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Compound">Linuron</td>
+<td class="gt_row gt_left" headers="Lab">FIWI</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">anti-A: AR antagonist; anti-E</td>
+<td class="gt_row gt_left" headers="Spiked_sign" style="background-color: #A020F0">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #0000FF">inactive</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Compound">Linuron</td>
+<td class="gt_row gt_left" headers="Lab">FRAUNH</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">anti-A: AR antagonist; anti-E</td>
+<td class="gt_row gt_left" headers="Spiked_sign">sign_Decr</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A-active</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Compound">Linuron</td>
+<td class="gt_row gt_left" headers="Lab">IDEA</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">anti-A: AR antagonist; anti-E</td>
+<td class="gt_row gt_left" headers="Spiked_sign">sign_Decr</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A-active</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Compound">Vinclozolin</td>
+<td class="gt_row gt_left" headers="Lab">WATCHFR</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">anti-A: AR antagonist; E: weak ER agonist</td>
+<td class="gt_row gt_left" headers="Spiked_sign">sign_Decr</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A-active</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Compound">Vinclozolin</td>
+<td class="gt_row gt_left" headers="Lab">CEFAS</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">anti-A: AR antagonist; E: weak ER agonist</td>
+<td class="gt_row gt_left" headers="Spiked_sign">sign_Decr</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A-active</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Compound">Vinclozolin</td>
+<td class="gt_row gt_left" headers="Lab">FIWI</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">anti-A: AR antagonist; E: weak ER agonist</td>
+<td class="gt_row gt_left" headers="Spiked_sign">sign_Decr</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A-active</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Compound">Vinclozolin</td>
+<td class="gt_row gt_left" headers="Lab">FRAUNH</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">anti-A: AR antagonist; E: weak ER agonist</td>
+<td class="gt_row gt_left" headers="Spiked_sign">sign_Decr</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A-active</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Compound">Vinclozolin</td>
+<td class="gt_row gt_left" headers="Lab">IDEA</td>
+<td class="gt_row gt_left" headers="Known Mode of Action">anti-A: AR antagonist; E: weak ER agonist</td>
+<td class="gt_row gt_left" headers="Spiked_sign">sign_Decr</td>
+<td class="gt_row gt_left" headers="Unspiked_sign">Nonsignificant</td>
+<td class="gt_row gt_left" headers="Final Conclusion" style="background-color: #00FF00">A-active</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>arabinoseWATCHFR_unspiked <span class="ot">&lt;-</span> xeredar<span class="sc">::</span>RADAR_valid_data_table_spiked_unspiked[[<span class="st">"ArabinoseWATCHFR_Unspiked"</span>]] <span class="sc">|&gt;</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(ggplot2<span class="sc">::</span><span class="fu">aes</span>(<span class="at">x=</span> Conc, <span class="at">y =</span> Fluor)) <span class="sc">+</span> </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">geom_boxplot</span>() <span class="sc">+</span> </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">facet_wrap</span>(ggplot2<span class="sc">::</span><span class="fu">vars</span>(Replicate)) <span class="sc">+</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">ggtitle</span>(<span class="st">"Arabinose Watchfrog unspiked"</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>anastrozoleIDEA_spiked <span class="ot">&lt;-</span> xeredar<span class="sc">::</span>RADAR_valid_data_table_spiked_unspiked[[<span class="st">"AnastrozoleIDEA_Spiked"</span>]] <span class="sc">|&gt;</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>   ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(ggplot2<span class="sc">::</span><span class="fu">aes</span>(<span class="at">x=</span> Conc, <span class="at">y =</span> Fluor)) <span class="sc">+</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    ggplot2<span class="sc">::</span><span class="fu">geom_boxplot</span>() <span class="sc">+</span> </span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    ggplot2<span class="sc">::</span><span class="fu">facet_wrap</span>(ggplot2<span class="sc">::</span><span class="fu">vars</span>(Replicate)) <span class="sc">+</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    ggplot2<span class="sc">::</span><span class="fu">ggtitle</span>(<span class="st">"Anastrozole IDEA spiked"</span>)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>prochlorazWATCHFR_spiked <span class="ot">&lt;-</span> xeredar<span class="sc">::</span>RADAR_valid_data_table_spiked_unspiked[[<span class="st">"ProchlorazWATCHFR_Spiked"</span>]] <span class="sc">|&gt;</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>   ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(ggplot2<span class="sc">::</span><span class="fu">aes</span>(<span class="at">x=</span> Conc, <span class="at">y =</span> Fluor)) <span class="sc">+</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    ggplot2<span class="sc">::</span><span class="fu">geom_boxplot</span>() <span class="sc">+</span> </span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    ggplot2<span class="sc">::</span><span class="fu">facet_wrap</span>(ggplot2<span class="sc">::</span><span class="fu">vars</span>(Replicate)) <span class="sc">+</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    ggplot2<span class="sc">::</span><span class="fu">ggtitle</span>(<span class="st">"Procholoraz Watchfrog spiked"</span>)</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>fenitrothionIDEA_spiked <span class="ot">&lt;-</span> xeredar<span class="sc">::</span>RADAR_valid_data_table_spiked_unspiked[[<span class="st">"LinuronFIWI_Spiked"</span>]] <span class="sc">|&gt;</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(ggplot2<span class="sc">::</span><span class="fu">aes</span>(<span class="at">x=</span> Conc, <span class="at">y =</span> Fluor)) <span class="sc">+</span> </span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    ggplot2<span class="sc">::</span><span class="fu">geom_boxplot</span>() <span class="sc">+</span> </span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    ggplot2<span class="sc">::</span><span class="fu">facet_wrap</span>(ggplot2<span class="sc">::</span><span class="fu">vars</span>(Replicate)) <span class="sc">+</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    ggplot2<span class="sc">::</span><span class="fu">ggtitle</span>(<span class="st">"Linuron FIWI spiked"</span>)</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>fenitrothionCEFAS_spiked <span class="ot">&lt;-</span> xeredar<span class="sc">::</span>RADAR_valid_data_table_spiked_unspiked[[<span class="st">"LinuronCEFAS_Spiked"</span>]] <span class="sc">|&gt;</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(ggplot2<span class="sc">::</span><span class="fu">aes</span>(<span class="at">x=</span> Conc, <span class="at">y =</span> Fluor)) <span class="sc">+</span> </span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>    ggplot2<span class="sc">::</span><span class="fu">geom_boxplot</span>() <span class="sc">+</span> </span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>    ggplot2<span class="sc">::</span><span class="fu">facet_wrap</span>(ggplot2<span class="sc">::</span><span class="fu">vars</span>(Replicate)) <span class="sc">+</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>    ggplot2<span class="sc">::</span><span class="fu">ggtitle</span>(<span class="st">"Linuron CEFAS spiked"</span>)</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>arabinoseWATCHFR_unspiked<span class="sc">/</span></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>anastrozoleIDEA_spiked<span class="sc">/</span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>prochlorazWATCHFR_spiked<span class="sc">/</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>fenitrothionIDEA_spiked<span class="sc">/</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>fenitrothionCEFAS_spiked</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Running_RADAR_analysis_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
