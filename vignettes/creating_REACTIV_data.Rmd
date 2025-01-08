@@ -2,6 +2,7 @@
 title: "Creating simulated REACTIV data for power analysis of publication"
 author: "Inka Marie Spyridonov"
 date: "2024-12-17"
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Creating simulated REACTIV data for power analysis}
   %\VignetteEngine{knitr::rmarkdown}

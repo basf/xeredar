@@ -2,6 +2,7 @@
 title: "Reproducing power analysis based on REACTIV validation studies of publication"
 author: "Inka Marie Spyridonov"
 date: "2024-12-17"
+output: rmarkdwon::html_vignette
 vignette: >
   %\VignetteIndexEntry{Power analysis based on REACTIV validation studies}
   %\VignetteEngine{knitr::rmarkdown}

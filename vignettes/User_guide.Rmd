@@ -1,5 +1,6 @@
 ---
 title: "User guide"
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{User guide}
   %\VignetteEngine{knitr::rmarkdown}

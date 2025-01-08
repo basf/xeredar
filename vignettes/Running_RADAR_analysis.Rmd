@@ -2,6 +2,7 @@
 title: "Analysis of all RADAR validation studies"
 author: "Inka Marie Spyridonov"
 date: "2024-12-17"
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Analysis of all RADAR validation studies}
   %\VignetteEngine{knitr::rmarkdown}
@@ -21,7 +22,7 @@ rix::rix(
   tex_pkgs = c("amsmath"),
   git_pkgs = list(package_name = "xeredar",
                   repo_url = "https://github.com/basf/xeredar",
-                  commit = "2b85763"),
+                  commit = "ca1d789"),
   ide = "rstudio",
   project_path = "./vignettes",
   overwrite = TRUE
