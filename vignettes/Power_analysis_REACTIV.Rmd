@@ -551,9 +551,10 @@ type1_error_Spiked <- resultsSpiked_power_reactive |>
   ggplot2::ggplot(ggplot2::aes(x=PercentSign, color=Test))+
   ggplot2::geom_boxplot(alpha = 0.5, lwd=0.1, outlier.size = 0.15)+
   ggplot2::scale_x_continuous(labels = scales::percent, trans = "log10")+
-  ggplot2::scale_color_discrete(name  ="Tests",
+  ggplot2::scale_color_manual(name  ="Tests",
                       breaks = breaks,
-                      labels = labels) + 
+                      labels = labels,
+                      values = c("#d8d343","#920011", "#00e193","#312e9c")) + 
   ggplot2::xlab("% significant tests") +
   ggplot2::ylab("") +
   theme(panel.background = element_blank(),
