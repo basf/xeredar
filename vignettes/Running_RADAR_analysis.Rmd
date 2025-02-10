@@ -15,14 +15,15 @@ vignette: >
 In case you want to make sure that you are creating the exact same output as presented in the publication, you need to create the reproducible environment using `rix` and `nix`. Using `rix`, you can run the following function to create your nix script. The nix script is however already in the vignettes folder within `xeredar` available as default.nix file.
 
 ```{r eval = FALSE}
+
 rix::rix(
   r_ver = "4.4.0",
-  r_pkgs = c("tidyverse", "tidyr", "purrr", "furrr", "gt","easystats","rlang", "DHARMa", "devtools", "patchwork", "rmarkdown"),
+  r_pkgs = c("tidyverse", "tidyr", "purrr", "furrr", "gt","easystats","rlang", "DHARMa", "devtools", "patchwork", "rmarkdown", "ggpubr"),
   system_pkgs = NULL,
   tex_pkgs = c("amsmath"),
   git_pkgs = list(package_name = "xeredar",
                   repo_url = "https://github.com/basf/xeredar",
-                  commit = "ca1d789"),
+                  commit = "2b85763"),
   ide = "rstudio",
   project_path = "./vignettes",
   overwrite = TRUE
@@ -117,7 +118,7 @@ significances <- function(df, Williams= FALSE){
 
 
 ```{r eval=TRUE, echo=TRUE, results='hide', message=FALSE}
-devtools::install_github("thomasp85/patchwork")
+#devtools::install_github("thomasp85/patchwork")
 #devtools::install_github("basf/xeredar")
 purrr::map(c("tidyverse","tidyr", "purrr", "furrr", "gt","easystats","rlang","drc", "DHARMa", "devtools", "patchwork"), require, character.only = TRUE)
 library(patchwork)
