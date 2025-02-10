@@ -9,13 +9,11 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+To reproduce the power analysis in the publication the following code has to be executed:
 
-To reproduce the power analysis in the publication the following code has to be executed: 
+## Variance component analysis
 
-
-
-## Variance component analysis 
-### Functions 
+### Functions
 
 ```{r eval=FALSE}
 GetVarianceInfo <- function(ListAnovas, resultList){
@@ -55,7 +53,7 @@ resultList
 
 #devtools::install_git("https://gitlab.roqs.basf.net/WillmsIM/xetaana.git")
 #install.packages("easystats")
-lapply(c("tidyverse","xeredar","tidyr", "purrr", "furrr", "gt","easystats","rlang","drc", "DHARMa", "devtools", "ggplot2"), require, character.only = TRUE)
+lapply(c("tidyverse","xeredar","tidyr", "purrr", "furrr", "gt","easystats","rlang","drc", "DHARMa", "devtools", "ggplot2", "ggpubr"), require, character.only = TRUE)
 
 ```
 
@@ -65,7 +63,6 @@ data <- xeredar::REACTIV_valid_data_table_spiked_unspiked |>
   purrr::list_flatten()
 
 ```
-
 
 ```{r eval=FALSE}
 resultList <- list()
@@ -92,10 +89,12 @@ Simulation_Info <- bind_rows(check)
 
 SimulationInfoWTzeroInflated <- Simulation_Info  |> 
   filter(zeroInflated > 0.05) |> 
-  dplyr::relocate(Compound)
+  dplyr::mutate(Inert = dplyr::if_else(
+      Compound %in% c("Anastrozole", "anastrozole", "Amantadine", "Arabinose", "Atenolol", "Cefuroxime", "cefuroxime", "Cromolyn", "cromolyn", "Saccharin", "saccharin"), "Inert", "Active"
+  )) |>
+  dplyr::relocate(Compound, Inert) 
 
 ```
-
 
 ```{r eval=TRUE}
 
@@ -104,20 +103,96 @@ SimulationInfoWTzeroInflated <- Simulation_Info  |>
 gt::gt(xeredar::SimulationInfoWTzeroInflated) |> gt::tab_caption(caption = "Summary table of information from the validation studies determined using the GetVarianceInfo() function. The first column specifies the respective compound tested, the second the estimated mean control measurement of the respective study, the third column refers to the standard deviation throughout the experiment, also referred to as residual standard deviation and the fourth column contains the Coefficient of Variation (CV) determined by dividing the SDExperiment column with the MeanControl column. The SDRep column contains information about the standard deviation explained through the replicate, followed by the standard deviation explained by the replicate treatment interaction. The adj_ICC column contains the adjusted intra-class Correlation Coefficient, followed by the column SPiked which specifies whether the previous data referes to spiked samples (TRUE) or unspiked samples (FALSE). The last column (Country) contains information about the lab in which the respective study was carried out.")
 ```
 
+```{r}
+
+
+result1 <- xeredar::SimulationInfoWTzeroInflated |> 
+  dplyr::filter(Spiked == TRUE) |>
+  rstatix::t_test(CVControl ~ Inert, var.equal = FALSE,
+  alternative = "two.sided",) |>
+  rstatix::add_significance() |> 
+  rstatix::add_xy_position(x = "Inert") |> 
+  mutate_if(is.numeric, ~round(., digits = 2))
+
+p1 <- xeredar::SimulationInfoWTzeroInflated |> 
+  dplyr::filter(Spiked == TRUE) |>
+  ggpubr::ggboxplot(x= "Inert", y= "CVControl", fill = "purple", size = NULL,
+  width = 0.7, outlier.size = 0.3, outlier.shape = 16, lwd=0.1)+
+  ggpubr::stat_pvalue_manual(result1, 
+                             label = "Welch two-sample T-test, t= {statistic}, p = {p}", label.size = 1.5, bracket.size = 0.1)+
+  ggplot2::stat_summary(fun="mean", color="darkred", size = 0.05)+
+  xlab("Studies with spiked treatments")+
+  ylab("Coefficient of Variation (CV)")+
+   theme(axis.text = element_text(size=3),
+         axis.title = element_text(size=4), 
+         legend.text = element_text(size=2), 
+         legend.title = element_text(size=3),
+         axis.line = element_line(linewidth = 0.1), 
+         axis.ticks = element_line(linewidth = 0.1))
+
+#ggsave("CVSpiked.png", p1, width = 736, height = 518, units = "px")
+
+result2 <- xeredar::SimulationInfoWTzeroInflated |> 
+  dplyr::filter(Spiked == FALSE) |>
+  rstatix::t_test(CVControl ~ Inert, var.equal = FALSE,
+  alternative = "two.sided",) |>
+  rstatix::add_significance() |> 
+  rstatix::add_xy_position(x = "Inert") |> 
+  mutate_if(is.numeric, ~round(., digits = 2))
+
+p2 <- xeredar::SimulationInfoWTzeroInflated |> 
+  dplyr::filter(Spiked == FALSE) |>
+  ggpubr::ggboxplot(x= "Inert", y= "CVControl", fill = "#00AFBB", size = NULL,
+  width = 0.7, outlier.size = 0.3, outlier.shape = 16, lwd=0.1)+
+  ggpubr::stat_pvalue_manual(result2, 
+                             label = "Welch two-sample T-test, t= {statistic}, p = {p}", label.size = 1.5, bracket.size = 0.1)+
+  ggplot2::stat_summary(fun="mean", color="darkred", size = 0.05)+
+  xlab("Studies with unspiked treatments")+
+  ylab("Coefficient of Variation (CV)")+
+   theme(axis.text = element_text(size=3),
+         axis.title = element_text(size=4), 
+         legend.text = element_text(size=2), 
+         legend.title = element_text(size=3),
+         axis.line = element_line(linewidth = 0.1), 
+         axis.ticks = element_line(linewidth = 0.1))
+
+#ggsave("CVUnspiked.png", p2, width = 736, height = 518, units = "px")
+
+
+
+```
+
+\
+
 ```{r eval=TRUE}
-xeredar::SimulationInfoWTzeroInflated |> 
+p3 <- xeredar::SimulationInfoWTzeroInflated |> 
   dplyr::select(adj_ICC, Country, Spiked) |> 
   dplyr::mutate(Spiked = dplyr::if_else(Spiked == TRUE, "Spiked", "Unspiked")) |>
   ggplot2::ggplot(aes(y= as.numeric(adj_ICC), x= Country, color = Spiked)) +
-  geom_jitter(alpha= 0.5,  width = 0.2) +
-  geom_abline(slope=0, intercept= 0.1337804) +
+  geom_jitter(alpha= 0.5,  width = 0.2, size = 0.3) +
+  geom_abline(slope=0, intercept= 0.139, lwd= 0.1) +
+  scale_color_manual(values = c("Spiked" = "purple", "Unspiked" = "#00AFBB")) + 
   labs(color='Spiked or Unspiked?') +
-  ylab(label="adjusted ICC value") +
-  xlab(label="")
+  ylab(label="adjusted intraclass Correlation Coefficient (ICC)") +
+  xlab(label="Labs/country") +
+  theme(panel.background = element_blank(),
+        panel.grid.major = element_line(color = "lightgray", size = 0.1), 
+        panel.grid.minor = element_line(color = "lightgray", size = 0.05),
+        axis.text = element_text(size=3),
+        axis.title = element_text(size=4), 
+        legend.text = element_text(size=2), 
+        legend.title = element_text(size=3),
+        legend.key.size = unit(0.3, "lines"), 
+        legend.spacing = unit(0.1, "lines"),
+        axis.line = element_line(linewidth = 0.1), 
+        axis.ticks = element_line(linewidth = 0.1)
+        )
+#ggsave("ICC.png", p3, width = 813, height = 566, units = "px")
+  
 ```
 
-
 ## Data simulation
+
 ### Functions
 
 ```{r eval=FALSE}
@@ -207,9 +282,6 @@ SimulateNow_HomoVar <- function(Spiked = TRUE, MeanValues, nEmbryoperConc=8, nCo
 }
 ```
 
-
-
-
 ```{r eval=FALSE}
 
 Conc <- c(0,0.16,0.8,4,20,100)
@@ -231,8 +303,7 @@ SimDatSpiked_Homo <-  SimulateNow_HomoVar(Spiked=TRUE, MeanValues = MeansAllStud
 SimDatUnspiked_Homo <- SimulateNow_HomoVar(Spiked=FALSE, MeanValues = MeansAllStudiesperConcUnspiked, Repetitions=25)
 ```
 
-
-## Analyzing simulated data 
+## Analyzing simulated data
 
 ```{r eval=FALSE}
 
@@ -341,9 +412,7 @@ names(ResultsSpiked_pooledDunns) <- names(ResultsSpiked_dataPrep_alpha0)
 usethis::use_data(ResultsSpiked_pooledDunns, overwrite = TRUE)
 ```
 
-
-## Presenting results 
-
+## Presenting results
 
 ```{r eval=FALSE}
 
@@ -453,4 +522,3 @@ resultsUnspiked_power_reactive  <- dplyr::bind_rows(resultsUnspiked_power_reacti
 resultsUnspiked_power_reactive <- dplyr::left_join(resultsUnspiked_power_reactive, perc_effect_e_dose_Unspiked)
 
 ```
-

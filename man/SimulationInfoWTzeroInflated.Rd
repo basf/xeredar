@@ -6,7 +6,7 @@
 \title{Data containing information from variance analysis of original REACTIV validation studies only that the zero inflated studies were filtered out. 
 Based on this data, and on MeansAllStudiesperConcSpiked and MeansAllStudiesperConcUnspiked the simualted data is created.}
 \format{
-An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 96 rows and 10 columns.
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 96 rows and 11 columns.
 }
 \usage{
 SimulationInfoWTzeroInflated

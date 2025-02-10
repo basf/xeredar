@@ -16,7 +16,7 @@ In case you want to make sure that you are creating the exact same output as pre
 ```{r eval = FALSE}
 rix::rix(
   r_ver = "4.4.0",
-  r_pkgs = c("tidyverse", "tidyr", "purrr", "furrr", "gt","easystats","rlang", "DHARMa", "devtools", "patchwork", "rmarkdown"),
+  r_pkgs = c("tidyverse", "tidyr", "purrr", "furrr", "gt","easystats","rlang", "DHARMa", "devtools", "patchwork", "rmarkdown", "ggpubr"),
   system_pkgs = NULL,
   tex_pkgs = c("amsmath"),
   git_pkgs = list(package_name = "xeredar",
@@ -33,8 +33,9 @@ Once the default.nix file was created in the path you specified in the command a
 
 The following sections contain the code that needs to be executed to reproduce the analysis.
 
-## Variance component analysis 
-### Functions 
+## Variance component analysis
+
+### Functions
 
 ```{r eval=FALSE}
 GetVarianceInfo <- function(ListAnovas, resultList){
@@ -85,7 +86,6 @@ data <- xeredar::REACTIV_valid_data_table_spiked_unspiked |>
 
 ```
 
-
 ```{r eval=FALSE}
 resultList <- list()
 ANOVAs <- furrr::future_map(data, ~ purrr::possibly(function(df) {
@@ -111,16 +111,72 @@ Simulation_Info <- bind_rows(check)
 
 SimulationInfoWTzeroInflated <- Simulation_Info  |> 
   filter(zeroInflated > 0.05) |> 
-  dplyr::relocate(Compound)
+  dplyr::mutate(Inert = dplyr::if_else(
+      Compound %in% c("Anastrozole", "anastrozole", "Amantadine", "Arabinose", "Atenolol", "Cefuroxime", "cefuroxime", "Cromolyn", "cromolyn", "Saccharin", "saccharin"), "Inert", "Active"
+  )) |>
+  dplyr::relocate(Compound, Inert) 
 
 ```
-
 
 ```{r eval=TRUE}
 
 
 
-gt::gt(xeredar::SimulationInfoWTzeroInflated) |> gt::tab_caption(caption = "Summary table of information from the validation studies determined using the GetVarianceInfo() function. The first column specifies the respective compound tested, the second the estimated mean control measurement of the respective study, the third column refers to the standard deviation throughout the experiment, also referred to as residual standard deviation and the fourth column contains the Coefficient of Variation (CV) determined by dividing the SDExperiment column with the MeanControl column. The SDRep column contains information about the standard deviation explained through the replicate, followed by the standard deviation explained by the replicate treatment interaction. The adj_ICC column contains the adjusted intra-class Correlation Coefficient, followed by the column SPiked which specifies whether the previous data referes to spiked samples (TRUE) or unspiked samples (FALSE). The last column (Country) contains information about the lab in which the respective study was carried out.")
+gt::gt(xeredar::SimulationInfoWTzeroInflated) |> gt::tab_caption(caption = "Summary table of information from the validation studies determined using the GetVarianceInfo() function. The first column specifies the respective compound tested, the second provides information whether it is an inert or an ective compound and the third column provides information about the estimated mean control measurement of the respective study. The fourth column refers to the standard deviation throughout the experiment, also referred to as residual standard deviation and the fifth column contains the Coefficient of Variation (CV) determined by dividing the SDExperiment column with the MeanControl column. The SDRep column contains information about the standard deviation explained through the replicate, followed by the standard deviation explained by the replicate treatment interaction. The adj_ICC column contains the adjusted intra-class Correlation Coefficient, followed by the column Spiked which specifies whether the previous data referes to spiked samples (TRUE) or unspiked samples (FALSE). The last column (Country) contains information about the lab in which the respective study was carried out.")
+```
+
+```{r}
+
+  
+result1 <- xeredar::SimulationInfoWTzeroInflated |> 
+  dplyr::filter(Spiked == TRUE) |>
+  rstatix::t_test(CVControl ~ Inert, var.equal = FALSE,
+  alternative = "two.sided",) |>
+  rstatix::add_significance() |> 
+  rstatix::add_xy_position(x = "Inert") |> 
+  mutate_if(is.numeric, ~round(., digits = 2))
+
+p1 <- xeredar::SimulationInfoWTzeroInflated |> 
+  dplyr::filter(Spiked == TRUE) |>
+  ggpubr::ggboxplot(x= "Inert", y= "CVControl", fill = "purple", size = NULL,
+  width = 0.7, outlier.size = 0.3, outlier.shape = 16, lwd=0.1)+
+  ggpubr::stat_pvalue_manual(result1, 
+                             label = "Welch two-sample T-test, t= {statistic}, p = {p}", label.size = 1.5, bracket.size = 0.1)+
+  ggplot2::stat_summary(fun="mean", color="darkred", size = 0.05)+
+  xlab("Studies with spiked treatments")+
+  ylab("Coefficient of Variation (CV)")+
+   theme(axis.text = element_text(size=3),
+         axis.title = element_text(size=4), 
+         legend.text = element_text(size=2), 
+         legend.title = element_text(size=3),
+         axis.line = element_line(linewidth = 0.1), 
+         axis.ticks = element_line(linewidth = 0.1))
+
+#ggsave("CVSpiked.png", p1, width = 736, height = 518, units = "px")
+
+result2 <- xeredar::SimulationInfoWTzeroInflated |> 
+  dplyr::filter(Spiked == FALSE) |>
+  rstatix::t_test(CVControl ~ Inert, var.equal = FALSE,
+  alternative = "two.sided",) |>
+  rstatix::add_significance() |> 
+  rstatix::add_xy_position(x = "Inert") |> 
+  mutate_if(is.numeric, ~round(., digits = 2))
+
+p2 <- xeredar::SimulationInfoWTzeroInflated |> 
+  dplyr::filter(Spiked == FALSE) |>
+  ggpubr::ggboxplot(x= "Inert", y= "CVControl", fill = "#00AFBB", size = NULL,
+  width = 0.7, outlier.size = 0.3, outlier.shape = 16, lwd=0.1)+
+  ggpubr::stat_pvalue_manual(result2, 
+                             label = "Welch two-sample T-test, t= {statistic}, p = {p}", label.size = 1.5, bracket.size = 0.1)+
+  ggplot2::stat_summary(fun="mean", color="darkred", size = 0.05)+
+  xlab("Studies with unspiked treatments")+
+  ylab("Coefficient of Variation (CV)")+
+   theme(axis.text = element_text(size=3),
+         axis.title = element_text(size=4), 
+         legend.text = element_text(size=2), 
+         legend.title = element_text(size=3),
+         axis.line = element_line(linewidth = 0.1), 
+         axis.ticks = element_line(linewidth = 0.1))
 ```
 
 ```{r eval=TRUE}
@@ -135,8 +191,8 @@ xeredar::SimulationInfoWTzeroInflated |>
   xlab(label="")
 ```
 
-
 ## Data simulation
+
 ### Functions
 
 ```{r eval=FALSE}
@@ -226,9 +282,6 @@ SimulateNow_HomoVar <- function(Spiked = TRUE, MeanValues, nEmbryoperConc=8, nCo
 }
 ```
 
-
-
-
 ```{r eval=FALSE}
 
 Conc <- c(0,0.16,0.8,4,20,100)
@@ -250,8 +303,7 @@ SimDatSpiked_Homo <-  SimulateNow_HomoVar(Spiked=TRUE, MeanValues = MeansAllStud
 SimDatUnspiked_Homo <- SimulateNow_HomoVar(Spiked=FALSE, MeanValues = MeansAllStudiesperConcUnspiked, Repetitions=25)
 ```
 
-
-## Analyzing simulated data 
+## Analyzing simulated data
 
 ```{r eval=FALSE}
 
@@ -360,9 +412,7 @@ names(ResultsSpiked_pooledDunns) <- names(ResultsSpiked_dataPrep_alpha0)
 usethis::use_data(ResultsSpiked_pooledDunns, overwrite = TRUE)
 ```
 
-
-## Presenting results 
-
+## Presenting results
 
 ```{r eval=FALSE}
 
@@ -479,7 +529,9 @@ breaks=c("mixedDunnett","PooledDunnetts","pooledDunns" ,"mixedWilliamsIncrease")
 
 labels=c("mixed Dunnett", "Pooled Dunnetts","Pooled Dunns","mixed Williams")
 
-type1_error_Spiked <- xeredar::resultsSpiked_power_reactive |> 
+resultsSpiked_power_reactive <- xeredar::resultsSpiked_power_reactive
+
+type1_error_Spiked <- resultsSpiked_power_reactive |> 
   dplyr::arrange(e, percEffect) |> 
   filter(percEffect <= 1) |>
   ggplot2::ggplot(aes(x=PercentSign, color=Test))+
@@ -487,7 +539,7 @@ type1_error_Spiked <- xeredar::resultsSpiked_power_reactive |>
   scale_x_continuous(labels = scales::percent, trans = "log10")+
   xlab("% significant tests")
 
-power_Spiked <- xeredar::resultsSpiked_power_reactive |> 
+power_Spiked <- resultsSpiked_power_reactive |> 
   dplyr::arrange(e, percEffect) |>  
   dplyr::filter(Conc==100) |>
   ggplot2::ggplot(ggplot2::aes(x=percEffect, y=PercentSign, color=Test))+
@@ -522,5 +574,3 @@ type1_error_Spiked <- xeredar::resultsSpiked_power_reactive |>
 
 power_Spiked / power_Unspiked / type1_error_Spiked
 ```
-
-
