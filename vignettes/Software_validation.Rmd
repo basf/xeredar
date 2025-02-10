@@ -15,7 +15,7 @@ In case you want to make sure that you are creating the exact same output as pre
 ```{r eval = FALSE}
 rix::rix(
   r_ver = "4.4.0",
-  r_pkgs = c("tidyverse", "tidyr", "purrr", "furrr", "gt","easystats","rlang", "DHARMa", "devtools", "patchwork", "rmarkdown"),
+  r_pkgs = c("tidyverse", "tidyr", "purrr", "furrr", "gt","easystats","rlang", "DHARMa", "devtools", "patchwork", "rmarkdown", "ggpubr"),
   system_pkgs = NULL,
   tex_pkgs = c("amsmath"),
   git_pkgs = list(package_name = "xeredar",
@@ -25,6 +25,7 @@ rix::rix(
   project_path = "./vignettes",
   overwrite = TRUE
 )
+
 
 ```
 

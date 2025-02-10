@@ -136,7 +136,7 @@ result1 <- xeredar::SimulationInfoWTzeroInflated |>
   rstatix::add_xy_position(x = "Inert") |> 
   mutate_if(is.numeric, ~round(., digits = 2))
 
-p1 <- xeredar::SimulationInfoWTzeroInflated |> 
+xeredar::SimulationInfoWTzeroInflated |> 
   dplyr::filter(Spiked == TRUE) |>
   ggpubr::ggboxplot(x= "Inert", y= "CVControl", fill = "purple", size = NULL,
   width = 0.7, outlier.size = 0.3, outlier.shape = 16, lwd=0.1)+
@@ -162,7 +162,7 @@ result2 <- xeredar::SimulationInfoWTzeroInflated |>
   rstatix::add_xy_position(x = "Inert") |> 
   mutate_if(is.numeric, ~round(., digits = 2))
 
-p2 <- xeredar::SimulationInfoWTzeroInflated |> 
+xeredar::SimulationInfoWTzeroInflated |> 
   dplyr::filter(Spiked == FALSE) |>
   ggpubr::ggboxplot(x= "Inert", y= "CVControl", fill = "#00AFBB", size = NULL,
   width = 0.7, outlier.size = 0.3, outlier.shape = 16, lwd=0.1)+
@@ -182,13 +182,27 @@ p2 <- xeredar::SimulationInfoWTzeroInflated |>
 ```{r eval=TRUE}
 xeredar::SimulationInfoWTzeroInflated |> 
   dplyr::select(adj_ICC, Country, Spiked) |> 
-  dplyr::mutate(Spiked = if_else(Spiked == TRUE, "Spiked", "Unspiked")) |>
-  ggplot(aes(y= as.numeric(adj_ICC), x= Country, color = Spiked))+
-  geom_jitter(alpha= 0.5,  width = 0.2)+
-  geom_abline(slope=0, intercept= 0.1337804)+
-  labs(color='Spiked or Unspiked?')+
-  ylab(label="adjusted ICC value")+
-  xlab(label="")
+  dplyr::mutate(Spiked = dplyr::if_else(Spiked == TRUE, "Spiked", "Unspiked")) |>
+  ggplot2::ggplot(aes(y= as.numeric(adj_ICC), x= Country, color = Spiked)) +
+  geom_jitter(alpha= 0.5,  width = 0.2, size = 0.3) +
+  geom_abline(slope=0, intercept= 0.139, lwd= 0.1) +
+  scale_color_manual(values = c("Spiked" = "purple", "Unspiked" = "#00AFBB")) + 
+  labs(color='Spiked or Unspiked?') +
+  ylab(label="adjusted intraclass Correlation Coefficient (ICC)") +
+  xlab(label="Labs/country") +
+  theme(panel.background = element_blank(),
+        panel.grid.major = element_line(color = "lightgray", size = 0.1), 
+        panel.grid.minor = element_line(color = "lightgray", size = 0.05),
+        axis.text = element_text(size=3),
+        axis.title = element_text(size=4), 
+        legend.text = element_text(size=2), 
+        legend.title = element_text(size=3),
+        legend.key.size = unit(0.3, "lines"), 
+        legend.spacing = unit(0.1, "lines"),
+        axis.line = element_line(linewidth = 0.1), 
+        axis.ticks = element_line(linewidth = 0.1)
+        )
+#ggsave("ICC.png", p3, width = 813, height = 566, units = "px")
 ```
 
 ## Data simulation
@@ -525,51 +539,98 @@ usethis::use_data(resultsUnspiked_power_reactive, overwrite = TRUE)
 ```
 
 ```{r eval=TRUE, warning=FALSE}
-breaks=c("mixedDunnett","PooledDunnetts","pooledDunns" ,"mixedWilliamsIncrease")
+breaks=c("pooledDunns","PooledDunnetts","mixedWilliamsIncrease", "mixedDunnett")
 
-labels=c("mixed Dunnett", "Pooled Dunnetts","Pooled Dunns","mixed Williams")
+labels=c("Pooled Dunns","Pooled Dunnetts","mixed Williams","mixed Dunnett")
 
 resultsSpiked_power_reactive <- xeredar::resultsSpiked_power_reactive
 
 type1_error_Spiked <- resultsSpiked_power_reactive |> 
   dplyr::arrange(e, percEffect) |> 
-  filter(percEffect <= 1) |>
-  ggplot2::ggplot(aes(x=PercentSign, color=Test))+
-  geom_boxplot( alpha= 0.5)+
-  scale_x_continuous(labels = scales::percent, trans = "log10")+
-  xlab("% significant tests")
+  dplyr::filter(percEffect <= 1) |>
+  ggplot2::ggplot(ggplot2::aes(x=PercentSign, color=Test))+
+  ggplot2::geom_boxplot(alpha = 0.5, lwd=0.1, outlier.size = 0.15)+
+  ggplot2::scale_x_continuous(labels = scales::percent, trans = "log10")+
+  ggplot2::scale_color_discrete(name  ="Tests",
+                      breaks = breaks,
+                      labels = labels) + 
+  ggplot2::xlab("% significant tests") +
+  ggplot2::ylab("") +
+  theme(panel.background = element_blank(),
+        panel.grid.major = element_line(color = "lightgray", size = 0.1), 
+        panel.grid.minor = element_line(color = "lightgray", size = 0.05),
+        axis.text = element_text(size=3),
+        axis.title = element_text(size=4), 
+        legend.text = element_text(size=2), 
+        legend.title = element_text(size=3),
+        legend.key.size = unit(0.3, "lines"), 
+        legend.spacing = unit(0.1, "lines"),
+        axis.line = element_line(linewidth = 0.1), 
+        axis.ticks = element_line(linewidth = 0.1),
+        axis.ticks.y = element_blank(),
+        axis.text.y=element_blank()
+        )
+
+#ggsave("type1_error_Spiked.png", type1_error_Spiked, width = 736, height = 518, units = "px")
+
+
+breaks=c("mixedWilliamsIncrease", "mixedDunnett","pooledDunns","PooledDunnetts")
+
+labels=c("mixed Williams","mixed Dunnett","Pooled Dunns","Pooled Dunnetts")
 
 power_Spiked <- resultsSpiked_power_reactive |> 
   dplyr::arrange(e, percEffect) |>  
   dplyr::filter(Conc==100) |>
   ggplot2::ggplot(ggplot2::aes(x=percEffect, y=PercentSign, color=Test))+
-  ggplot2::geom_line(linewidth=1.2)+
-  ggplot2::geom_hline(x=as.numeric(0:300), yintercept=0.8)+
-  ggplot2::scale_color_discrete(name  ="Tests",
+  ggplot2::geom_line(linewidth=0.2)+
+  ggplot2::geom_hline(x=as.numeric(0:300), yintercept=0.8, lwd = 0.2)+
+  ggplot2::scale_color_manual(name  ="Approach",
                       breaks = breaks,
-                      labels = labels)+
-  ggplot2::ylab("% significant")+
-  ggplot2::xlab("% effect")
+                      labels = labels,
+                      values=c("#00e193","#312e9c","#d8d343","#920011"))+
+  ggplot2::ylab("% Significant test results \n in the highest tested concentration")+
+  ggplot2::xlab("Simulated % effect") + 
+  theme(panel.background = element_blank(),
+        panel.grid.major = element_line(color = "lightgray", size = 0.1), 
+        panel.grid.minor = element_line(color = "lightgray", size = 0.05),
+        axis.text = element_text(size=3),
+        axis.title = element_text(size=4), 
+        legend.text = element_text(size=2), 
+        legend.title = element_text(size=3),
+        legend.key.size = unit(0.3, "lines"), 
+        legend.spacing = unit(0.1, "lines"),
+        axis.line = element_line(linewidth = 0.1), 
+        axis.ticks = element_line(linewidth = 0.1)
+        )
+#ggsave("power_Spiked.png", power_Spiked, width = 736, height = 518, units = "px")
+
 
 power_Unspiked <- xeredar::resultsUnspiked_power_reactive |> 
   dplyr::arrange(e, percEffect) |>  
   dplyr::filter(Conc==100) |>
   ggplot2::ggplot(ggplot2::aes(x=percEffect, y=PercentSign, color=Test))+
-  ggplot2::geom_line(linewidth=1.2)+
-  ggplot2::geom_hline(x=as.numeric(0:300), yintercept=0.8)+
-  ggplot2::scale_color_discrete(name  ="Tests",
+  ggplot2::geom_line(linewidth=0.2)+
+  ggplot2::geom_hline(x=as.numeric(0:300), yintercept=0.8, lwd = 0.2)+
+  ggplot2::scale_color_manual(name  ="Approach",
                       breaks = breaks,
-                      labels = labels)+
-  ggplot2::ylab("% significant")+
-  ggplot2::xlab("% effect")
+                      labels = labels,
+                      values=c("#00e193","#312e9c","#d8d343","#920011"))+
+  ggplot2::ylab("% Significant test results \n in the highest tested concentration")+
+  ggplot2::xlab("Simulated % effect") + 
+  theme(panel.background = element_blank(),
+        panel.grid.major = element_line(color = "lightgray", size = 0.1), 
+        panel.grid.minor = element_line(color = "lightgray", size = 0.05),
+        axis.text = element_text(size=3),
+        axis.title = element_text(size=4), 
+        legend.text = element_text(size=2), 
+        legend.title = element_text(size=3),
+        legend.key.size = unit(0.3, "lines"), 
+        legend.spacing = unit(0.1, "lines"),
+        axis.line = element_line(linewidth = 0.1), 
+        axis.ticks = element_line(linewidth = 0.1)
+        )
+#ggsave("power_Unspiked.png", power_Unspiked, width = 736, height = 518, units = "px")
 
-type1_error_Spiked <- xeredar::resultsSpiked_power_reactive |> 
-  dplyr::arrange(e, percEffect) |> 
-  filter(percEffect <= 1) |>
-  ggplot2::ggplot(aes(x=PercentSign, color=Test))+
-  geom_boxplot( alpha= 0.5)+
-  scale_x_continuous(labels = scales::percent, trans = "log10")+
-  xlab("% significant tests")
 
 
 power_Spiked / power_Unspiked / type1_error_Spiked
