@@ -178,8 +178,8 @@ the XETA assay
 The default XETA analysis can be run using the `data_prep()` function
 with either spiked or unspiked data. This function automatically decides
 whether trimming, outlier removal and/or transformations are conducted
-following the manuscript (Spyridonov et al. unpublished). The actual
-analysis is carried out by the `ana()` function. The `ana()` function is
+following the manuscript ([Spyridonov et al. 2025](https://academic.oup.com/etc/advance-article/doi/10.1093/etojnl/vgaf056/8046659?searchresult=1)). 
+The actual analysis is carried out by the `ana()` function. The `ana()` function is
 called by the `data_prep()` function and does not need to be called
 separately. For this dataset, the exposure well ID (Row of the 96 well
 plate) is not recorded, therefore, we set the `row` argument to `FALSE`.
