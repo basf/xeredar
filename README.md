@@ -2516,3 +2516,10 @@ OECD. 2022b. Test No. 251: Rapid Androgen Disruption Activity Reporter
 OECD. 2022a. Rapid Estrogen Activity in Vivo (REACTIV) Assay (OECD Draft
 TG): Guideline for the Testing of Chemicals, Section 2: Effects on
 Biotic System. OECD.
+
+Inka Marie Spyridonov, Lijuan Yan, Eduard Szöcs, Ana Filipa Pereira Miranda, Carsten Lange, 
+Andrew Tindall, David Du Pasquier, Gregory Lemkine, Lennart Weltje, Maike Habekost, 
+Pernille Thorbek. 2025. Xeredar: An open-source R-package for the statistical analysis
+of endocrine new approach methods (NAMs) using fish or amphibian eleutheroembryos, 
+Environmental Toxicology and Chemistry. 
+<a href="https://doi.org/10.1093/etojnl/vgaf056" class="uri">https://doi.org/10.1093/etojnl/vgaf056</a>
