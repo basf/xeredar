@@ -1,5 +1,5 @@
 
-# xeredar <a <img src="man/figures/logo.png" align="right" height="138" /></a>
+# xeredar <img src="man/figures/logo.png" align="right" height="138" /></a>
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/basf/xeredar/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/basf/xeredar/actions/workflows/R-CMD-check.yaml)
