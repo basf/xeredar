@@ -19,7 +19,7 @@ trim <- function(dataframe, lwr = 0.1, upr = 0.9) {
   # quantiles for each treatment x Replicate
   thrs <- dataframe |>
     dplyr::group_by(.data$Treatment, .data$Replicate) |>
-    dplyr::summarise(
+    dplyr::reframe(
       thrs = stats::quantile(.data$Fluor,
         probs = c(lwr, upr),
         type = 2
